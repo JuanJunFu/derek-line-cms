@@ -36,7 +36,8 @@ export interface ReferralResult {
  */
 function buildReferralFlexMessage(code: string) {
   // LINE oaMessage URL: opens chat with OA and pre-fills the referral code
-  const shareUrl = `https://line.me/R/oaMessage/${encodeURIComponent(LINE_OA_ID)}/?${encodeURIComponent(code)}`;
+  // Note: @ in LINE_OA_ID must NOT be encoded
+  const shareUrl = `https://line.me/R/oaMessage/${LINE_OA_ID}/?${encodeURIComponent(code)}`;
 
   return {
     type: "flex",
