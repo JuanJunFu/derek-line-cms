@@ -79,13 +79,15 @@ async function handleEvent(event: WebhookEvent, eventIndex: number) {
     if (event.type === "message" && event.message.type === "text") {
       const text = event.message.text.trim();
 
-      // ── Referral: generate code ──
+      // ── Referral: generate code → Flex card with share link ──
       if (userId && REFERRAL_KEYWORDS.some((kw) => text === kw)) {
         const result = await generateReferralCode(userId);
         await trackEvent(userId, "REFERRAL_GENERATE", { keyword: text }, webhookEventId);
         await lineClient.replyMessage({
           replyToken: event.replyToken,
-          messages: [{ type: "text", text: result.message }],
+          messages: result.flexMessage
+            ? [result.flexMessage as any]
+            : [{ type: "text", text: result.message }],
         });
         return;
       }

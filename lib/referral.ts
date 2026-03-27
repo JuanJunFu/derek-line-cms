@@ -12,6 +12,9 @@ const CODE_LENGTH = 4;
 const CODE_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // 排除易混淆: 0/O, 1/I
 const MAX_RETRIES = 5;
 
+// LINE 官方帳號 ID（@xxx 格式），用於產生分享連結
+const LINE_OA_ID = process.env.LINE_OA_ID || "@derek_bath";
+
 function randomCode(): string {
   let code = "";
   for (let i = 0; i < CODE_LENGTH; i++) {
@@ -24,6 +27,80 @@ export interface ReferralResult {
   success: boolean;
   code?: string;
   message: string;
+  flexMessage?: any; // LINE Flex Message object (for shareable card)
+}
+
+/**
+ * Build a shareable referral Flex Message card.
+ * Contains the referral code + a "分享給朋友" button that opens LINE share.
+ */
+function buildReferralFlexMessage(code: string) {
+  // LINE oaMessage URL: opens chat with OA and pre-fills the referral code
+  const shareUrl = `https://line.me/R/oaMessage/${encodeURIComponent(LINE_OA_ID)}/?${encodeURIComponent(code)}`;
+
+  return {
+    type: "flex",
+    altText: `我的推薦碼：${code}`,
+    contents: {
+      type: "bubble",
+      header: {
+        type: "box",
+        layout: "vertical",
+        backgroundColor: "#B89A6A",
+        paddingAll: "16px",
+        contents: [
+          { type: "text", text: "🤝 DEREK 德瑞克衛浴", size: "sm", color: "#ffffff", align: "center" },
+          { type: "text", text: "專屬推薦碼", size: "xl", weight: "bold", color: "#ffffff", align: "center", margin: "sm" },
+        ],
+      },
+      body: {
+        type: "box",
+        layout: "vertical",
+        paddingAll: "20px",
+        spacing: "lg",
+        contents: [
+          {
+            type: "box",
+            layout: "vertical",
+            backgroundColor: "#F5F0E8",
+            cornerRadius: "12px",
+            paddingAll: "16px",
+            contents: [
+              { type: "text", text: code, size: "3xl", weight: "bold", color: "#B89A6A", align: "center" },
+            ],
+          },
+          { type: "text", text: "分享此推薦碼給朋友\n朋友點擊下方按鈕即可加入並自動輸入推薦碼", size: "sm", color: "#888888", wrap: true, align: "center" },
+        ],
+      },
+      footer: {
+        type: "box",
+        layout: "vertical",
+        paddingAll: "12px",
+        spacing: "sm",
+        contents: [
+          {
+            type: "button",
+            style: "primary",
+            color: "#B89A6A",
+            action: {
+              type: "uri",
+              label: "📤 分享給朋友",
+              uri: shareUrl,
+            },
+          },
+          {
+            type: "button",
+            style: "secondary",
+            action: {
+              type: "uri",
+              label: "📋 複製連結分享",
+              uri: shareUrl,
+            },
+          },
+        ],
+      },
+    },
+  };
 }
 
 /**
@@ -41,7 +118,8 @@ export async function generateReferralCode(userId: string): Promise<ReferralResu
     return {
       success: true,
       code: existing.code,
-      message: `您的專屬推薦碼是 ${existing.code}\n\n請分享給朋友，對方加入好友後輸入此推薦碼即可完成推薦！`,
+      message: `您的專屬推薦碼是 ${existing.code}`,
+      flexMessage: buildReferralFlexMessage(existing.code),
     };
   }
 
@@ -59,7 +137,8 @@ export async function generateReferralCode(userId: string): Promise<ReferralResu
       return {
         success: true,
         code,
-        message: `您的專屬推薦碼是 ${code}\n\n請分享給朋友，對方加入好友後輸入此推薦碼即可完成推薦！`,
+        message: `您的專屬推薦碼是 ${code}`,
+        flexMessage: buildReferralFlexMessage(code),
       };
     } catch (err: unknown) {
       // Unique constraint violation → retry with new code
