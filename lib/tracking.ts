@@ -9,6 +9,7 @@ import {
   REPAIR_KEYWORDS,
   SMART_TOILET_INTENT_TAG,
   CUSTOMER_TYPES,
+  REFERRAL_SCORE_DELTA,
   getRelationshipLevel,
 } from "@/lib/constants";
 
@@ -150,6 +151,9 @@ export function calculateRelationshipDelta(
       return d.REPAIR_INQUIRY;
     }
   }
+  // Referral events — reward both referrer and referee
+  if (eventType === "REFERRAL_COMPLETE") return REFERRAL_SCORE_DELTA.REFEREE;
+  if (eventType === "REFERRAL_GENERATE") return REFERRAL_SCORE_DELTA.REFERRER;
   return 0;
 }
 

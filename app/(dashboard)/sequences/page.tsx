@@ -62,7 +62,15 @@ export default async function SequencesPage({
 
   return (
     <div className="max-w-3xl">
-      <h1 className="text-xl font-bold text-gray-100 mb-1">📬 序列訊息管理</h1>
+      <div className="flex items-center justify-between mb-1">
+        <h1 className="text-xl font-bold text-gray-100">📬 序列訊息管理</h1>
+        <a
+          href="/sequences/editor"
+          className="text-sm bg-amber-600 hover:bg-amber-500 text-white rounded-lg px-4 py-2 transition"
+        >
+          📝 序列定義編輯器
+        </a>
+      </div>
       <p className="text-xs text-gray-500 mb-6">
         管理自動化旅程中排定的 LINE 訊息 · Cron 每小時執行一次
       </p>

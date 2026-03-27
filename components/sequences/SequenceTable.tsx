@@ -123,8 +123,8 @@ export function SequenceTable({ messages }: { messages: ScheduledMessage[] }) {
                   </p>
                   <p className="text-xs text-gray-600 mt-0.5">
                     {msg.status === "sent" && msg.sentAt
-                      ? `已發送：${new Date(msg.sentAt).toLocaleString("zh-TW")}`
-                      : `預計發送：${new Date(msg.scheduledAt).toLocaleString("zh-TW")}`}
+                      ? `已發送：${new Date(msg.sentAt).toLocaleString("zh-TW", { timeZone: "Asia/Taipei" })}`
+                      : `預計發送：${new Date(msg.scheduledAt).toLocaleString("zh-TW", { timeZone: "Asia/Taipei" })}`}
                   </p>
                 </div>
 

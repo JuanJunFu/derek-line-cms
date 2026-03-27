@@ -121,10 +121,11 @@ export default async function AlertsPage() {
 function formatTime(date: Date): string {
   const diff = Date.now() - date.getTime();
   const min = Math.floor(diff / 60000);
+  if (min < 1) return "剛剛";
   if (min < 60) return `${min} 分鐘前`;
   const hours = Math.floor(min / 60);
   if (hours < 24) return `${hours} 小時前`;
   const days = Math.floor(hours / 24);
   if (days < 7) return `${days} 天前`;
-  return date.toLocaleDateString("zh-TW");
+  return date.toLocaleDateString("zh-TW", { timeZone: "Asia/Taipei" });
 }

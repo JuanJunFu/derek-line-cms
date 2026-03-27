@@ -22,7 +22,11 @@ const REGION_COLORS: Record<string, string> = {
 
 export default async function AnalyticsPage() {
   const now = new Date();
-  const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  // Use Taiwan timezone (UTC+8) for day boundaries
+  const twNow = new Date(now.toLocaleString("en-US", { timeZone: "Asia/Taipei" }));
+  const todayStart = new Date(twNow.getFullYear(), twNow.getMonth(), twNow.getDate());
+  // Adjust back to UTC for DB queries
+  todayStart.setTime(todayStart.getTime() - 8 * 60 * 60 * 1000);
   const weekStart  = new Date(todayStart); weekStart.setDate(weekStart.getDate() - 7);
   const monthStart = new Date(todayStart); monthStart.setDate(monthStart.getDate() - 30);
 

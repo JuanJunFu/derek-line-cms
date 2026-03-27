@@ -44,6 +44,14 @@ export const SMART_TOILET_INTENT_TAG = "Intent:SmartToilet_High";
 // Store interaction events → HOT trigger
 export const HOT_EVENTS = ["STORE_CALL", "STORE_NAV", "STORE_LINE"] as const;
 
+// Referral system
+export const REFERRAL_KEYWORDS = ["推薦", "推荐", "邀請碼", "推薦碼"];
+export const REFERRAL_CODE_PATTERN = /^REF-[A-Z2-9]{4}$/i;
+export const REFERRAL_SCORE_DELTA = {
+  REFERRER: 15,  // 推薦人：成功推薦一位新客
+  REFEREE: 10,   // 被推薦人：使用推薦碼加入
+} as const;
+
 // Sequence triggers
 export const SEQUENCE_TRIGGERS = {
   NEW_CUSTOMER: "new_customer",

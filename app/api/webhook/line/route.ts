@@ -9,7 +9,8 @@ import { getAutoReply } from "@/lib/reply";
 import { getSettings } from "@/lib/settings";
 import { trackEvent } from "@/lib/tracking";
 import { triggerNewCustomerSequence, triggerRepairSequence } from "@/lib/sequence";
-import { REPAIR_KEYWORDS } from "@/lib/constants";
+import { REPAIR_KEYWORDS, REFERRAL_KEYWORDS, REFERRAL_CODE_PATTERN } from "@/lib/constants";
+import { generateReferralCode, redeemReferralCode } from "@/lib/referral";
 
 export async function POST(req: NextRequest) {
   try {
@@ -77,6 +78,30 @@ async function handleEvent(event: WebhookEvent, eventIndex: number) {
     // ── Text message ──
     if (event.type === "message" && event.message.type === "text") {
       const text = event.message.text.trim();
+
+      // ── Referral: generate code ──
+      if (userId && REFERRAL_KEYWORDS.some((kw) => text === kw)) {
+        const result = await generateReferralCode(userId);
+        await trackEvent(userId, "REFERRAL_GENERATE", { keyword: text }, webhookEventId);
+        await lineClient.replyMessage({
+          replyToken: event.replyToken,
+          messages: [{ type: "text", text: result.message }],
+        });
+        return;
+      }
+
+      // ── Referral: redeem code ──
+      if (userId && REFERRAL_CODE_PATTERN.test(text)) {
+        const result = await redeemReferralCode(text, userId);
+        const eventType = result.success ? "REFERRAL_COMPLETE" : "REFERRAL_FAIL";
+        await trackEvent(userId, eventType, { keyword: text, referralCode: text }, webhookEventId);
+        await lineClient.replyMessage({
+          replyToken: event.replyToken,
+          messages: [{ type: "text", text: result.message }],
+        });
+        return;
+      }
+
       const reply = await getAutoReply(text);
 
       // Track message event

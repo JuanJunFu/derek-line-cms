@@ -3,12 +3,51 @@ import { prisma } from "@/lib/prisma";
 export const dynamic = "force-dynamic";
 
 const STOP_WORDS = new Set([
+  // 代名詞
   "的", "了", "是", "我", "你", "他", "她", "它", "我們", "你們", "他們",
   "這", "那", "有", "在", "和", "與", "或", "但", "也", "都", "還",
   "就", "很", "不", "沒", "要", "會", "可以", "什麼", "怎麼", "為什麼",
+  // 語助詞
   "嗎", "嗯", "哦", "啊", "喔", "呢", "吧", "嗨", "哈", "OK", "ok",
   "ㄟ", "欸", "哇", "唷", "囉", "ㄚ", "ㄛ", "ㄜ",
+  // 常見無意義動詞/副詞
+  "想", "請", "問", "看", "找", "去", "來", "跟", "給", "讓", "做", "到",
+  "對", "把", "被", "比", "從", "向", "用", "以", "能", "得", "著",
+  "想要", "請問", "一下", "可以", "怎麼", "如何", "哪裡",
+  "你好", "您好", "謝謝", "感謝", "麻煩", "不好意思", "抱歉",
+  "知道", "需要", "應該", "已經", "然後", "所以", "因為", "如果",
+  "這個", "那個", "一個", "什麼時候", "多少", "幾",
+  // 英文常見
+  "hi", "hello", "hey", "yes", "no", "the", "is", "are",
 ]);
+
+/** Keywords that should be extracted from user messages (domain-specific) */
+const KEYWORD_DICT = [
+  // 產品相關
+  "馬桶", "智慧馬桶", "免治", "免治馬桶", "馬桶座", "馬桶蓋",
+  "面盆", "浴櫃", "洗手台", "洗臉盆",
+  "龍頭", "水龍頭", "蓮蓬頭", "花灑",
+  "浴缸", "泡澡",
+  "配件", "毛巾架", "置物架", "鏡子", "鏡櫃",
+  "小便斗",
+  // 服務相關
+  "維修", "修理", "漏水", "故障", "壞了", "損壞", "不出水", "零件",
+  "安裝", "施工", "拆除", "換新",
+  // 購買意圖
+  "價格", "報價", "多少錢", "費用", "價位", "優惠", "折扣", "特價", "促銷",
+  "購買", "訂購", "下單", "買",
+  // 門市相關
+  "門市", "店面", "展示", "展間", "旗艦店",
+  "地址", "地點", "位置", "在哪", "哪裡",
+  "營業", "營業時間", "幾點", "開門",
+  "預約", "參觀", "體驗",
+  // 品牌
+  "DEREK", "德瑞克",
+  // 功能需求
+  "省水", "節水", "沖水", "清潔", "除臭", "暖座", "烘乾",
+  "無障礙", "安全",
+  "保固", "保養", "售後",
+];
 
 const TAG_ZH: Record<string, string> = {
   "Intent:Comfort_High": "馬桶/免治",
@@ -44,20 +83,59 @@ export default async function KeywordsPage() {
     }),
   ]);
 
-  // ── Keyword frequency ──
+  // ── Keyword frequency (extract keywords from sentences) ──
   const freq: Record<string, { count: number; userIds: Set<string> }> = {};
 
-  function addKeyword(kw: unknown, userId: string) {
-    if (typeof kw !== "string" || !kw.trim()) return;
-    const word = kw.trim().replace(/[！!？?。，、,\.。…]+$/g, "").slice(0, 30);
+  function addWord(word: string, userId: string) {
     if (!word || word.length < 2 || STOP_WORDS.has(word)) return;
     if (!freq[word]) freq[word] = { count: 0, userIds: new Set() };
     freq[word].count++;
     freq[word].userIds.add(userId);
   }
 
-  for (const e of fallbackEvents) addKeyword((e.data as Record<string, unknown>)?.keyword, e.userId);
-  for (const e of messageEvents)  addKeyword((e.data as Record<string, unknown>)?.keyword, e.userId);
+  /** Extract meaningful keywords from a raw message */
+  function extractKeywords(raw: unknown, userId: string) {
+    if (typeof raw !== "string" || !raw.trim()) return;
+    const text = raw.trim().replace(/[！!？?。，、,\.…~～\s]+/g, " ").trim();
+    if (!text) return;
+
+    // Filter out pure numbers, single chars, test strings
+    if (/^[\d\s\.\-]+$/.test(text)) return;  // "1 2 3", "123"
+    if (text.length <= 1) return;
+
+    // 1. Try to match known dictionary keywords first
+    const matched = new Set<string>();
+    for (const kw of KEYWORD_DICT) {
+      if (text.includes(kw)) {
+        matched.add(kw);
+      }
+    }
+
+    // 2. If dictionary matched keywords, use those
+    if (matched.size > 0) {
+      for (const kw of matched) addWord(kw, userId);
+      return;
+    }
+
+    // 3. Fallback: split Chinese text into 2-3 char n-grams, filter by stop words
+    // Only keep short text (< 6 chars) as-is if it's not a sentence
+    if (text.length <= 5 && !STOP_WORDS.has(text)) {
+      addWord(text, userId);
+      return;
+    }
+
+    // For longer text, try splitting by common delimiters and punctuation
+    const segments = text.split(/[\s,，。、！!？?；;：:]+/).filter(Boolean);
+    for (const seg of segments) {
+      const clean = seg.replace(/^[我你他她它們的了是]+/, "").trim();
+      if (clean.length >= 2 && clean.length <= 8 && !STOP_WORDS.has(clean)) {
+        addWord(clean, userId);
+      }
+    }
+  }
+
+  for (const e of fallbackEvents) extractKeywords((e.data as Record<string, unknown>)?.keyword, e.userId);
+  for (const e of messageEvents)  extractKeywords((e.data as Record<string, unknown>)?.keyword, e.userId);
 
   const sorted = Object.entries(freq)
     .sort((a, b) => b[1].count - a[1].count)

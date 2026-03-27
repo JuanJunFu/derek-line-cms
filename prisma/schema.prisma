@@ -143,6 +143,8 @@ model UserProfile {
   customerType        String   @default("new") // "new" | "returning" — 唯一真相來源
   // sequenceState: { "new_customer": { "currentStep": 1, "startedAt": "...", "completedAt": null } }
   sequenceState       Json?
+  // ── Referral ──
+  referredBy          String?  // 推薦人的 userId
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
 
@@ -226,4 +228,25 @@ model AlertLog {
   @@index([ruleId])
   @@index([isRead])
   @@index([createdAt])
+}
+
+// ── Referral System ──
+
+model Referral {
+  id              String         @id @default(cuid())
+  referrerUserId  String                              // 推薦人 LINE userId
+  refereeUserId   String?                             // 被推薦人 LINE userId（兌換後填入）
+  code            String         @unique              // REF-XXXX
+  status          ReferralStatus @default(PENDING)
+  createdAt       DateTime       @default(now())
+  completedAt     DateTime?
+
+  @@index([referrerUserId])
+  @@index([refereeUserId])
+  @@index([status])
+}
+
+enum ReferralStatus {
+  PENDING
+  COMPLETED
 }

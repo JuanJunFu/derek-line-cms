@@ -55,7 +55,7 @@ export default async function WarRoomPage() {
   // Stats
   const [totalHot, todayNewFollows, todayHighIntent] = await Promise.all([
     prisma.userProfile.count({ where: { leadScore: "HOT", isBlocked: false } }),
-    prisma.userEvent.count({ where: { eventType: "FOLLOW", createdAt: { gte: new Date(now.getFullYear(), now.getMonth(), now.getDate()) } } }),
+    prisma.userEvent.count({ where: { eventType: "FOLLOW", createdAt: { gte: (() => { const tw = new Date(now.toLocaleString("en-US", { timeZone: "Asia/Taipei" })); const start = new Date(tw.getFullYear(), tw.getMonth(), tw.getDate()); start.setTime(start.getTime() - 8 * 60 * 60 * 1000); return start; })() } } }),
     prisma.userEvent.count({
       where: { eventType: { in: ["STORE_CALL", "STORE_NAV", "STORE_LINE"] }, createdAt: { gte: h24ago } },
     }),
@@ -240,10 +240,13 @@ const INTENT_ZH: Record<string, string> = {
 function timeAgo(date: Date): string {
   const diff = Date.now() - date.getTime();
   const minutes = Math.floor(diff / 60000);
+  if (minutes < 1) return "剛剛";
   if (minutes < 60) return `${minutes} 分鐘前`;
   const hours = Math.floor(minutes / 60);
   if (hours < 24) return `${hours} 小時前`;
-  return `${Math.floor(hours / 24)} 天前`;
+  const days = Math.floor(hours / 24);
+  if (days < 30) return `${days} 天前`;
+  return date.toLocaleDateString("zh-TW", { timeZone: "Asia/Taipei" });
 }
 
 function minutesAgo(date: Date): string {

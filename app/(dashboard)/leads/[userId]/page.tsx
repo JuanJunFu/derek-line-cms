@@ -105,6 +105,31 @@ export default async function UserTimelinePage({
     orderBy: { scheduledAt: "asc" },
   });
 
+  // Referral data
+  const [referralsAsReferrer, referralAsReferee] = await Promise.all([
+    prisma.referral.findMany({
+      where: { referrerUserId: decodedUserId },
+      orderBy: { createdAt: "desc" },
+    }),
+    prisma.referral.findFirst({
+      where: { refereeUserId: decodedUserId, status: "COMPLETED" },
+    }),
+  ]);
+  // Lookup display names for referral participants
+  const refUserIds = [
+    ...new Set([
+      ...referralsAsReferrer.map((r) => r.refereeUserId).filter(Boolean) as string[],
+      referralAsReferee?.referrerUserId,
+    ].filter(Boolean) as string[]),
+  ];
+  const refProfiles = refUserIds.length > 0
+    ? await prisma.userProfile.findMany({
+        where: { userId: { in: refUserIds } },
+        select: { userId: true, displayName: true },
+      })
+    : [];
+  const refProfileMap = Object.fromEntries(refProfiles.map((p) => [p.userId, p]));
+
   const scoreColors: Record<string, string> = {
     HOT: "text-red-400 bg-red-900/30 border border-red-700",
     WARM: "text-amber-400 bg-amber-900/30 border border-amber-700",
@@ -144,7 +169,7 @@ export default async function UserTimelinePage({
       <p className="text-xs text-gray-500 mb-4">
         LINE ID: {decodedUserId} ·
         {profile.customerType === "returning" ? " 老客戶 🔄" : " 新客戶 🌱"} ·
-        首次加入 {profile.firstSeen.toLocaleDateString("zh-TW")}
+        首次加入 {profile.firstSeen.toLocaleDateString("zh-TW", { timeZone: "Asia/Taipei" })}
       </p>
 
       {/* ── Dual-track Score Card ── */}
@@ -165,7 +190,7 @@ export default async function UserTimelinePage({
           </div>
           <div className="text-right text-xs text-gray-500 shrink-0 ml-2">
             <p>共 {profile.totalEvents} 次互動</p>
-            <p>最後：{profile.lastActive.toLocaleDateString("zh-TW")}</p>
+            <p>最後：{profile.lastActive.toLocaleDateString("zh-TW", { timeZone: "Asia/Taipei" })}</p>
           </div>
         </div>
 
@@ -215,6 +240,60 @@ export default async function UserTimelinePage({
         <p className="text-sm text-amber-100">{aiSuggestion}</p>
       </div>
 
+      {/* ── Referral Relationships ── */}
+      {(referralAsReferee || referralsAsReferrer.length > 0) && (
+        <div className="bg-gray-900 border border-gray-800 rounded-xl p-3 mb-4">
+          <p className="text-xs font-bold text-gray-400 mb-2">🤝 推薦關係</p>
+
+          {/* Who referred this user */}
+          {referralAsReferee && (
+            <div className="flex items-center gap-2 text-xs mb-2">
+              <span className="text-gray-500">被推薦人：由</span>
+              <Link
+                href={`/leads/${encodeURIComponent(referralAsReferee.referrerUserId)}`}
+                className="text-amber-400 hover:text-amber-300"
+              >
+                {refProfileMap[referralAsReferee.referrerUserId]?.displayName ??
+                  referralAsReferee.referrerUserId.slice(0, 12) + "…"}
+              </Link>
+              <span className="text-gray-500">推薦（碼：{referralAsReferee.code}）</span>
+            </div>
+          )}
+
+          {/* Users this person referred */}
+          {referralsAsReferrer.length > 0 && (
+            <div>
+              <p className="text-xs text-gray-500 mb-1">
+                推薦人：已推薦 {referralsAsReferrer.filter((r) => r.status === "COMPLETED").length} 人
+                {referralsAsReferrer.filter((r) => r.status === "PENDING").length > 0 &&
+                  `（${referralsAsReferrer.filter((r) => r.status === "PENDING").length} 組待使用）`}
+              </p>
+              <div className="space-y-1">
+                {referralsAsReferrer.map((r) => (
+                  <div key={r.id} className="flex items-center gap-2 text-xs">
+                    <span className="font-mono text-amber-400">{r.code}</span>
+                    <span className={r.status === "COMPLETED" ? "text-green-400" : "text-gray-600"}>
+                      {r.status === "COMPLETED" ? "✅" : "⏳"}
+                    </span>
+                    {r.refereeUserId ? (
+                      <Link
+                        href={`/leads/${encodeURIComponent(r.refereeUserId)}`}
+                        className="text-gray-300 hover:text-amber-400"
+                      >
+                        {refProfileMap[r.refereeUserId]?.displayName ??
+                          r.refereeUserId.slice(0, 12) + "…"}
+                      </Link>
+                    ) : (
+                      <span className="text-gray-600">等待使用</span>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
       {/* ── Sequence State ── */}
       {Object.keys(sequenceState).length > 0 && (
         <div className="bg-gray-900 border border-gray-800 rounded-xl p-3 mb-4">
@@ -258,7 +337,8 @@ export default async function UserTimelinePage({
               const prevEvent = events[i - 1];
               const showDate =
                 !prevEvent ||
-                event.createdAt.toDateString() !== prevEvent.createdAt.toDateString();
+                event.createdAt.toLocaleDateString("zh-TW", { timeZone: "Asia/Taipei" }) !==
+                prevEvent.createdAt.toLocaleDateString("zh-TW", { timeZone: "Asia/Taipei" });
 
               return (
                 <div key={event.id}>
@@ -266,6 +346,7 @@ export default async function UserTimelinePage({
                     <div className="pl-10 py-2">
                       <span className="text-xs font-bold text-gray-500">
                         {event.createdAt.toLocaleDateString("zh-TW", {
+                          timeZone: "Asia/Taipei",
                           year: "numeric",
                           month: "long",
                           day: "numeric",
@@ -347,9 +428,9 @@ export default async function UserTimelinePage({
                     {msg.sequenceId.replace("hardcode_", "")} / {msg.stepId}
                   </span>
                   <span className="text-gray-500">
-                    預計 {new Date(msg.scheduledAt).toLocaleDateString("zh-TW")}
+                    預計 {new Date(msg.scheduledAt).toLocaleDateString("zh-TW", { timeZone: "Asia/Taipei" })}
                     {" "}
-                    {new Date(msg.scheduledAt).toLocaleTimeString("zh-TW", { hour: "2-digit", minute: "2-digit" })}
+                    {new Date(msg.scheduledAt).toLocaleTimeString("zh-TW", { timeZone: "Asia/Taipei", hour: "2-digit", minute: "2-digit" })}
                   </span>
                 </div>
               ))}
