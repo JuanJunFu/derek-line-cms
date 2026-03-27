@@ -77,6 +77,35 @@ model SiteSetting {
   updatedAt DateTime @updatedAt
 }
 
+// ── Product Catalog ──
+
+model ProductCategory {
+  id              String              @id @default(cuid())
+  slug            String              @unique  // e.g. "toilet", "faucet"
+  name            String                       // 馬桶
+  emoji           String              @default("")  // 🚽
+  intent          String              @default("")  // Comfort_High (for tracking)
+  url             String              @default("")  // Official site link
+  order           Int                 @default(0)
+  isActive        Boolean             @default(true)
+  subcategories   ProductSubcategory[]
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+}
+
+model ProductSubcategory {
+  id              String          @id @default(cuid())
+  categoryId      String
+  category        ProductCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  slug            String          // e.g. "toilet_smart"
+  name            String          // 智慧馬桶
+  url             String          @default("")  // Link to product page
+  order           Int             @default(0)
+  createdAt       DateTime        @default(now())
+
+  @@index([categoryId])
+}
+
 // ── Intent Tracking ──
 
 model UserEvent {

@@ -101,7 +101,7 @@ async function handleEvent(event: WebhookEvent, eventIndex: number) {
           messages: [menu as any],
         });
       } else if (reply.type === "product_menu") {
-        const menu = buildProductMenu();
+        const menu = await buildProductMenu();
         await lineClient.replyMessage({
           replyToken: event.replyToken,
           messages: [menu as any],
@@ -132,7 +132,7 @@ async function handleEvent(event: WebhookEvent, eventIndex: number) {
 
       // Sequence button: show product menu
       if (action === "SHOW_PRODUCT_MENU") {
-        const menu = buildProductMenu();
+        const menu = await buildProductMenu();
         await lineClient.replyMessage({
           replyToken: event.replyToken,
           messages: [menu as any],
@@ -213,7 +213,7 @@ async function handleEvent(event: WebhookEvent, eventIndex: number) {
           );
         }
 
-        const reply = buildProductReply(category);
+        const reply = await buildProductReply(category);
         if (reply) {
           await lineClient.replyMessage({
             replyToken: event.replyToken,

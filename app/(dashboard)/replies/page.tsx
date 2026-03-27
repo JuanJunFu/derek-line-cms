@@ -54,6 +54,10 @@ export default async function RepliesPage() {
                     <span className="text-xs bg-amber-900/30 text-amber-400 px-2 py-0.5 rounded">
                       系統指令：顯示地區選單
                     </span>
+                  ) : r.message === "SHOW_PRODUCT_MENU" ? (
+                    <span className="text-xs bg-amber-900/30 text-amber-400 px-2 py-0.5 rounded">
+                      系統指令：顯示產品選單
+                    </span>
                   ) : (
                     r.message.slice(0, 60) + (r.message.length > 60 ? "..." : "")
                   )}

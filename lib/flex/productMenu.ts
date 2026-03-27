@@ -2,174 +2,148 @@
  * Product Category Menu — LINE Flex Message
  * Two-level: Main categories → Subcategories
  * All clicks are Postback (trackable), subcategories link to lcb.com.tw
+ *
+ * Reads from DB (ProductCategory + ProductSubcategory).
+ * Falls back to hardcoded data if DB is empty.
  */
 
+import { prisma } from "@/lib/prisma";
 import productsData from "@/data/products.json";
 
 const BASE = "https://www.lcb.com.tw";
 
-export type SubCategory = {
+type CategoryData = {
   id: string;
-  name: string;
-  url: string;
-};
-
-export type ProductCategory = {
-  id: string;
+  slug: string;
   name: string;
   emoji: string;
   intent: string;
   url: string;
-  subs: SubCategory[];
+  subs: { slug: string; name: string; url: string }[];
 };
 
-export const PRODUCT_CATEGORIES: ProductCategory[] = [
-  {
-    id: "toilet",
-    name: "馬桶",
-    emoji: "🚽",
-    intent: "Comfort_High",
-    url: `${BASE}/lcb/Apro`,
-    subs: [
-      { id: "toilet_smart", name: "智慧馬桶", url: `${BASE}/lcb/Apro_1` },
-      { id: "toilet_one", name: "單體馬桶", url: `${BASE}/lcb/Apro_2` },
-      { id: "toilet_two", name: "分體馬桶", url: `${BASE}/lcb/Apro_3` },
-      { id: "toilet_child", name: "幼兒馬桶", url: `${BASE}/lcb/Apro_4` },
-      { id: "toilet_squat", name: "蹲式馬桶", url: `${BASE}/lcb/Apro_5` },
-    ],
-  },
-  {
-    id: "bidet",
-    name: "免治馬桶座",
-    emoji: "💺",
-    intent: "Comfort_High",
-    url: `${BASE}/lcb/Bpro`,
-    subs: [
-      { id: "bidet_luxury", name: "奢華系列", url: `${BASE}/lcb/Bpro_1` },
-      { id: "bidet_urban", name: "都會系列", url: `${BASE}/lcb/Bpro_2` },
-    ],
-  },
-  {
-    id: "basin",
-    name: "面盆/浴櫃",
-    emoji: "🪥",
-    intent: "Storage_Space",
-    url: `${BASE}/lcb/Cpro`,
-    subs: [
-      { id: "basin_under", name: "下嵌盆", url: `${BASE}/lcb/Cpro_2` },
-      { id: "basin_top", name: "典雅檯上盆", url: `${BASE}/lcb/Cpro_1` },
-      { id: "basin_one", name: "時尚一體盆", url: `${BASE}/lcb/Cpro_3` },
-      { id: "basin_small", name: "小空間面盆", url: `${BASE}/lcb/Cpro_4` },
-      { id: "basin_wall", name: "經典壁掛盆", url: `${BASE}/lcb/Cpro_5` },
-    ],
-  },
-  {
-    id: "faucet",
-    name: "浴室龍頭",
-    emoji: "🚿",
-    intent: "Quick_Fix",
-    url: `${BASE}/lcb/Dpro`,
-    subs: [
-      { id: "faucet_basin", name: "面盆龍頭", url: `${BASE}/lcb/Dpro_1` },
-      { id: "faucet_shower", name: "沐浴龍頭", url: `${BASE}/lcb/Dpro_2` },
-      { id: "faucet_steel", name: "不鏽鋼龍頭", url: `${BASE}/lcb/Dpro_3` },
-      { id: "faucet_sensor", name: "感應龍頭", url: `${BASE}/lcb/Dpro_4` },
-      { id: "faucet_leadfree", name: "無鉛龍頭", url: `${BASE}/lcb/Dpro_5` },
-      { id: "faucet_tub", name: "浴缸龍頭", url: `${BASE}/lcb/Dpro_6` },
-      { id: "faucet_rain", name: "花灑龍頭", url: `${BASE}/lcb/Dpro_7` },
-      { id: "faucet_hand", name: "手持蓮蓬頭", url: `${BASE}/lcb/Dpro_8` },
-    ],
-  },
-  {
-    id: "accessibility",
-    name: "無障礙設備",
-    emoji: "♿",
-    intent: "Safety_Care",
-    url: `${BASE}/lcb/Epro`,
-    subs: [],
-  },
-  {
-    id: "bathtub",
-    name: "浴缸",
-    emoji: "🛁",
-    intent: "Luxury_Living",
-    url: `${BASE}/lcb/Fpro`,
-    subs: [
-      { id: "tub_free", name: "獨立浴缸", url: `${BASE}/lcb/Fpro_1` },
-      { id: "tub_built", name: "嵌入式浴缸", url: `${BASE}/lcb/Fpro_2` },
-    ],
-  },
-  {
-    id: "accessories",
-    name: "浴室配件",
-    emoji: "🔧",
-    intent: "Maintenance",
-    url: `${BASE}/lcb/Gpro`,
-    subs: [
-      { id: "acc_mirror", name: "鏡面／鏡櫃", url: `${BASE}/lcb/Gpro_1` },
-      { id: "acc_appliance", name: "多功能家電", url: `${BASE}/lcb/Gpro_4` },
-      { id: "acc_shelf", name: "置物架／櫃", url: `${BASE}/lcb/Gpro_5` },
-      { id: "acc_towel", name: "毛巾架／環／勾", url: `${BASE}/lcb/Gpro_6` },
-      { id: "acc_hook", name: "掛衣勾", url: `${BASE}/lcb/Gpro_7` },
-      { id: "acc_bar", name: "滑桿", url: `${BASE}/lcb/Gpro_8` },
-      { id: "acc_paper", name: "衛生紙架／盒", url: `${BASE}/lcb/Gpro_9` },
-      { id: "acc_cup", name: "杯子／肥皂架", url: `${BASE}/lcb/Gpro_10` },
-      { id: "acc_lid", name: "馬桶蓋", url: `${BASE}/lcb/Gpro_11` },
-      { id: "acc_other", name: "其他配件", url: `${BASE}/lcb/Gpro_3` },
-    ],
-  },
-  {
-    id: "urinal",
-    name: "小便斗",
-    emoji: "🚹",
-    intent: "Luxury_Living",
-    url: `${BASE}/lcb/Hpro`,
-    subs: [
-      { id: "urinal_wall", name: "壁掛式便斗", url: `${BASE}/lcb/Hpro_1` },
-      { id: "urinal_floor", name: "落地式便斗", url: `${BASE}/lcb/Hpro_2` },
-      { id: "urinal_child", name: "幼兒便斗", url: `${BASE}/lcb/Hpro_3` },
-    ],
-  },
-  {
-    id: "commercial",
-    name: "公共空間",
-    emoji: "🏢",
-    intent: "Maintenance",
-    url: `${BASE}/lcb/Ipro`,
-    subs: [
-      { id: "comm_kitchen", name: "廚房龍頭", url: `${BASE}/lcb/Ipro_1` },
-      { id: "comm_wall", name: "壁式龍頭", url: `${BASE}/lcb/Ipro_2` },
-      { id: "comm_dryer", name: "烘手機", url: `${BASE}/lcb/Ipro_3` },
-      { id: "comm_drain", name: "落水頭", url: `${BASE}/lcb/Ipro_4` },
-      { id: "comm_acc", name: "公共配件", url: `${BASE}/lcb/Ipro_5` },
-    ],
-  },
+// Hardcoded fallback (used only if DB has no categories)
+const FALLBACK_CATEGORIES: CategoryData[] = [
+  { id: "toilet", slug: "toilet", name: "馬桶", emoji: "🚽", intent: "Comfort_High", url: `${BASE}/lcb/Apro`, subs: [
+    { slug: "toilet_smart", name: "智慧馬桶", url: `${BASE}/lcb/Apro_1` },
+    { slug: "toilet_one", name: "單體馬桶", url: `${BASE}/lcb/Apro_2` },
+    { slug: "toilet_two", name: "分體馬桶", url: `${BASE}/lcb/Apro_3` },
+    { slug: "toilet_child", name: "幼兒馬桶", url: `${BASE}/lcb/Apro_4` },
+    { slug: "toilet_squat", name: "蹲式馬桶", url: `${BASE}/lcb/Apro_5` },
+  ]},
+  { id: "bidet", slug: "bidet", name: "免治馬桶座", emoji: "💺", intent: "Comfort_High", url: `${BASE}/lcb/Bpro`, subs: [
+    { slug: "bidet_luxury", name: "奢華系列", url: `${BASE}/lcb/Bpro_1` },
+    { slug: "bidet_urban", name: "都會系列", url: `${BASE}/lcb/Bpro_2` },
+  ]},
+  { id: "basin", slug: "basin", name: "面盆/浴櫃", emoji: "🪥", intent: "Storage_Space", url: `${BASE}/lcb/Cpro`, subs: [
+    { slug: "basin_under", name: "下嵌盆", url: `${BASE}/lcb/Cpro_2` },
+    { slug: "basin_top", name: "典雅檯上盆", url: `${BASE}/lcb/Cpro_1` },
+    { slug: "basin_one", name: "時尚一體盆", url: `${BASE}/lcb/Cpro_3` },
+    { slug: "basin_small", name: "小空間面盆", url: `${BASE}/lcb/Cpro_4` },
+    { slug: "basin_wall", name: "經典壁掛盆", url: `${BASE}/lcb/Cpro_5` },
+  ]},
+  { id: "faucet", slug: "faucet", name: "浴室龍頭", emoji: "🚿", intent: "Quick_Fix", url: `${BASE}/lcb/Dpro`, subs: [
+    { slug: "faucet_basin", name: "面盆龍頭", url: `${BASE}/lcb/Dpro_1` },
+    { slug: "faucet_shower", name: "沐浴龍頭", url: `${BASE}/lcb/Dpro_2` },
+    { slug: "faucet_steel", name: "不鏽鋼龍頭", url: `${BASE}/lcb/Dpro_3` },
+    { slug: "faucet_sensor", name: "感應龍頭", url: `${BASE}/lcb/Dpro_4` },
+    { slug: "faucet_leadfree", name: "無鉛龍頭", url: `${BASE}/lcb/Dpro_5` },
+    { slug: "faucet_tub", name: "浴缸龍頭", url: `${BASE}/lcb/Dpro_6` },
+    { slug: "faucet_rain", name: "花灑龍頭", url: `${BASE}/lcb/Dpro_7` },
+    { slug: "faucet_hand", name: "手持蓮蓬頭", url: `${BASE}/lcb/Dpro_8` },
+  ]},
+  { id: "accessibility", slug: "accessibility", name: "無障礙設備", emoji: "♿", intent: "Safety_Care", url: `${BASE}/lcb/Epro`, subs: [] },
+  { id: "bathtub", slug: "bathtub", name: "浴缸", emoji: "🛁", intent: "Luxury_Living", url: `${BASE}/lcb/Fpro`, subs: [
+    { slug: "tub_free", name: "獨立浴缸", url: `${BASE}/lcb/Fpro_1` },
+    { slug: "tub_built", name: "嵌入式浴缸", url: `${BASE}/lcb/Fpro_2` },
+  ]},
+  { id: "accessories", slug: "accessories", name: "浴室配件", emoji: "🔧", intent: "Maintenance", url: `${BASE}/lcb/Gpro`, subs: [
+    { slug: "acc_mirror", name: "鏡面／鏡櫃", url: `${BASE}/lcb/Gpro_1` },
+    { slug: "acc_appliance", name: "多功能家電", url: `${BASE}/lcb/Gpro_4` },
+    { slug: "acc_shelf", name: "置物架／櫃", url: `${BASE}/lcb/Gpro_5` },
+    { slug: "acc_towel", name: "毛巾架／環／勾", url: `${BASE}/lcb/Gpro_6` },
+    { slug: "acc_hook", name: "掛衣勾", url: `${BASE}/lcb/Gpro_7` },
+    { slug: "acc_bar", name: "滑桿", url: `${BASE}/lcb/Gpro_8` },
+    { slug: "acc_paper", name: "衛生紙架／盒", url: `${BASE}/lcb/Gpro_9` },
+    { slug: "acc_cup", name: "杯子／肥皂架", url: `${BASE}/lcb/Gpro_10` },
+    { slug: "acc_lid", name: "馬桶蓋", url: `${BASE}/lcb/Gpro_11` },
+    { slug: "acc_other", name: "其他配件", url: `${BASE}/lcb/Gpro_3` },
+  ]},
+  { id: "urinal", slug: "urinal", name: "小便斗", emoji: "🚹", intent: "Luxury_Living", url: `${BASE}/lcb/Hpro`, subs: [
+    { slug: "urinal_wall", name: "壁掛式便斗", url: `${BASE}/lcb/Hpro_1` },
+    { slug: "urinal_floor", name: "落地式便斗", url: `${BASE}/lcb/Hpro_2` },
+    { slug: "urinal_child", name: "幼兒便斗", url: `${BASE}/lcb/Hpro_3` },
+  ]},
+  { id: "commercial", slug: "commercial", name: "公共空間", emoji: "🏢", intent: "Maintenance", url: `${BASE}/lcb/Ipro`, subs: [
+    { slug: "comm_kitchen", name: "廚房龍頭", url: `${BASE}/lcb/Ipro_1` },
+    { slug: "comm_wall", name: "壁式龍頭", url: `${BASE}/lcb/Ipro_2` },
+    { slug: "comm_dryer", name: "烘手機", url: `${BASE}/lcb/Ipro_3` },
+    { slug: "comm_drain", name: "落水頭", url: `${BASE}/lcb/Ipro_4` },
+    { slug: "comm_acc", name: "公共配件", url: `${BASE}/lcb/Ipro_5` },
+  ]},
 ];
+
+/** Load categories from DB, fallback to hardcoded */
+async function getCategories(): Promise<CategoryData[]> {
+  try {
+    const dbCats = await prisma.productCategory.findMany({
+      where: { isActive: true },
+      include: { subcategories: { orderBy: { order: "asc" } } },
+      orderBy: { order: "asc" },
+    });
+
+    if (dbCats.length > 0) {
+      return dbCats.map((c) => ({
+        id: c.slug,
+        slug: c.slug,
+        name: c.name,
+        emoji: c.emoji,
+        intent: c.intent,
+        url: c.url,
+        subs: c.subcategories.map((s) => ({
+          slug: s.slug,
+          name: s.name,
+          url: s.url,
+        })),
+      }));
+    }
+  } catch {
+    // DB not available — use fallback
+  }
+  return FALLBACK_CATEGORIES;
+}
+
+/** Find a category by slug (for postback replies) */
+async function findCategory(slug: string): Promise<CategoryData | undefined> {
+  const cats = await getCategories();
+  return cats.find((c) => c.id === slug || c.slug === slug);
+}
 
 /**
  * Build the main product category menu (Level 1).
  * Each category is a Postback button.
  */
-export function buildProductMenu() {
-  const buttons = PRODUCT_CATEGORIES.map((cat) => ({
+export async function buildProductMenu() {
+  const categories = await getCategories();
+
+  const buttons = categories.map((cat) => ({
     type: "button" as const,
     style: "secondary" as const,
     height: "sm" as const,
     action: {
       type: "postback" as const,
       label: `${cat.emoji} ${cat.name}`,
-      data: `action=PRODUCT_VIEW&category=${cat.id}`,
+      data: `action=PRODUCT_VIEW&category=${cat.slug}`,
       displayText: cat.name,
     },
   }));
 
-  // 2-column rows — wider buttons so text doesn't truncate
+  // 2-column rows
   const rows: object[] = [];
   for (let i = 0; i < buttons.length; i += 2) {
     const items: object[] = [{ ...buttons[i], flex: 1 }];
     if (buttons[i + 1]) items.push({ ...buttons[i + 1], flex: 1 });
     else items.push({ type: "filler" });
-
     rows.push({
       type: "box",
       layout: "horizontal",
@@ -189,19 +163,8 @@ export function buildProductMenu() {
         spacing: "md" as const,
         paddingAll: "16px",
         contents: [
-          {
-            type: "text",
-            text: "請選擇感興趣的產品分類",
-            weight: "bold",
-            size: "md",
-          },
-          {
-            type: "text",
-            text: "點擊後查看細分類別 🏠",
-            size: "sm",
-            color: "#888888",
-            margin: "sm",
-          },
+          { type: "text", text: "請選擇感興趣的產品分類", weight: "bold", size: "md" },
+          { type: "text", text: "點擊後查看細分類別", size: "sm", color: "#888888", margin: "sm" },
           { type: "separator", margin: "lg" },
           ...rows,
         ],
@@ -211,13 +174,10 @@ export function buildProductMenu() {
 }
 
 /**
- * Build subcategory reply for a given main category.
- * If category has subcategories → show subcategory buttons (each links to lcb.com.tw).
- * If no subcategories → show direct link to category page.
- * Returns null if category ID is invalid.
+ * Build subcategory reply for a given category slug.
  */
-export function buildProductReply(categoryId: string) {
-  const cat = PRODUCT_CATEGORIES.find((c) => c.id === categoryId);
+export async function buildProductReply(categorySlug: string) {
+  const cat = await findCategory(categorySlug);
   if (!cat) return null;
 
   // No subcategories → direct link
@@ -244,7 +204,7 @@ export function buildProductReply(categoryId: string) {
               type: "button",
               style: "primary",
               color: "#B89A6A",
-              action: { type: "uri" as const, label: "🌐 前往官網查看", uri: cat.url },
+              action: { type: "uri" as const, label: "前往官網查看", uri: cat.url },
             },
           ],
         },
@@ -252,7 +212,7 @@ export function buildProductReply(categoryId: string) {
     };
   }
 
-  // Has subcategories → show sub buttons as URI actions (direct links)
+  // Has subcategories → show sub buttons as URI actions
   const subButtons = cat.subs.map((sub) => ({
     type: "button" as const,
     style: "secondary" as const,
@@ -264,7 +224,6 @@ export function buildProductReply(categoryId: string) {
     },
   }));
 
-  // 2-column layout for subs
   const rows: object[] = [];
   for (let i = 0; i < subButtons.length; i += 2) {
     const items: object[] = [{ ...subButtons[i], flex: 1 }];
@@ -303,7 +262,7 @@ export function buildProductReply(categoryId: string) {
             type: "button",
             style: "primary",
             color: "#B89A6A",
-            action: { type: "uri" as const, label: `🌐 查看全部${cat.name}`, uri: cat.url },
+            action: { type: "uri" as const, label: `查看全部${cat.name}`, uri: cat.url },
           },
         ],
       },
@@ -313,8 +272,6 @@ export function buildProductReply(categoryId: string) {
 
 /**
  * Build Intelligence Series menu — 5 smart toilet series as a Flex Carousel.
- * Each bubble links to lcb.com.tw/IntelligenceTechnology (deeplink, no rebuild needed).
- * Triggered when user views toilet → smart category.
  */
 export function buildIntelligenceSeriesMenu() {
   const INTEL_URL = `${BASE}/lcb/IntelligenceTechnology`;
@@ -328,7 +285,7 @@ export function buildIntelligenceSeriesMenu() {
       paddingAll: "12px",
       backgroundColor: "#1a1a2e",
       contents: [
-        { type: "text", text: "🧠 智慧科技", size: "xs", color: "#B89A6A" },
+        { type: "text", text: "智慧科技", size: "xs", color: "#B89A6A" },
         { type: "text", text: series.label, size: "lg", weight: "bold" as const, color: "#ffffff" },
         { type: "text", text: series.subtitle, size: "xs", color: "#aaaaaa", margin: "xs" },
       ],
@@ -370,12 +327,11 @@ export function buildIntelligenceSeriesMenu() {
 
   return {
     type: "flex" as const,
-    altText: "DEREK 智慧科技系列 — 5大智慧功能",
+    altText: "DEREK 智慧科技系列",
     contents: {
       type: "carousel" as const,
       contents: [
         ...bubbles,
-        // "View All" bubble
         {
           type: "bubble" as const,
           size: "kilo" as const,
@@ -409,7 +365,7 @@ export function buildIntelligenceSeriesMenu() {
                 color: "#1a1a2e",
                 action: {
                   type: "uri" as const,
-                  label: "🌐 前往官網",
+                  label: "前往官網",
                   uri: INTEL_URL,
                 },
               },

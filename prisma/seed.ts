@@ -223,7 +223,85 @@ async function main() {
     ],
   });
 
-  console.log("✅ Seed 完成：6地區、10門市、6自動回覆、1管理員、5系統設定");
+  // 6. Product Categories
+  const BASE = "https://www.lcb.com.tw";
+  const productCategories = [
+    { slug: "toilet", name: "馬桶", emoji: "🚽", intent: "Comfort_High", url: `${BASE}/lcb/Apro`, order: 0, subs: [
+      { slug: "toilet_smart", name: "智慧馬桶", url: `${BASE}/lcb/Apro_1` },
+      { slug: "toilet_one", name: "單體馬桶", url: `${BASE}/lcb/Apro_2` },
+      { slug: "toilet_two", name: "分體馬桶", url: `${BASE}/lcb/Apro_3` },
+      { slug: "toilet_child", name: "幼兒馬桶", url: `${BASE}/lcb/Apro_4` },
+      { slug: "toilet_squat", name: "蹲式馬桶", url: `${BASE}/lcb/Apro_5` },
+    ]},
+    { slug: "bidet", name: "免治馬桶座", emoji: "💺", intent: "Comfort_High", url: `${BASE}/lcb/Bpro`, order: 1, subs: [
+      { slug: "bidet_luxury", name: "奢華系列", url: `${BASE}/lcb/Bpro_1` },
+      { slug: "bidet_urban", name: "都會系列", url: `${BASE}/lcb/Bpro_2` },
+    ]},
+    { slug: "basin", name: "面盆/浴櫃", emoji: "🪥", intent: "Storage_Space", url: `${BASE}/lcb/Cpro`, order: 2, subs: [
+      { slug: "basin_under", name: "下嵌盆", url: `${BASE}/lcb/Cpro_2` },
+      { slug: "basin_top", name: "典雅檯上盆", url: `${BASE}/lcb/Cpro_1` },
+      { slug: "basin_one", name: "時尚一體盆", url: `${BASE}/lcb/Cpro_3` },
+      { slug: "basin_small", name: "小空間面盆", url: `${BASE}/lcb/Cpro_4` },
+      { slug: "basin_wall", name: "經典壁掛盆", url: `${BASE}/lcb/Cpro_5` },
+    ]},
+    { slug: "faucet", name: "浴室龍頭", emoji: "🚿", intent: "Quick_Fix", url: `${BASE}/lcb/Dpro`, order: 3, subs: [
+      { slug: "faucet_basin", name: "面盆龍頭", url: `${BASE}/lcb/Dpro_1` },
+      { slug: "faucet_shower", name: "沐浴龍頭", url: `${BASE}/lcb/Dpro_2` },
+      { slug: "faucet_steel", name: "不鏽鋼龍頭", url: `${BASE}/lcb/Dpro_3` },
+      { slug: "faucet_sensor", name: "感應龍頭", url: `${BASE}/lcb/Dpro_4` },
+      { slug: "faucet_leadfree", name: "無鉛龍頭", url: `${BASE}/lcb/Dpro_5` },
+      { slug: "faucet_tub", name: "浴缸龍頭", url: `${BASE}/lcb/Dpro_6` },
+      { slug: "faucet_rain", name: "花灑龍頭", url: `${BASE}/lcb/Dpro_7` },
+      { slug: "faucet_hand", name: "手持蓮蓬頭", url: `${BASE}/lcb/Dpro_8` },
+    ]},
+    { slug: "accessibility", name: "無障礙設備", emoji: "♿", intent: "Safety_Care", url: `${BASE}/lcb/Epro`, order: 4, subs: [] },
+    { slug: "bathtub", name: "浴缸", emoji: "🛁", intent: "Luxury_Living", url: `${BASE}/lcb/Fpro`, order: 5, subs: [
+      { slug: "tub_free", name: "獨立浴缸", url: `${BASE}/lcb/Fpro_1` },
+      { slug: "tub_built", name: "嵌入式浴缸", url: `${BASE}/lcb/Fpro_2` },
+    ]},
+    { slug: "accessories", name: "浴室配件", emoji: "🔧", intent: "Maintenance", url: `${BASE}/lcb/Gpro`, order: 6, subs: [
+      { slug: "acc_mirror", name: "鏡面／鏡櫃", url: `${BASE}/lcb/Gpro_1` },
+      { slug: "acc_appliance", name: "多功能家電", url: `${BASE}/lcb/Gpro_4` },
+      { slug: "acc_shelf", name: "置物架／櫃", url: `${BASE}/lcb/Gpro_5` },
+      { slug: "acc_towel", name: "毛巾架／環／勾", url: `${BASE}/lcb/Gpro_6` },
+      { slug: "acc_hook", name: "掛衣勾", url: `${BASE}/lcb/Gpro_7` },
+      { slug: "acc_bar", name: "滑桿", url: `${BASE}/lcb/Gpro_8` },
+      { slug: "acc_paper", name: "衛生紙架／盒", url: `${BASE}/lcb/Gpro_9` },
+      { slug: "acc_cup", name: "杯子／肥皂架", url: `${BASE}/lcb/Gpro_10` },
+      { slug: "acc_lid", name: "馬桶蓋", url: `${BASE}/lcb/Gpro_11` },
+      { slug: "acc_other", name: "其他配件", url: `${BASE}/lcb/Gpro_3` },
+    ]},
+    { slug: "urinal", name: "小便斗", emoji: "🚹", intent: "Luxury_Living", url: `${BASE}/lcb/Hpro`, order: 7, subs: [
+      { slug: "urinal_wall", name: "壁掛式便斗", url: `${BASE}/lcb/Hpro_1` },
+      { slug: "urinal_floor", name: "落地式便斗", url: `${BASE}/lcb/Hpro_2` },
+      { slug: "urinal_child", name: "幼兒便斗", url: `${BASE}/lcb/Hpro_3` },
+    ]},
+    { slug: "commercial", name: "公共空間", emoji: "🏢", intent: "Maintenance", url: `${BASE}/lcb/Ipro`, order: 8, subs: [
+      { slug: "comm_kitchen", name: "廚房龍頭", url: `${BASE}/lcb/Ipro_1` },
+      { slug: "comm_wall", name: "壁式龍頭", url: `${BASE}/lcb/Ipro_2` },
+      { slug: "comm_dryer", name: "烘手機", url: `${BASE}/lcb/Ipro_3` },
+      { slug: "comm_drain", name: "落水頭", url: `${BASE}/lcb/Ipro_4` },
+      { slug: "comm_acc", name: "公共配件", url: `${BASE}/lcb/Ipro_5` },
+    ]},
+  ];
+
+  for (const cat of productCategories) {
+    await prisma.productCategory.create({
+      data: {
+        slug: cat.slug,
+        name: cat.name,
+        emoji: cat.emoji,
+        intent: cat.intent,
+        url: cat.url,
+        order: cat.order,
+        subcategories: {
+          create: cat.subs.map((s, i) => ({ slug: s.slug, name: s.name, url: s.url, order: i })),
+        },
+      },
+    });
+  }
+
+  console.log("✅ Seed 完成：6地區、10門市、8自動回覆、1管理員、5系統設定、9產品分類");
 }
 
 main()

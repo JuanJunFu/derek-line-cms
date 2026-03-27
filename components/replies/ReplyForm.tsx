@@ -75,13 +75,34 @@ export function ReplyForm({ reply }: { reply?: AutoReply }) {
           value={form.message}
           onChange={(e) => update("message", e.target.value)}
           required
-          placeholder="回覆文字訊息，或輸入 SHOW_REGION_MENU 顯示地區選單"
+          placeholder="回覆文字訊息，或輸入系統指令"
         />
         {form.message === "SHOW_REGION_MENU" && (
           <p className="text-xs text-amber-400 mt-1">
             系統指令：收到此關鍵字時，會自動顯示地區選單（非文字回覆）
           </p>
         )}
+        {form.message === "SHOW_PRODUCT_MENU" && (
+          <p className="text-xs text-amber-400 mt-1">
+            系統指令：收到此關鍵字時，會自動顯示產品分類選單（非文字回覆）
+          </p>
+        )}
+        <div className="mt-2 flex gap-2">
+          <button
+            type="button"
+            onClick={() => update("message", "SHOW_REGION_MENU")}
+            className="text-xs bg-gray-800 hover:bg-gray-700 text-amber-500 px-2 py-1 rounded transition"
+          >
+            插入：顯示地區選單
+          </button>
+          <button
+            type="button"
+            onClick={() => update("message", "SHOW_PRODUCT_MENU")}
+            className="text-xs bg-gray-800 hover:bg-gray-700 text-amber-500 px-2 py-1 rounded transition"
+          >
+            插入：顯示產品選單
+          </button>
+        </div>
       </div>
 
       <div className="grid grid-cols-2 gap-4">

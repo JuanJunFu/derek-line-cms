@@ -21,6 +21,7 @@ export default async function DashboardLayout({
         <nav className="flex-1 p-3 space-y-1">
           <NavLink href="/stores">🏪 門市管理</NavLink>
           <NavLink href="/regions">📍 地區管理</NavLink>
+          <NavLink href="/products">📦 產品分類</NavLink>
           <NavLink href="/replies">💬 自動回覆</NavLink>
           <NavLink href="/settings">⚙️ 系統設定</NavLink>
           <div className="my-2 border-t border-gray-800" />
