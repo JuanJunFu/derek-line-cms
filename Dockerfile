@@ -11,6 +11,9 @@ FROM base AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
+# Prisma generate only reads schema, doesn't need a real DB
+ARG DATABASE_URL="postgresql://placeholder:placeholder@localhost:5432/placeholder"
+ENV DATABASE_URL=$DATABASE_URL
 RUN npx prisma generate
 RUN npm run build
 
