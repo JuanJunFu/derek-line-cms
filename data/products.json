@@ -1,0 +1,157 @@
+{
+  "_meta": {
+    "source": "https://www.lcb.com.tw/lcb/ProductZone + /IntelligenceTechnology",
+    "crawledAt": "2026-03-27",
+    "note": "人工維護，建議每半年更新一次"
+  },
+  "categories": [
+    {
+      "id": "toilet",
+      "label": "馬桶",
+      "icon": "🚽",
+      "url": "https://www.lcb.com.tw/lcb/ProductZone",
+      "subcategories": [
+        { "id": "toilet_smart", "label": "智慧馬桶" },
+        { "id": "toilet_one", "label": "單體馬桶" },
+        { "id": "toilet_two", "label": "分體馬桶" },
+        { "id": "toilet_child", "label": "幼兒馬桶" },
+        { "id": "toilet_squat", "label": "蹲式馬桶" }
+      ]
+    },
+    {
+      "id": "bidet",
+      "label": "微電腦馬桶座",
+      "icon": "💺",
+      "url": "https://www.lcb.com.tw/lcb/ProductZone",
+      "subcategories": [
+        { "id": "bidet_luxury", "label": "奢華系列" },
+        { "id": "bidet_urban", "label": "都會系列" }
+      ]
+    },
+    {
+      "id": "basin",
+      "label": "面盆/浴櫃組",
+      "icon": "🪣",
+      "url": "https://www.lcb.com.tw/lcb/ProductZone",
+      "subcategories": [
+        { "id": "basin_under", "label": "下嵌盆" },
+        { "id": "basin_counter", "label": "典雅檯上盆" },
+        { "id": "basin_integrated", "label": "時尚一體盆" },
+        { "id": "basin_small", "label": "小空間面盆" },
+        { "id": "basin_wall", "label": "經典壁掛盆" }
+      ]
+    },
+    {
+      "id": "faucet",
+      "label": "浴室龍頭",
+      "icon": "🚿",
+      "url": "https://www.lcb.com.tw/lcb/ProductZone",
+      "subcategories": [
+        { "id": "faucet_basin", "label": "面盆龍頭" },
+        { "id": "faucet_shower", "label": "沐浴龍頭" },
+        { "id": "faucet_sensor", "label": "感應龍頭" },
+        { "id": "faucet_stainless", "label": "不鏽鋼龍頭" },
+        { "id": "faucet_leadfree", "label": "無鉛龍頭" },
+        { "id": "faucet_bathtub", "label": "浴缸龍頭" },
+        { "id": "faucet_rain", "label": "花灑龍頭" },
+        { "id": "faucet_handheld", "label": "手持蓮蓬頭" }
+      ]
+    },
+    {
+      "id": "bathtub",
+      "label": "浴缸",
+      "icon": "🛁",
+      "url": "https://www.lcb.com.tw/lcb/ProductZone",
+      "subcategories": [
+        { "id": "bathtub_freestanding", "label": "獨立浴缸" },
+        { "id": "bathtub_builtin", "label": "嵌入式浴缸" }
+      ]
+    },
+    {
+      "id": "urinal",
+      "label": "小便斗",
+      "icon": "🚾",
+      "url": "https://www.lcb.com.tw/lcb/ProductZone",
+      "subcategories": [
+        { "id": "urinal_wall", "label": "壁掛式便斗" },
+        { "id": "urinal_floor", "label": "落地式便斗" },
+        { "id": "urinal_child", "label": "幼兒便斗" }
+      ]
+    },
+    {
+      "id": "accessibility",
+      "label": "無障礙設備",
+      "icon": "♿",
+      "url": "https://www.lcb.com.tw/lcb/ProductZone",
+      "subcategories": []
+    },
+    {
+      "id": "accessories",
+      "label": "浴室配件",
+      "icon": "🪞",
+      "url": "https://www.lcb.com.tw/lcb/ProductZone",
+      "subcategories": [
+        { "id": "acc_mirror", "label": "鏡面/鏡櫃" },
+        { "id": "acc_appliance", "label": "多功能家電" },
+        { "id": "acc_shelf", "label": "置物架/櫃" },
+        { "id": "acc_towel", "label": "毛巾架/環/勾" },
+        { "id": "acc_hook", "label": "掛衣勾" },
+        { "id": "acc_bar", "label": "滑桿" },
+        { "id": "acc_tp", "label": "衛生紙架/盒" },
+        { "id": "acc_cup", "label": "杯子/肥皂架" },
+        { "id": "acc_seat", "label": "馬桶蓋" },
+        { "id": "acc_other", "label": "其他配件" }
+      ]
+    },
+    {
+      "id": "commercial",
+      "label": "公共空間",
+      "icon": "🏢",
+      "url": "https://www.lcb.com.tw/lcb/ProductZone",
+      "subcategories": [
+        { "id": "com_kitchen", "label": "廚房龍頭" },
+        { "id": "com_wall", "label": "壁式龍頭" },
+        { "id": "com_dryer", "label": "烘手機" },
+        { "id": "com_drain", "label": "落水頭" },
+        { "id": "com_acc", "label": "公共配件" }
+      ]
+    }
+  ],
+  "intelligenceSeries": [
+    {
+      "id": "smart_future",
+      "label": "淨未來",
+      "subtitle": "全自動智慧馬桶",
+      "features": ["指紋辨識記憶", "雙漩洗技術", "Easy Touch開閉蓋", "新一代阻尼馬達"],
+      "url": "https://www.lcb.com.tw/lcb/IntelligenceTechnology"
+    },
+    {
+      "id": "smart_clean",
+      "label": "Clean 極淨",
+      "subtitle": "3.8L高效洗淨",
+      "features": ["3.8L獨立水壓", "前濕潤技術", "可拆卸噴嘴", "噴嘴UV殺菌", "抗菌座圈"],
+      "url": "https://www.lcb.com.tw/lcb/IntelligenceTechnology"
+    },
+    {
+      "id": "smart_speed",
+      "label": "Speed 極瞬",
+      "subtitle": "0.2秒超瞬熱技術",
+      "features": ["0.2秒超瞬熱", "瞬乾暖風Plus", "三段風溫速調節"],
+      "url": "https://www.lcb.com.tw/lcb/IntelligenceTechnology"
+    },
+    {
+      "id": "smart_smart",
+      "label": "Smart 極智",
+      "subtitle": "第二代微波感應",
+      "features": ["第二代微波感應（Smart III）", "自動沖水進化", "無段旋鈕操控", "腳觸式設計"],
+      "url": "https://www.lcb.com.tw/lcb/IntelligenceTechnology"
+    },
+    {
+      "id": "smart_comfort",
+      "label": "Comfort 極悅",
+      "subtitle": "SPA按摩洗淨",
+      "features": ["光感應夜光燈", "控溫式暖座", "光觸媒除臭", "冷熱SPA按摩洗淨"],
+      "url": "https://www.lcb.com.tw/lcb/IntelligenceTechnology"
+    }
+  ]
+}
