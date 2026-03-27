@@ -35,9 +35,14 @@ export interface ReferralResult {
  * Contains the referral code + a "分享給朋友" button that opens LINE share.
  */
 function buildReferralFlexMessage(code: string) {
-  // LINE oaMessage URL: opens chat with OA and pre-fills the referral code
-  // Note: @ in LINE_OA_ID must NOT be encoded
-  const shareUrl = `https://line.me/R/oaMessage/${LINE_OA_ID}/?${encodeURIComponent(code)}`;
+  // oaMessage URL: opens chat with OA and pre-fills the referral code
+  const oaUrl = `https://line.me/R/oaMessage/${LINE_OA_ID}/?${encodeURIComponent(code)}`;
+
+  // Share text: friend receives this message with clickable link
+  const shareText = `🤝 DEREK 德瑞克衛浴 — 好友推薦\n\n我的推薦碼：${code}\n\n👉 點擊加入並自動輸入推薦碼：\n${oaUrl}`;
+
+  // LINE share picker URL: opens friend selection dialog
+  const sharePickerUrl = `https://line.me/R/share?text=${encodeURIComponent(shareText)}`;
 
   return {
     type: "flex",
@@ -70,7 +75,7 @@ function buildReferralFlexMessage(code: string) {
               { type: "text", text: code, size: "3xl", weight: "bold", color: "#B89A6A", align: "center" },
             ],
           },
-          { type: "text", text: "分享此推薦碼給朋友\n朋友點擊下方按鈕即可加入並自動輸入推薦碼", size: "sm", color: "#888888", wrap: true, align: "center" },
+          { type: "text", text: "點擊「分享給朋友」選擇好友\n朋友收到後點連結即可自動輸入推薦碼", size: "sm", color: "#888888", wrap: true, align: "center" },
         ],
       },
       footer: {
@@ -86,7 +91,7 @@ function buildReferralFlexMessage(code: string) {
             action: {
               type: "uri",
               label: "📤 分享給朋友",
-              uri: shareUrl,
+              uri: sharePickerUrl,
             },
           },
           {
@@ -94,8 +99,8 @@ function buildReferralFlexMessage(code: string) {
             style: "secondary",
             action: {
               type: "uri",
-              label: "📋 複製連結分享",
-              uri: shareUrl,
+              label: "👆 自己使用推薦連結",
+              uri: oaUrl,
             },
           },
         ],
