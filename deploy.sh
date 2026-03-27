@@ -16,7 +16,10 @@ echo "等待資料庫就緒..."
 sleep 5
 
 # 4. Run migrations
-docker compose exec app npx prisma migrate deploy
+docker run --rm --network derek-line-cms_default \
+  -v $(pwd)/prisma:/app/prisma \
+  -e DATABASE_URL="postgresql://postgres:${DB_PASSWORD:-DerekLine2026!}@derek-line-cms-db-1:5432/derek_line" \
+  node:20-alpine sh -c "npm install -g prisma@6 --quiet 2>/dev/null && prisma migrate deploy --schema /app/prisma/schema.prisma"
 
 echo "=== 部署完成 ==="
 echo "網站：https://drweber.uk"
