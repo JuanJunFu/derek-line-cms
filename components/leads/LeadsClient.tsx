@@ -93,7 +93,15 @@ export function LeadsClient() {
 
   return (
     <div>
-      <h1 className="text-xl font-bold text-[var(--text-primary)] mb-6">🎯 客戶關係矩陣</h1>
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-xl font-bold text-[var(--text-primary)]">🎯 客戶關係矩陣</h1>
+        <a
+          href="/api/v1/leads/export"
+          className="px-3 py-1.5 rounded-lg text-sm font-medium bg-[var(--brand-primary)] text-white hover:opacity-90 transition inline-block"
+        >
+          匯出 CSV
+        </a>
+      </div>
 
       {/* ── Scatter Plot ── */}
       {data && data.data.length > 0 && (

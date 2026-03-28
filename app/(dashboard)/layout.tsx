@@ -34,6 +34,7 @@ export default async function DashboardLayout({
           <NavLink href="/analytics">互動分析</NavLink>
           <NavLink href="/leads">客戶矩陣</NavLink>
           <NavLink href="/war-room">戰情室</NavLink>
+          <NavLink href="/broadcasts">群發推播</NavLink>
           <NavLink href="/sequences">序列管理</NavLink>
           <NavLink href="/rich-menus">圖文選單</NavLink>
           <NavLink href="/referrals">推薦管理</NavLink>

@@ -106,8 +106,8 @@ export function RichMenuClient({
     field: "type" | "uri" | "data" | "text" | "label",
     value: string
   ) {
-    setFormAreas((prev) =>
-      prev.map((area, i) =>
+    setFormAreas((prev: Area[]) =>
+      prev.map((area: Area, i: number) =>
         i === index
           ? { ...area, action: { ...area.action, [field]: value } }
           : area
@@ -232,7 +232,7 @@ export function RichMenuClient({
         method: "DELETE",
       });
       if (res.ok) {
-        setMenus((prev) => prev.filter((m) => m.id !== id));
+        setMenus((prev: RichMenu[]) => prev.filter((m: RichMenu) => m.id !== id));
       } else {
         const err = await res.json();
         alert(err.error || "刪除失敗");
