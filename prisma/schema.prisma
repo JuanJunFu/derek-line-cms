@@ -250,3 +250,86 @@ enum ReferralStatus {
   PENDING
   COMPLETED
 }
+
+// ── Broadcast System ──
+
+model Broadcast {
+  id            String    @id @default(cuid())
+  name          String                           // 推播名稱
+  messageType   String    @default("text")       // text | image | flex | json
+  content       Json                             // { text: "..." } | { imageUrl: "..." } | Flex JSON
+  audienceType  String    @default("all")        // all | tags | segment
+  audienceFilter Json?                           // { tags: ["xxx"], exclude: ["yyy"] }
+  audienceCount Int       @default(0)            // 預估受眾人數
+  scheduledAt   DateTime?                        // null = 立即發送
+  sentAt        DateTime?
+  status        String    @default("draft")      // draft | scheduled | sending | sent | failed
+  sentCount     Int       @default(0)            // 成功發送數
+  failCount     Int       @default(0)            // 失敗數
+  createdBy     String?                          // admin user id
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@index([status])
+  @@index([scheduledAt])
+  @@index([createdAt])
+}
+
+// ── Audience Segments ──
+
+model Segment {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  conditions  Json     // { tagsInclude: [], tagsExclude: [], leadScore: [], regions: [], customerType: [] }
+  userCount   Int      @default(0)              // 快取人數（每次查詢時更新）
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([createdAt])
+}
+
+// ── Chat Message Log ──
+
+model ChatMessage {
+  id        String   @id @default(cuid())
+  userId    String                              // LINE user ID
+  direction String                              // inbound | outbound
+  msgType   String                              // text | flex | image | postback | sticker
+  content   Json                                // { text: "..." } | { postbackData: "..." } | Flex JSON
+  createdAt DateTime @default(now())
+
+  @@index([userId, createdAt])
+  @@index([createdAt])
+}
+
+// ── User Notes ──
+
+model UserNote {
+  id        String   @id @default(cuid())
+  userId    String                              // LINE user ID
+  authorId  String                              // admin user id
+  authorName String                             // 管理員名稱快照
+  content   String
+  createdAt DateTime @default(now())
+
+  @@index([userId, createdAt])
+}
+
+// ── Rich Menu Management ──
+
+model RichMenu {
+  id          String    @id @default(cuid())
+  name        String
+  lineMenuId  String?                           // LINE 端的 richMenuId
+  imageUrl    String?                           // 選單圖片 URL
+  size        Json      @default("{\"width\":2500,\"height\":1686}")
+  areas       Json      @default("[]")          // [{ bounds: {x,y,w,h}, action: {type,data} }]
+  isDefault   Boolean   @default(false)
+  isActive    Boolean   @default(true)
+  env         String    @default("production")  // production | test
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([isDefault, env])
+}
