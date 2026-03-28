@@ -134,7 +134,7 @@ async function buildReferralFlexMessage(code: string) {
             style: "secondary",
             action: {
               type: "uri",
-              label: "👆 自己使用推薦連結",
+              label: "📋 複製推薦連結",
               uri: oaUrl,
             },
           },

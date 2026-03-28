@@ -316,6 +316,16 @@ model UserNote {
   @@index([userId, createdAt])
 }
 
+// ── Tag Definitions ──
+
+model TagDefinition {
+  id        String   @id @default(cuid())
+  tag       String   @unique  // e.g. "Intent:Luxury_Living"
+  group     String             // Intent, Region, Status, Role, Custom
+  label     String?            // 可選的顯示名稱
+  createdAt DateTime @default(now())
+}
+
 // ── Rich Menu Management ──
 
 model RichMenu {

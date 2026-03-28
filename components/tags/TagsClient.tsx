@@ -1,11 +1,12 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 
 interface TagInfo {
   tag: string;
   count: number;
   group: string;
+  label?: string | null;
 }
 
 const GROUP_LABELS: Record<string, string> = {
@@ -21,11 +22,12 @@ const GROUP_ORDER = ["Intent", "Region", "Status", "Role", "Custom"];
 export function TagsClient({ initialTags }: { initialTags: TagInfo[] }) {
   const [tags, setTags] = useState<TagInfo[]>(initialTags);
   const [search, setSearch] = useState("");
-  const [newTag, setNewTag] = useState("");
+  const [newTagName, setNewTagName] = useState("");
+  const [newTagGroup, setNewTagGroup] = useState("Custom");
   const [showAddForm, setShowAddForm] = useState(false);
   const [adding, setAdding] = useState(false);
+  const [error, setError] = useState("");
 
-  // Refresh tags
   const refreshTags = useCallback(async () => {
     try {
       const res = await fetch("/api/v1/tags");
@@ -36,10 +38,6 @@ export function TagsClient({ initialTags }: { initialTags: TagInfo[] }) {
     } catch {
       // ignore
     }
-  }, []);
-
-  useEffect(() => {
-    // Initial tags are passed from server, no need to fetch again
   }, []);
 
   // Filter tags
@@ -65,26 +63,31 @@ export function TagsClient({ initialTags }: { initialTags: TagInfo[] }) {
   const totalTagTypes = tags.length;
   const totalTagged = tags.reduce((acc, t) => acc + t.count, 0);
 
-  // Add a custom tag — this creates a placeholder. In a real scenario,
-  // you'd batch-add the tag to selected users via /api/v1/tags/batch.
-  // Here we just show it in the UI for immediate feedback.
-  const handleAddCustomTag = useCallback(async () => {
-    if (!newTag.trim()) return;
+  // Add tag — POST to API, persist to DB
+  const handleAddTag = useCallback(async () => {
+    if (!newTagName.trim()) return;
     setAdding(true);
-    const tagName = newTag.startsWith("Custom:")
-      ? newTag
-      : `Custom:${newTag.trim()}`;
-    // Add to local state immediately
-    setTags((prev) => {
-      const existing = prev.find((t) => t.tag === tagName);
-      if (existing) return prev;
-      return [...prev, { tag: tagName, count: 0, group: "Custom" }];
-    });
-    setNewTag("");
-    setShowAddForm(false);
+    setError("");
+    try {
+      const res = await fetch("/api/v1/tags", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: newTagName.trim(), group: newTagGroup }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error || "新增失敗");
+        setAdding(false);
+        return;
+      }
+      setNewTagName("");
+      setShowAddForm(false);
+      await refreshTags();
+    } catch {
+      setError("網路錯誤，請重試");
+    }
     setAdding(false);
-    await refreshTags();
-  }, [newTag, refreshTags]);
+  }, [newTagName, newTagGroup, refreshTags]);
 
   return (
     <div>
@@ -94,7 +97,7 @@ export function TagsClient({ initialTags }: { initialTags: TagInfo[] }) {
           <h1 className="text-xl font-bold text-[var(--text-primary)]">
             標籤管理
           </h1>
-          <p className="text-xs text-[var(--text-muted)] mt-1">
+          <p className="text-sm text-[var(--text-muted)] mt-1">
             管理用戶標籤系統，共 {totalTagTypes} 種標籤，
             {totalTagged.toLocaleString()} 次標記
           </p>
@@ -104,52 +107,86 @@ export function TagsClient({ initialTags }: { initialTags: TagInfo[] }) {
             onClick={() => setShowAddForm(true)}
             className="text-sm bg-[var(--brand-primary)] text-white rounded-lg px-4 py-2 hover:opacity-90 transition"
           >
-            新增自訂標籤
+            新增標籤
           </button>
         )}
       </div>
 
-      {/* Add Custom Tag Form */}
+      {/* Add Tag Form */}
       {showAddForm && (
         <div className="bg-[var(--bg-secondary)] border border-[var(--border-strong)] rounded-xl p-4 mb-6">
           <h2 className="text-sm font-bold text-[var(--text-primary)] mb-3">
-            新增自訂標籤
+            新增標籤
           </h2>
-          <div className="flex gap-2">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
+            {/* Group selector */}
+            <div>
+              <label className="block text-xs text-[var(--text-muted)] mb-1">
+                標籤群組
+              </label>
+              <select
+                value={newTagGroup}
+                onChange={(e) => setNewTagGroup(e.target.value)}
+                className="border border-[var(--border-strong)] rounded-lg px-3 py-1.5 text-sm bg-[var(--bg-primary)] text-[var(--text-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--brand-accent)]"
+              >
+                {GROUP_ORDER.map((g) => (
+                  <option key={g} value={g}>
+                    {GROUP_LABELS[g]}
+                  </option>
+                ))}
+              </select>
+            </div>
+            {/* Tag name */}
             <div className="flex-1">
+              <label className="block text-xs text-[var(--text-muted)] mb-1">
+                標籤名稱
+              </label>
               <div className="flex items-center gap-1">
-                <span className="text-xs text-[var(--text-muted)] shrink-0">
-                  Custom:
+                <span className="text-xs text-[var(--text-muted)] shrink-0 font-mono">
+                  {newTagGroup}:
                 </span>
                 <input
                   type="text"
-                  value={newTag}
-                  onChange={(e) => setNewTag(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") handleAddCustomTag();
+                  value={newTagName}
+                  onChange={(e) => {
+                    setNewTagName(e.target.value);
+                    setError("");
                   }}
-                  placeholder="輸入標籤名稱"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") handleAddTag();
+                  }}
+                  placeholder="輸入標籤名稱（例: Premium_Bath）"
                   className="flex-1 border border-[var(--border-strong)] rounded-lg px-3 py-1.5 text-sm bg-[var(--bg-primary)] text-[var(--text-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--brand-accent)]"
                 />
               </div>
             </div>
-            <button
-              onClick={handleAddCustomTag}
-              disabled={adding || !newTag.trim()}
-              className="text-xs px-4 py-1.5 rounded-lg bg-[var(--brand-primary)] text-white hover:opacity-90 transition disabled:opacity-50"
-            >
-              新增
-            </button>
-            <button
-              onClick={() => {
-                setShowAddForm(false);
-                setNewTag("");
-              }}
-              className="text-xs px-3 py-1.5 rounded-lg border border-[var(--border-strong)] text-[var(--text-muted)] hover:text-[var(--text-primary)] transition"
-            >
-              取消
-            </button>
+            {/* Buttons */}
+            <div className="flex gap-2">
+              <button
+                onClick={handleAddTag}
+                disabled={adding || !newTagName.trim()}
+                className="text-sm px-4 py-1.5 rounded-lg bg-[var(--brand-primary)] text-white hover:opacity-90 transition disabled:opacity-50"
+              >
+                {adding ? "新增中..." : "新增"}
+              </button>
+              <button
+                onClick={() => {
+                  setShowAddForm(false);
+                  setNewTagName("");
+                  setError("");
+                }}
+                className="text-sm px-3 py-1.5 rounded-lg border border-[var(--border-strong)] text-[var(--text-muted)] hover:text-[var(--text-primary)] transition"
+              >
+                取消
+              </button>
+            </div>
           </div>
+          {error && (
+            <p className="text-xs text-red-500 mt-2">{error}</p>
+          )}
+          <p className="text-xs text-[var(--text-muted)] mt-2">
+            提示：標籤新增後，可在客戶矩陣中為用戶指派此標籤
+          </p>
         </div>
       )}
 
@@ -168,7 +205,7 @@ export function TagsClient({ initialTags }: { initialTags: TagInfo[] }) {
       {sortedGroups.length === 0 ? (
         <div className="bg-[var(--bg-secondary)] rounded-xl border border-[var(--border-strong)] p-8 text-center">
           <p className="text-[var(--text-muted)]">
-            {search ? "無符合搜尋的標籤" : "尚無任何標籤"}
+            {search ? "無符合搜尋的標籤" : "尚無任何標籤，點擊「新增標籤」開始建立"}
           </p>
         </div>
       ) : (
@@ -190,7 +227,7 @@ export function TagsClient({ initialTags }: { initialTags: TagInfo[] }) {
                 {groupTags.map((t) => (
                   <div
                     key={t.tag}
-                    className="inline-flex items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-lg bg-[var(--bg-tertiary)] border border-[var(--border-subtle)]"
+                    className="inline-flex items-center gap-1.5 text-sm px-3 py-2 rounded-lg bg-[var(--bg-tertiary)] border border-[var(--border-subtle)]"
                   >
                     <span className="text-[var(--text-primary)]">
                       {t.tag.includes(":") ? t.tag.split(":")[1] : t.tag}

@@ -3,14 +3,15 @@ import { TagsClient } from "@/components/tags/TagsClient";
 
 export const dynamic = "force-dynamic";
 
-interface TagInfo {
-  tag: string;
-  count: number;
-  group: string;
-}
+const GROUP_ORDER = ["Intent", "Region", "Status", "Role", "Custom"];
 
 export default async function TagsPage() {
-  // Aggregate tags server-side for initial render
+  // 1. Get tag definitions
+  const definitions = await prisma.tagDefinition.findMany({
+    orderBy: { createdAt: "asc" },
+  });
+
+  // 2. Get actual user tag counts
   const profiles = await prisma.userProfile.findMany({
     where: { isBlocked: false },
     select: { tags: true },
@@ -23,16 +24,33 @@ export default async function TagsPage() {
     }
   }
 
-  const tags: TagInfo[] = Array.from(tagCounts.entries())
-    .map(([tag, count]) => {
+  // 3. Merge definitions + user tags
+  const tagMap = new Map<string, { tag: string; count: number; group: string }>();
+
+  for (const def of definitions) {
+    tagMap.set(def.tag, {
+      tag: def.tag,
+      count: tagCounts.get(def.tag) || 0,
+      group: def.group,
+    });
+  }
+
+  for (const [tag, count] of tagCounts) {
+    if (!tagMap.has(tag)) {
       const colonIdx = tag.indexOf(":");
       const group = colonIdx > 0 ? tag.substring(0, colonIdx) : "Custom";
-      return { tag, count, group };
-    })
-    .sort((a, b) => {
-      if (a.group !== b.group) return a.group.localeCompare(b.group);
-      return b.count - a.count;
-    });
+      tagMap.set(tag, { tag, count, group });
+    }
+  }
+
+  const tags = Array.from(tagMap.values()).sort((a, b) => {
+    const ai = GROUP_ORDER.indexOf(a.group);
+    const bi = GROUP_ORDER.indexOf(b.group);
+    const aIdx = ai === -1 ? 99 : ai;
+    const bIdx = bi === -1 ? 99 : bi;
+    if (aIdx !== bIdx) return aIdx - bIdx;
+    return b.count - a.count;
+  });
 
   return <TagsClient initialTags={tags} />;
 }
