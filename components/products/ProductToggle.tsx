@@ -34,8 +34,8 @@ export function ProductToggle({
       disabled={loading}
       className={`text-xs px-2 py-1 rounded transition ${
         active
-          ? "text-green-400 hover:text-green-300"
-          : "text-gray-500 hover:text-gray-400"
+          ? "text-emerald-600 hover:text-emerald-700"
+          : "text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
       }`}
     >
       {active ? "● 啟用" : "○ 停用"}

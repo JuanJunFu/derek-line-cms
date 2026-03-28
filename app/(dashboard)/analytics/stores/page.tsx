@@ -64,13 +64,13 @@ export default async function StoreAnalyticsPage() {
 
   return (
     <div>
-      <h1 className="text-xl font-bold text-gray-100 mb-6">🏆 據點表現</h1>
-      <p className="text-sm text-gray-500 mb-4">過去 30 天數據</p>
+      <h1 className="text-xl font-bold text-[var(--text-primary)] mb-6">🏆 據點表現</h1>
+      <p className="text-sm text-[var(--text-muted)] mb-4">過去 30 天數據</p>
 
-      <div className="bg-gray-900 rounded-xl border border-gray-800 overflow-x-auto">
+      <div className="bg-[var(--bg-secondary)] rounded-xl border border-[var(--border-strong)] overflow-x-auto">
         <table className="w-full text-sm min-w-[700px]">
           <thead>
-            <tr className="bg-gray-800 text-amber-500">
+            <tr className="bg-[var(--bg-tertiary)] text-[var(--brand-accent)]">
               <th className="p-3 text-left font-medium">排名</th>
               <th className="p-3 text-left font-medium">門市</th>
               <th className="p-3 text-left font-medium">地區</th>
@@ -85,31 +85,31 @@ export default async function StoreAnalyticsPage() {
             {storeData.map((store, i) => (
               <tr
                 key={store.id}
-                className="border-t border-gray-800 hover:bg-gray-800/50 transition"
+                className="border-t border-[var(--border-strong)] hover:bg-[var(--bg-tertiary)]/50 transition"
               >
-                <td className="p-3 text-gray-400">{i + 1}</td>
-                <td className="p-3 text-gray-200 font-medium">{store.name}</td>
-                <td className="p-3 text-gray-400">{store.region.name}</td>
-                <td className="p-3 text-right text-gray-400">
+                <td className="p-3 text-[var(--text-secondary)]">{i + 1}</td>
+                <td className="p-3 text-[var(--text-primary)] font-medium">{store.name}</td>
+                <td className="p-3 text-[var(--text-secondary)]">{store.region.name}</td>
+                <td className="p-3 text-right text-[var(--text-secondary)]">
                   {store.metrics.views}
                 </td>
-                <td className="p-3 text-right text-amber-400">
+                <td className="p-3 text-right text-[var(--brand-accent)]">
                   {store.metrics.calls}
                 </td>
-                <td className="p-3 text-right text-green-400">
+                <td className="p-3 text-right text-emerald-600">
                   {store.metrics.navs}
                 </td>
-                <td className="p-3 text-right text-blue-400">
+                <td className="p-3 text-right text-blue-600">
                   {store.metrics.lines}
                 </td>
                 <td className="p-3 text-right">
                   <span
                     className={
                       store.convRate > 30
-                        ? "text-green-400 font-bold"
+                        ? "text-emerald-600 font-bold"
                         : store.convRate > 10
-                          ? "text-amber-400"
-                          : "text-gray-500"
+                          ? "text-[var(--brand-accent)]"
+                          : "text-[var(--text-muted)]"
                     }
                   >
                     {store.convRate}%
@@ -119,7 +119,7 @@ export default async function StoreAnalyticsPage() {
             ))}
             {storeData.length === 0 && (
               <tr>
-                <td colSpan={8} className="p-6 text-center text-gray-500">
+                <td colSpan={8} className="p-6 text-center text-[var(--text-muted)]">
                   尚無互動數據
                 </td>
               </tr>

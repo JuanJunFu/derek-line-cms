@@ -12,7 +12,7 @@ export default async function EditProductPage({
   if (id === "new") {
     return (
       <div>
-        <h1 className="text-xl font-bold text-gray-100 mb-6">新增產品分類</h1>
+        <h1 className="text-xl font-bold text-[var(--text-primary)] mb-6">新增產品分類</h1>
         <ProductForm />
       </div>
     );
@@ -27,7 +27,7 @@ export default async function EditProductPage({
 
   return (
     <div>
-      <h1 className="text-xl font-bold text-gray-100 mb-6">
+      <h1 className="text-xl font-bold text-[var(--text-primary)] mb-6">
         編輯：{category.emoji} {category.name}
       </h1>
       <ProductForm category={category} />

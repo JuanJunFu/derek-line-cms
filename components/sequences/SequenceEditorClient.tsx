@@ -23,11 +23,11 @@ interface Sequence {
 
 // Categories for filtering
 const CATEGORY_MAP: Record<string, { label: string; emoji: string; color: string }> = {
-  new_customer: { label: "新人", emoji: "🌱", color: "bg-green-900/30 text-green-400 border-green-700" },
-  repair_inquiry: { label: "熟客", emoji: "🔄", color: "bg-blue-900/30 text-blue-400 border-blue-700" },
-  product_view_smart: { label: "活動", emoji: "🎯", color: "bg-amber-900/30 text-amber-400 border-amber-700" },
-  event_promo: { label: "活動", emoji: "🎪", color: "bg-purple-900/30 text-purple-400 border-purple-700" },
-  manual: { label: "手動", emoji: "✋", color: "bg-gray-800 text-gray-400 border-gray-700" },
+  new_customer: { label: "新人", emoji: "🌱", color: "bg-emerald-50 text-emerald-600 border-emerald-300" },
+  repair_inquiry: { label: "熟客", emoji: "🔄", color: "bg-blue-50 text-blue-600 border-blue-300" },
+  product_view_smart: { label: "活動", emoji: "🎯", color: "bg-[var(--brand-accent)]/10 text-[var(--brand-accent)] border-[var(--brand-accent)]/30" },
+  event_promo: { label: "活動", emoji: "🎪", color: "bg-purple-50 text-purple-600 border-purple-300" },
+  manual: { label: "手動", emoji: "✋", color: "bg-[var(--bg-tertiary)] text-[var(--text-secondary)] border-[var(--border-strong)]" },
 };
 
 const TRIGGER_OPTIONS = [
@@ -236,7 +236,7 @@ export function SequenceEditorClient() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-500" />
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[var(--brand-accent)]" />
       </div>
     );
   }
@@ -244,38 +244,38 @@ export function SequenceEditorClient() {
   return (
     <div className="max-w-4xl">
       <div className="flex items-center justify-between mb-1">
-        <h1 className="text-xl font-bold text-gray-100">📝 序列定義編輯器</h1>
+        <h1 className="text-xl font-bold text-[var(--text-primary)]">📝 序列定義編輯器</h1>
         <Link
           href="/sequences"
-          className="text-xs text-amber-500 hover:text-amber-400 transition"
+          className="text-xs text-[var(--brand-accent)] hover:text-[var(--brand-accent)] transition"
         >
           ← 返回排程訊息
         </Link>
       </div>
-      <p className="text-xs text-gray-500 mb-6">
+      <p className="text-xs text-[var(--text-muted)] mb-6">
         設定自動發送序列 · 勾選開關控制是否發送 · 設定時間點後自動推播
       </p>
 
       {error && (
-        <div className="mb-4 bg-red-900/30 border border-red-700 rounded-lg px-3 py-2 text-sm text-red-300">
+        <div className="mb-4 bg-red-50 border border-red-300 rounded-lg px-3 py-2 text-sm text-red-600">
           {error}
         </div>
       )}
       {success && (
-        <div className="mb-4 bg-green-900/30 border border-green-700 rounded-lg px-3 py-2 text-sm text-green-300">
+        <div className="mb-4 bg-emerald-50 border border-emerald-300 rounded-lg px-3 py-2 text-sm text-emerald-600">
           {success}
         </div>
       )}
 
       {/* ── Category filter tabs ── */}
       <div className="flex gap-2 mb-4 flex-wrap items-center">
-        <span className="text-xs text-gray-600">分類：</span>
+        <span className="text-xs text-[var(--text-muted)]">分類：</span>
         <button
           onClick={() => setFilterCategory(null)}
           className={`text-xs px-3 py-1 rounded-lg border transition ${
             !filterCategory
-              ? "bg-gray-800 border-gray-600 text-gray-200"
-              : "border-gray-800 text-gray-500 hover:text-gray-300"
+              ? "bg-[var(--bg-tertiary)] border-[var(--border-strong)] text-[var(--text-primary)]"
+              : "border-[var(--border-strong)] text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
           }`}
         >
           全部 ({sequences.length})
@@ -291,7 +291,7 @@ export function SequenceEditorClient() {
               className={`text-xs px-3 py-1 rounded-lg border transition ${
                 filterCategory === key
                   ? meta.color
-                  : "border-gray-800 text-gray-500 hover:text-gray-300"
+                  : "border-[var(--border-strong)] text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
               }`}
             >
               {meta.emoji} {meta.label} ({count})
@@ -302,21 +302,21 @@ export function SequenceEditorClient() {
 
       {/* ── Stats ── */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
-        <div className="bg-gray-900 border border-gray-800 rounded-xl p-3 text-center">
-          <p className="text-2xl font-bold text-gray-200">{sequences.length}</p>
-          <p className="text-xs text-gray-500 mt-0.5">序列總數</p>
+        <div className="bg-[var(--bg-secondary)] border border-[var(--border-strong)] rounded-xl p-3 text-center">
+          <p className="text-2xl font-bold text-[var(--text-primary)]">{sequences.length}</p>
+          <p className="text-xs text-[var(--text-muted)] mt-0.5">序列總數</p>
         </div>
-        <div className="bg-green-900/20 border border-green-800/40 rounded-xl p-3 text-center">
-          <p className="text-2xl font-bold text-green-400">
+        <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-3 text-center">
+          <p className="text-2xl font-bold text-emerald-600">
             {sequences.filter((s) => s.isActive).length}
           </p>
-          <p className="text-xs text-gray-500 mt-0.5">已啟用</p>
+          <p className="text-xs text-[var(--text-muted)] mt-0.5">已啟用</p>
         </div>
-        <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-3 text-center">
-          <p className="text-2xl font-bold text-gray-500">
+        <div className="bg-[var(--bg-tertiary)]/50 border border-[var(--border-strong)] rounded-xl p-3 text-center">
+          <p className="text-2xl font-bold text-[var(--text-muted)]">
             {sequences.filter((s) => !s.isActive).length}
           </p>
-          <p className="text-xs text-gray-500 mt-0.5">已停用</p>
+          <p className="text-xs text-[var(--text-muted)] mt-0.5">已停用</p>
         </div>
       </div>
 
@@ -324,7 +324,7 @@ export function SequenceEditorClient() {
       {!showNew && (
         <button
           onClick={() => setShowNew(true)}
-          className="mb-6 text-sm bg-amber-600 hover:bg-amber-500 text-white rounded-lg px-4 py-2 transition"
+          className="mb-6 text-sm bg-[var(--brand-primary)] hover:bg-[var(--text-secondary)] text-white rounded-lg px-4 py-2 transition"
         >
           + 新增序列
         </button>
@@ -332,20 +332,20 @@ export function SequenceEditorClient() {
 
       {/* New sequence form */}
       {showNew && (
-        <div className="mb-6 bg-gray-900 border border-amber-800/50 rounded-xl p-4">
-          <h3 className="text-sm font-bold text-gray-300 mb-3">新增序列</h3>
+        <div className="mb-6 bg-[var(--bg-secondary)] border border-[var(--brand-accent)]/20 rounded-xl p-4">
+          <h3 className="text-sm font-bold text-[var(--text-secondary)] mb-3">新增序列</h3>
           <div className="space-y-3">
             <div>
-              <label className="block text-xs text-gray-500 mb-1">序列名稱</label>
+              <label className="block text-xs text-[var(--text-muted)] mb-1">序列名稱</label>
               <input
                 value={newName}
                 onChange={(e) => setNewName(e.target.value)}
                 placeholder="例：新人歡迎序列、週年慶活動推播"
-                className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-200 focus:outline-none focus:border-amber-500"
+                className="w-full bg-[var(--bg-tertiary)] border border-[var(--border-strong)] rounded-lg px-3 py-2 text-sm text-[var(--text-primary)] focus:outline-none focus:border-[var(--brand-accent)]"
               />
             </div>
             <div>
-              <label className="block text-xs text-gray-500 mb-1">分類 / 觸發條件</label>
+              <label className="block text-xs text-[var(--text-muted)] mb-1">分類 / 觸發條件</label>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 {TRIGGER_OPTIONS.map((t) => (
                   <button
@@ -353,8 +353,8 @@ export function SequenceEditorClient() {
                     onClick={() => setNewTrigger(t.value)}
                     className={`text-left text-xs px-3 py-2 rounded-lg border transition ${
                       newTrigger === t.value
-                        ? "border-amber-600 bg-amber-900/30 text-amber-400"
-                        : "border-gray-700 text-gray-400 hover:border-gray-600"
+                        ? "border-[var(--brand-accent)] bg-[var(--brand-accent)]/10 text-[var(--brand-accent)]"
+                        : "border-[var(--border-strong)] text-[var(--text-secondary)] hover:border-[var(--border-strong)]"
                     }`}
                   >
                     {t.label}
@@ -366,13 +366,13 @@ export function SequenceEditorClient() {
               <button
                 onClick={createSequence}
                 disabled={saving || !newName}
-                className="bg-amber-600 hover:bg-amber-500 text-white rounded-lg px-4 py-2 text-sm transition disabled:opacity-50"
+                className="bg-[var(--brand-primary)] hover:bg-[var(--text-secondary)] text-white rounded-lg px-4 py-2 text-sm transition disabled:opacity-50"
               >
                 建立序列
               </button>
               <button
                 onClick={() => setShowNew(false)}
-                className="text-gray-500 hover:text-gray-300 text-sm transition px-4 py-2"
+                className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] text-sm transition px-4 py-2"
               >
                 取消
               </button>
@@ -383,7 +383,7 @@ export function SequenceEditorClient() {
 
       {/* Sequence list */}
       {filteredSequences.length === 0 ? (
-        <p className="text-sm text-gray-500 text-center py-8">
+        <p className="text-sm text-[var(--text-muted)] text-center py-8">
           {filterCategory ? "此分類下無序列" : "尚無序列定義。點擊「+ 新增序列」開始建立。"}
         </p>
       ) : (
@@ -395,16 +395,16 @@ export function SequenceEditorClient() {
             return (
               <div
                 key={seq.id}
-                className={`bg-gray-900 border rounded-xl overflow-hidden transition ${
+                className={`bg-[var(--bg-secondary)] border rounded-xl overflow-hidden transition ${
                   isEditing
-                    ? "border-amber-600"
+                    ? "border-[var(--brand-accent)]"
                     : seq.isActive
-                      ? "border-gray-800"
-                      : "border-gray-800 opacity-60"
+                      ? "border-[var(--border-strong)]"
+                      : "border-[var(--border-strong)] opacity-60"
                 }`}
               >
                 {/* Header with toggle */}
-                <div className="flex items-center justify-between px-4 py-3 border-b border-gray-800">
+                <div className="flex items-center justify-between px-4 py-3 border-b border-[var(--border-strong)]">
                   <div className="flex items-center gap-3">
                     {/* ON/OFF Toggle — prominent checkbox style */}
                     <label className="flex items-center gap-2 cursor-pointer select-none">
@@ -414,14 +414,14 @@ export function SequenceEditorClient() {
                         onChange={() => toggleActive(seq)}
                         className="sr-only peer"
                       />
-                      <div className="w-10 h-5 rounded-full bg-gray-700 peer-checked:bg-green-600 transition-colors relative">
+                      <div className="w-10 h-5 rounded-full bg-[var(--border-strong)] peer-checked:bg-green-600 transition-colors relative">
                         <span
                           className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-transform ${
                             seq.isActive ? "translate-x-5" : "translate-x-0.5"
                           }`}
                         />
                       </div>
-                      <span className={`text-xs ${seq.isActive ? "text-green-400" : "text-gray-500"}`}>
+                      <span className={`text-xs ${seq.isActive ? "text-emerald-600" : "text-[var(--text-muted)]"}`}>
                         {seq.isActive ? "發送中" : "已停用"}
                       </span>
                     </label>
@@ -431,10 +431,10 @@ export function SequenceEditorClient() {
                       <input
                         value={editName}
                         onChange={(e) => setEditName(e.target.value)}
-                        className="bg-gray-800 border border-gray-700 rounded px-2 py-1 text-sm text-gray-200 focus:outline-none focus:border-amber-500"
+                        className="bg-[var(--bg-tertiary)] border border-[var(--border-strong)] rounded px-2 py-1 text-sm text-[var(--text-primary)] focus:outline-none focus:border-[var(--brand-accent)]"
                       />
                     ) : (
-                      <span className="text-sm font-bold text-gray-200">{seq.name}</span>
+                      <span className="text-sm font-bold text-[var(--text-primary)]">{seq.name}</span>
                     )}
 
                     {/* Category badge */}
@@ -445,7 +445,7 @@ export function SequenceEditorClient() {
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="text-xs text-gray-600">
+                    <span className="text-xs text-[var(--text-muted)]">
                       {seq.steps.length} 步驟
                     </span>
                     {isEditing ? (
@@ -453,13 +453,13 @@ export function SequenceEditorClient() {
                         <button
                           onClick={saveEdit}
                           disabled={saving}
-                          className="text-xs bg-amber-600 hover:bg-amber-500 text-white rounded px-3 py-1 transition disabled:opacity-50"
+                          className="text-xs bg-[var(--brand-primary)] hover:bg-[var(--text-secondary)] text-white rounded px-3 py-1 transition disabled:opacity-50"
                         >
                           {saving ? "儲存中…" : "💾 儲存"}
                         </button>
                         <button
                           onClick={cancelEdit}
-                          className="text-xs text-gray-500 hover:text-gray-300 transition"
+                          className="text-xs text-[var(--text-muted)] hover:text-[var(--text-secondary)] transition"
                         >
                           取消
                         </button>
@@ -467,7 +467,7 @@ export function SequenceEditorClient() {
                     ) : (
                       <button
                         onClick={() => startEdit(seq)}
-                        className="text-xs text-amber-400 hover:text-amber-300 transition"
+                        className="text-xs text-[var(--brand-accent)] hover:text-[var(--brand-accent)] transition"
                       >
                         ✏️ 編輯
                       </button>
@@ -481,11 +481,11 @@ export function SequenceEditorClient() {
                     <>
                       {/* Trigger selector */}
                       <div className="mb-4">
-                        <label className="block text-xs text-gray-500 mb-1">分類 / 觸發條件</label>
+                        <label className="block text-xs text-[var(--text-muted)] mb-1">分類 / 觸發條件</label>
                         <select
                           value={editTrigger}
                           onChange={(e) => setEditTrigger(e.target.value)}
-                          className="bg-gray-800 border border-gray-700 rounded px-3 py-1.5 text-xs text-gray-200 focus:outline-none focus:border-amber-500"
+                          className="bg-[var(--bg-tertiary)] border border-[var(--border-strong)] rounded px-3 py-1.5 text-xs text-[var(--text-primary)] focus:outline-none focus:border-[var(--brand-accent)]"
                         >
                           {TRIGGER_OPTIONS.map((t) => (
                             <option key={t.value} value={t.value}>
@@ -496,23 +496,23 @@ export function SequenceEditorClient() {
                       </div>
 
                       {/* Steps editor */}
-                      <p className="text-xs text-gray-500 mb-2">
+                      <p className="text-xs text-[var(--text-muted)] mb-2">
                         步驟排程 — 設定觸發後第幾天發送
                       </p>
                       <div className="space-y-3">
                         {editSteps.map((step, idx) => (
                           <div
                             key={idx}
-                            className="bg-gray-800/50 border border-gray-700 rounded-lg p-3"
+                            className="bg-[var(--bg-tertiary)]/50 border border-[var(--border-strong)] rounded-lg p-3"
                           >
                             <div className="flex items-center gap-3 mb-2">
-                              <span className="text-xs text-amber-400 font-bold w-14 shrink-0">
+                              <span className="text-xs text-[var(--brand-accent)] font-bold w-14 shrink-0">
                                 步驟 {idx + 1}
                               </span>
 
                               {/* Day offset — prominent */}
-                              <div className="flex items-center gap-1 bg-gray-900 rounded px-2 py-1 border border-gray-700">
-                                <span className="text-xs text-gray-400">觸發後第</span>
+                              <div className="flex items-center gap-1 bg-[var(--bg-secondary)] rounded px-2 py-1 border border-[var(--border-strong)]">
+                                <span className="text-xs text-[var(--text-secondary)]">觸發後第</span>
                                 <input
                                   type="number"
                                   min={0}
@@ -520,15 +520,15 @@ export function SequenceEditorClient() {
                                   onChange={(e) =>
                                     updateStep(idx, "dayOffset", parseInt(e.target.value) || 0)
                                   }
-                                  className="w-12 bg-transparent text-center text-sm text-amber-400 font-bold focus:outline-none"
+                                  className="w-12 bg-transparent text-center text-sm text-[var(--brand-accent)] font-bold focus:outline-none"
                                 />
-                                <span className="text-xs text-gray-400">天發送</span>
+                                <span className="text-xs text-[var(--text-secondary)]">天發送</span>
                               </div>
 
                               <select
                                 value={step.messageType}
                                 onChange={(e) => updateStep(idx, "messageType", e.target.value)}
-                                className="bg-gray-900 border border-gray-700 rounded px-2 py-1 text-xs text-gray-200 focus:outline-none focus:border-amber-500"
+                                className="bg-[var(--bg-secondary)] border border-[var(--border-strong)] rounded px-2 py-1 text-xs text-[var(--text-primary)] focus:outline-none focus:border-[var(--brand-accent)]"
                               >
                                 {MESSAGE_TYPE_OPTIONS.map((t) => (
                                   <option key={t.value} value={t.value}>
@@ -540,7 +540,7 @@ export function SequenceEditorClient() {
                               <div className="flex-1" />
                               <button
                                 onClick={() => removeStep(idx)}
-                                className="text-xs text-red-400 hover:text-red-300 transition"
+                                className="text-xs text-red-600 hover:text-red-600 transition"
                               >
                                 🗑
                               </button>
@@ -549,19 +549,19 @@ export function SequenceEditorClient() {
                             {/* Content fields */}
                             <div className="space-y-2 pl-14">
                               <div>
-                                <label className="block text-xs text-gray-500 mb-0.5">標題</label>
+                                <label className="block text-xs text-[var(--text-muted)] mb-0.5">標題</label>
                                 <input
                                   value={step.content?.label || ""}
                                   onChange={(e) =>
                                     updateStepContent(idx, "label", e.target.value)
                                   }
-                                  className="w-full bg-gray-900 border border-gray-700 rounded px-2 py-1 text-xs text-gray-200 focus:outline-none focus:border-amber-500"
+                                  className="w-full bg-[var(--bg-secondary)] border border-[var(--border-strong)] rounded px-2 py-1 text-xs text-[var(--text-primary)] focus:outline-none focus:border-[var(--brand-accent)]"
                                   placeholder="步驟標題"
                                 />
                               </div>
                               {step.messageType === "text" ? (
                                 <div>
-                                  <label className="block text-xs text-gray-500 mb-0.5">
+                                  <label className="block text-xs text-[var(--text-muted)] mb-0.5">
                                     文字內容
                                   </label>
                                   <textarea
@@ -570,13 +570,13 @@ export function SequenceEditorClient() {
                                       updateStepContent(idx, "text", e.target.value)
                                     }
                                     rows={3}
-                                    className="w-full bg-gray-900 border border-gray-700 rounded px-2 py-1 text-xs text-gray-200 focus:outline-none focus:border-amber-500 resize-y"
+                                    className="w-full bg-[var(--bg-secondary)] border border-[var(--border-strong)] rounded px-2 py-1 text-xs text-[var(--text-primary)] focus:outline-none focus:border-[var(--brand-accent)] resize-y"
                                     placeholder="輸入要傳送的文字"
                                   />
                                 </div>
                               ) : (
                                 <div>
-                                  <label className="block text-xs text-gray-500 mb-0.5">
+                                  <label className="block text-xs text-[var(--text-muted)] mb-0.5">
                                     Flex 模板
                                   </label>
                                   <select
@@ -584,7 +584,7 @@ export function SequenceEditorClient() {
                                     onChange={(e) =>
                                       updateStepContent(idx, "template", e.target.value)
                                     }
-                                    className="w-full bg-gray-900 border border-gray-700 rounded px-2 py-1 text-xs text-gray-200 focus:outline-none focus:border-amber-500"
+                                    className="w-full bg-[var(--bg-secondary)] border border-[var(--border-strong)] rounded px-2 py-1 text-xs text-[var(--text-primary)] focus:outline-none focus:border-[var(--brand-accent)]"
                                   >
                                     {TEMPLATE_OPTIONS.map((t) => (
                                       <option key={t.value} value={t.value}>
@@ -601,7 +601,7 @@ export function SequenceEditorClient() {
 
                       <button
                         onClick={addStep}
-                        className="mt-3 text-xs text-amber-400 hover:text-amber-300 border border-dashed border-amber-800 rounded-lg px-3 py-1.5 transition hover:border-amber-600"
+                        className="mt-3 text-xs text-[var(--brand-accent)] hover:text-[var(--brand-accent)] border border-dashed border-[var(--brand-accent)]/30 rounded-lg px-3 py-1.5 transition hover:border-[var(--brand-accent)]"
                       >
                         + 新增步驟
                       </button>
@@ -610,7 +610,7 @@ export function SequenceEditorClient() {
                     /* Read-only timeline */
                     <div className="relative pl-6">
                       {/* Timeline line */}
-                      <div className="absolute left-2 top-1 bottom-1 w-px bg-gray-700" />
+                      <div className="absolute left-2 top-1 bottom-1 w-px bg-[var(--border-strong)]" />
 
                       <div className="space-y-3">
                         {seq.steps.map((step, idx) => (
@@ -619,20 +619,20 @@ export function SequenceEditorClient() {
                             <div
                               className={`absolute -left-4 top-1 w-3 h-3 rounded-full z-10 ${
                                 step.messageType === "flex"
-                                  ? "bg-amber-500"
+                                  ? "bg-[var(--brand-accent)]"
                                   : "bg-blue-500"
                               }`}
                             />
                             <div className="flex-1">
                               <div className="flex items-center gap-2">
-                                <span className="text-xs font-bold text-amber-400">
+                                <span className="text-xs font-bold text-[var(--brand-accent)]">
                                   Day {step.dayOffset}
                                 </span>
-                                <span className="text-xs text-gray-600">
+                                <span className="text-xs text-[var(--text-muted)]">
                                   {step.messageType === "flex" ? "Flex" : "文字"}
                                 </span>
                               </div>
-                              <p className="text-sm text-gray-300">
+                              <p className="text-sm text-[var(--text-secondary)]">
                                 {(step.content as any)?.label || `步驟 ${idx + 1}`}
                               </p>
                             </div>

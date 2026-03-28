@@ -14,7 +14,7 @@ export default async function RegionEditPage({
   if (id === "new") {
     return (
       <div>
-        <h1 className="text-xl font-bold text-gray-100 mb-6">新增地區</h1>
+        <h1 className="text-xl font-bold text-[var(--text-primary)] mb-6">新增地區</h1>
         <RegionForm />
       </div>
     );
@@ -25,7 +25,7 @@ export default async function RegionEditPage({
 
   return (
     <div>
-      <h1 className="text-xl font-bold text-gray-100 mb-6">編輯地區</h1>
+      <h1 className="text-xl font-bold text-[var(--text-primary)] mb-6">編輯地區</h1>
       <RegionForm region={region} />
     </div>
   );

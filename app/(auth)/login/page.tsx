@@ -4,11 +4,11 @@ import { signIn } from "next-auth/react";
 
 export default function LoginPage() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-950">
-      <div className="w-full max-w-sm p-8 bg-gray-900 rounded-xl border border-gray-800">
+    <div className="min-h-screen flex items-center justify-center bg-[var(--bg-primary)]">
+      <div className="w-full max-w-sm p-8 bg-[var(--bg-secondary)] rounded-xl border border-[var(--border-strong)]">
         <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold text-amber-500">DEREK</h1>
-          <p className="text-sm text-gray-400 mt-1">德瑞克衛浴 管理後台</p>
+          <h1 className="text-2xl font-bold text-[var(--brand-accent)]">DEREK</h1>
+          <p className="text-sm text-[var(--text-secondary)] mt-1">德瑞克衛浴 管理後台</p>
         </div>
 
         <button
@@ -36,7 +36,7 @@ export default function LoginPage() {
           使用 Google 帳號登入
         </button>
 
-        <p className="text-xs text-gray-600 text-center mt-6">
+        <p className="text-xs text-[var(--text-muted)] text-center mt-6">
           僅限已授權的管理員帳號
         </p>
       </div>

@@ -161,18 +161,18 @@ export default async function AnalyticsPage() {
 
   return (
     <div>
-      <h1 className="text-xl font-bold text-gray-100 mb-6">📊 互動分析</h1>
+      <h1 className="text-xl font-bold text-[var(--text-primary)] mb-6">📊 互動分析</h1>
 
       {/* Summary cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
         <StatCard label="今日互動" value={todayCount} />
         <StatCard label="本週互動" value={weekCount} />
         <StatCard label="本月互動" value={monthCount} />
-        <StatCard label="活躍用戶" value={totalUsers} color="text-blue-400" />
+        <StatCard label="活躍用戶" value={totalUsers} color="text-blue-600" />
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-        <StatCard label="本月新增好友" value={follows} color="text-green-400" />
-        <StatCard label="本月封鎖" value={unfollows} color="text-red-400" />
+        <StatCard label="本月新增好友" value={follows} color="text-emerald-600" />
+        <StatCard label="本月封鎖" value={unfollows} color="text-red-600" />
       </div>
 
       {/* 7-day trend */}
@@ -189,14 +189,14 @@ export default async function AnalyticsPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
         <DonutChart data={regionData} title="📍 熱門地區分布" />
-        <div className="bg-gray-900 rounded-xl border border-gray-800 p-4">
+        <div className="bg-[var(--bg-secondary)] rounded-xl border border-[var(--border-strong)] p-4">
           <BarChart data={eventTypeData} title="📋 事件類型統計（本月）" />
         </div>
       </div>
 
       {/* ── Conversion Funnel ── */}
-      <div className="bg-gray-900 rounded-xl border border-gray-800 p-4 mb-6">
-        <h2 className="text-sm font-bold text-gray-300 mb-4">🔽 轉換漏斗（本月不重複用戶）</h2>
+      <div className="bg-[var(--bg-secondary)] rounded-xl border border-[var(--border-strong)] p-4 mb-6">
+        <h2 className="text-sm font-bold text-[var(--text-secondary)] mb-4">🔽 轉換漏斗（本月不重複用戶）</h2>
         <div className="space-y-2">
           {funnelStages.map((stage, i) => {
             const pct = funnelStages[0].count > 0
@@ -208,16 +208,16 @@ export default async function AnalyticsPage() {
             return (
               <div key={stage.label}>
                 <div className="flex items-center justify-between mb-1">
-                  <span className="text-sm text-gray-300">{stage.label}</span>
+                  <span className="text-sm text-[var(--text-secondary)]">{stage.label}</span>
                   <div className="flex items-center gap-3">
                     {dropOff !== null && (
-                      <span className="text-xs text-red-400">▼ {dropOff}% 流失</span>
+                      <span className="text-xs text-red-600">▼ {dropOff}% 流失</span>
                     )}
-                    <span className="text-sm font-bold text-gray-100">{stage.count.toLocaleString()}</span>
-                    <span className="text-xs text-gray-500 w-10 text-right">{pct}%</span>
+                    <span className="text-sm font-bold text-[var(--text-primary)]">{stage.count.toLocaleString()}</span>
+                    <span className="text-xs text-[var(--text-muted)] w-10 text-right">{pct}%</span>
                   </div>
                 </div>
-                <div className="w-full bg-gray-800 rounded-full h-5 relative overflow-hidden">
+                <div className="w-full bg-[var(--bg-tertiary)] rounded-full h-5 relative overflow-hidden">
                   <div
                     className="h-5 rounded-full transition-all"
                     style={{ width: `${pct}%`, backgroundColor: stage.color, opacity: 0.8 }}
@@ -230,34 +230,34 @@ export default async function AnalyticsPage() {
       </div>
 
       {/* ── Hourly Distribution (Behavioral Chronos) ── */}
-      <div className="bg-gray-900 rounded-xl border border-gray-800 p-4 mb-6">
-        <h2 className="text-sm font-bold text-gray-300 mb-1">🕐 24小時互動分布（行為時光隧道）</h2>
-        <p className="text-xs text-gray-600 mb-4">過去 30 天，用戶最活躍的時段</p>
+      <div className="bg-[var(--bg-secondary)] rounded-xl border border-[var(--border-strong)] p-4 mb-6">
+        <h2 className="text-sm font-bold text-[var(--text-secondary)] mb-1">🕐 24小時互動分布（行為時光隧道）</h2>
+        <p className="text-xs text-[var(--text-muted)] mb-4">過去 30 天，用戶最活躍的時段</p>
         <HourlyChart counts={hourlyCounts} />
       </div>
 
       {/* ── Sequence Metrics ── */}
-      <div className="bg-gray-900 rounded-xl border border-gray-800 p-4">
-        <h2 className="text-sm font-bold text-gray-300 mb-4">📬 自動序列指標</h2>
+      <div className="bg-[var(--bg-secondary)] rounded-xl border border-[var(--border-strong)] p-4">
+        <h2 className="text-sm font-bold text-[var(--text-secondary)] mb-4">📬 自動序列指標</h2>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
-          <StatCard label="待發送" value={seqPending} color="text-amber-400" />
-          <StatCard label="已發送" value={seqSent} color="text-green-400" />
-          <StatCard label="處理中" value={seqProcessing} color="text-blue-400" />
-          <StatCard label="序列啟動數" value={newCustomerStarted} color="text-gray-400" />
+          <StatCard label="待發送" value={seqPending} color="text-[var(--brand-accent)]" />
+          <StatCard label="已發送" value={seqSent} color="text-emerald-600" />
+          <StatCard label="處理中" value={seqProcessing} color="text-blue-600" />
+          <StatCard label="序列啟動數" value={newCustomerStarted} color="text-[var(--text-secondary)]" />
         </div>
         {newCustomerStarted > 0 && (
           <div>
-            <div className="flex justify-between text-xs text-gray-500 mb-1">
+            <div className="flex justify-between text-xs text-[var(--text-muted)] mb-1">
               <span>新客序列完成率（Day30 發送）</span>
               <span>{Math.round((day30Sent / newCustomerStarted) * 100)}%</span>
             </div>
-            <div className="w-full bg-gray-800 rounded-full h-2">
+            <div className="w-full bg-[var(--bg-tertiary)] rounded-full h-2">
               <div
-                className="bg-amber-500 h-2 rounded-full"
+                className="bg-[var(--brand-accent)] h-2 rounded-full"
                 style={{ width: `${Math.round((day30Sent / newCustomerStarted) * 100)}%` }}
               />
             </div>
-            <p className="text-xs text-gray-600 mt-1">
+            <p className="text-xs text-[var(--text-muted)] mt-1">
               {day30Sent} / {newCustomerStarted} 人完成（目標 &gt; 40%）
             </p>
           </div>
@@ -299,7 +299,7 @@ function HourlyChart({ counts }: { counts: number[] }) {
           );
         })}
       </svg>
-      <p className="text-xs text-gray-500 mt-1">
+      <p className="text-xs text-[var(--text-muted)] mt-1">
         🏆 最活躍時段：{peakHour} 時（{counts[peakHour].toLocaleString()} 次）
         {(peakHour >= 22 || peakHour < 6) && " · 深夜族群明顯"}
         {peakHour >= 6 && peakHour < 10 && " · 早晨通勤族"}
@@ -310,10 +310,10 @@ function HourlyChart({ counts }: { counts: number[] }) {
   );
 }
 
-function StatCard({ label, value, color = "text-amber-400" }: { label: string; value: number; color?: string }) {
+function StatCard({ label, value, color = "text-[var(--brand-accent)]" }: { label: string; value: number; color?: string }) {
   return (
-    <div className="bg-gray-900 rounded-xl border border-gray-800 p-3 md:p-4">
-      <p className="text-xs text-gray-500">{label}</p>
+    <div className="bg-[var(--bg-secondary)] rounded-xl border border-[var(--border-strong)] p-3 md:p-4">
+      <p className="text-xs text-[var(--text-muted)]">{label}</p>
       <p className={`text-xl md:text-2xl font-bold ${color}`}>{value.toLocaleString()}</p>
     </div>
   );

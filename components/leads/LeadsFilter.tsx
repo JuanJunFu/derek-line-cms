@@ -69,9 +69,9 @@ export function LeadsFilter({ filters, onChange, total }: LeadsFilterProps) {
 
   const chipBase =
     "text-xs px-2.5 py-1 rounded-lg border transition cursor-pointer select-none";
-  const chipActive = "border-amber-600 bg-amber-900/30 text-amber-400";
+  const chipActive = "border-[var(--brand-accent)] bg-[var(--brand-accent)]/10 text-[var(--brand-accent)]";
   const chipNormal =
-    "border-gray-700 text-gray-500 hover:text-gray-300 hover:border-gray-600";
+    "border-[var(--border-strong)] text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:border-[var(--border-strong)]";
 
   const hasActiveFilters =
     filters.q || filters.quadrant || filters.tag || filters.level || filters.type;
@@ -86,9 +86,9 @@ export function LeadsFilter({ filters, onChange, total }: LeadsFilterProps) {
             value={searchInput}
             onChange={(e) => handleSearchChange(e.target.value)}
             placeholder="搜尋客戶名稱 / userId ..."
-            className="w-full pl-8 pr-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-sm text-gray-200 placeholder-gray-600 focus:outline-none focus:border-amber-500"
+            className="w-full pl-8 pr-3 py-2 bg-[var(--bg-tertiary)] border border-[var(--border-strong)] rounded-lg text-sm text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:border-[var(--brand-accent)]"
           />
-          <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-600 text-sm">
+          <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[var(--text-muted)] text-sm">
             🔍
           </span>
         </div>
@@ -98,7 +98,7 @@ export function LeadsFilter({ filters, onChange, total }: LeadsFilterProps) {
           onChange={(e) =>
             onChange({ ...filters, sort: e.target.value as SortField })
           }
-          className="bg-gray-800 border border-gray-700 rounded-lg text-xs text-gray-300 px-3 py-2 focus:outline-none focus:border-amber-500"
+          className="bg-[var(--bg-tertiary)] border border-[var(--border-strong)] rounded-lg text-xs text-[var(--text-secondary)] px-3 py-2 focus:outline-none focus:border-[var(--brand-accent)]"
         >
           {SORT_OPTIONS.map((o) => (
             <option key={o.value} value={o.value}>
@@ -111,7 +111,7 @@ export function LeadsFilter({ filters, onChange, total }: LeadsFilterProps) {
           onClick={() =>
             onChange({ ...filters, order: filters.order === "desc" ? "asc" : "desc" })
           }
-          className="bg-gray-800 border border-gray-700 rounded-lg text-xs text-gray-400 px-3 py-2 hover:text-gray-200 transition"
+          className="bg-[var(--bg-tertiary)] border border-[var(--border-strong)] rounded-lg text-xs text-[var(--text-secondary)] px-3 py-2 hover:text-[var(--text-primary)] transition"
           title={filters.order === "desc" ? "降序" : "升序"}
         >
           {filters.order === "desc" ? "↓ 降序" : "↑ 升序"}
@@ -120,7 +120,7 @@ export function LeadsFilter({ filters, onChange, total }: LeadsFilterProps) {
 
       {/* Filter chips row */}
       <div className="flex flex-wrap gap-1.5 items-center">
-        <span className="text-xs text-gray-600 mr-1">篩選：</span>
+        <span className="text-xs text-[var(--text-muted)] mr-1">篩選：</span>
 
         {/* Relationship level */}
         {LEVEL_OPTIONS.map((lv) => (
@@ -135,7 +135,7 @@ export function LeadsFilter({ filters, onChange, total }: LeadsFilterProps) {
           </button>
         ))}
 
-        <span className="text-gray-700 mx-1">|</span>
+        <span className="text-[var(--text-muted)] mx-1">|</span>
 
         {/* Customer type */}
         {TYPE_OPTIONS.map((t) => (
@@ -150,7 +150,7 @@ export function LeadsFilter({ filters, onChange, total }: LeadsFilterProps) {
           </button>
         ))}
 
-        <span className="text-gray-700 mx-1">|</span>
+        <span className="text-[var(--text-muted)] mx-1">|</span>
 
         {/* Tag presets */}
         {TAG_PRESETS.map((t) => (
@@ -168,8 +168,8 @@ export function LeadsFilter({ filters, onChange, total }: LeadsFilterProps) {
 
       {/* Result count + clear */}
       <div className="flex items-center justify-between">
-        <p className="text-xs text-gray-600">
-          共 <span className="text-gray-400">{total}</span> 位客戶
+        <p className="text-xs text-[var(--text-muted)]">
+          共 <span className="text-[var(--text-secondary)]">{total}</span> 位客戶
         </p>
         {hasActiveFilters && (
           <button
@@ -184,7 +184,7 @@ export function LeadsFilter({ filters, onChange, total }: LeadsFilterProps) {
                 type: null,
               })
             }
-            className="text-xs text-red-400 hover:text-red-300 transition"
+            className="text-xs text-red-600 hover:text-red-600 transition"
           >
             清除所有篩選
           </button>

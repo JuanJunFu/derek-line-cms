@@ -14,7 +14,7 @@ export default async function ReplyEditPage({
   if (id === "new") {
     return (
       <div>
-        <h1 className="text-xl font-bold text-gray-100 mb-6">新增自動回覆</h1>
+        <h1 className="text-xl font-bold text-[var(--text-primary)] mb-6">新增自動回覆</h1>
         <ReplyForm />
       </div>
     );
@@ -25,7 +25,7 @@ export default async function ReplyEditPage({
 
   return (
     <div>
-      <h1 className="text-xl font-bold text-gray-100 mb-6">編輯自動回覆</h1>
+      <h1 className="text-xl font-bold text-[var(--text-primary)] mb-6">編輯自動回覆</h1>
       <ReplyForm reply={reply} />
     </div>
   );

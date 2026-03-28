@@ -11,9 +11,9 @@ export function DonutChart({
   const total = data.reduce((s, d) => s + d.value, 0);
   if (total === 0) {
     return (
-      <div className="bg-gray-900 rounded-xl border border-gray-800 p-4">
-        <h2 className="text-sm font-bold text-amber-500 mb-4">{title}</h2>
-        <p className="text-sm text-gray-500 text-center py-8">尚無數據</p>
+      <div className="bg-[var(--bg-secondary)] rounded-xl border border-[var(--border-strong)] p-4">
+        <h2 className="text-sm font-bold text-[var(--brand-accent)] mb-4">{title}</h2>
+        <p className="text-sm text-[var(--text-muted)] text-center py-8">尚無數據</p>
       </div>
     );
   }
@@ -28,8 +28,8 @@ export function DonutChart({
   });
 
   return (
-    <div className="bg-gray-900 rounded-xl border border-gray-800 p-4">
-      <h2 className="text-sm font-bold text-amber-500 mb-4">{title}</h2>
+    <div className="bg-[var(--bg-secondary)] rounded-xl border border-[var(--border-strong)] p-4">
+      <h2 className="text-sm font-bold text-[var(--brand-accent)] mb-4">{title}</h2>
       <div className="flex items-center gap-6">
         {/* Donut */}
         <div className="relative w-32 h-32 flex-shrink-0">
@@ -40,8 +40,8 @@ export function DonutChart({
             }}
           />
           {/* Center hole */}
-          <div className="absolute inset-4 bg-gray-900 rounded-full flex items-center justify-center">
-            <span className="text-lg font-bold text-amber-400">{total}</span>
+          <div className="absolute inset-4 bg-[var(--bg-secondary)] rounded-full flex items-center justify-center">
+            <span className="text-lg font-bold text-[var(--brand-accent)]">{total}</span>
           </div>
         </div>
         {/* Legend */}
@@ -53,9 +53,9 @@ export function DonutChart({
                   className="w-3 h-3 rounded-full"
                   style={{ backgroundColor: d.color }}
                 />
-                <span className="text-xs text-gray-300">{d.label}</span>
+                <span className="text-xs text-[var(--text-secondary)]">{d.label}</span>
               </div>
-              <span className="text-xs font-bold text-gray-400">
+              <span className="text-xs font-bold text-[var(--text-secondary)]">
                 {d.value} ({total > 0 ? Math.round((d.value / total) * 100) : 0}%)
               </span>
             </div>
@@ -77,19 +77,19 @@ export function BarChart({
   const max = Math.max(...data.map((d) => d.value), 1);
 
   return (
-    <div className="bg-gray-900 rounded-xl border border-gray-800 p-4">
-      <h2 className="text-sm font-bold text-amber-500 mb-4">{title}</h2>
+    <div className="bg-[var(--bg-secondary)] rounded-xl border border-[var(--border-strong)] p-4">
+      <h2 className="text-sm font-bold text-[var(--brand-accent)] mb-4">{title}</h2>
       {data.length === 0 ? (
-        <p className="text-sm text-gray-500 text-center py-8">尚無數據</p>
+        <p className="text-sm text-[var(--text-muted)] text-center py-8">尚無數據</p>
       ) : (
         <div className="space-y-3">
           {data.map((d) => (
             <div key={d.label}>
               <div className="flex justify-between text-xs mb-1">
-                <span className="text-gray-300">{d.label}</span>
-                <span className="text-amber-400 font-bold">{d.value} 次</span>
+                <span className="text-[var(--text-secondary)]">{d.label}</span>
+                <span className="text-[var(--brand-accent)] font-bold">{d.value} 次</span>
               </div>
-              <div className="w-full bg-gray-800 rounded-full h-4">
+              <div className="w-full bg-[var(--bg-tertiary)] rounded-full h-4">
                 <div
                   className="h-4 rounded-full transition-all duration-500"
                   style={{
@@ -119,10 +119,10 @@ export function TrendLine({
   const width = 100; // percentage
 
   return (
-    <div className="bg-gray-900 rounded-xl border border-gray-800 p-4">
-      <h2 className="text-sm font-bold text-amber-500 mb-4">{title}</h2>
+    <div className="bg-[var(--bg-secondary)] rounded-xl border border-[var(--border-strong)] p-4">
+      <h2 className="text-sm font-bold text-[var(--brand-accent)] mb-4">{title}</h2>
       {data.length === 0 ? (
-        <p className="text-sm text-gray-500 text-center py-8">尚無數據</p>
+        <p className="text-sm text-[var(--text-muted)] text-center py-8">尚無數據</p>
       ) : (
         <div>
           {/* SVG Line Chart */}

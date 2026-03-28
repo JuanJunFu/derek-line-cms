@@ -18,7 +18,7 @@ export default async function StoreEditPage({
   if (id === "new") {
     return (
       <div>
-        <h1 className="text-xl font-bold text-gray-100 mb-6">新增門市</h1>
+        <h1 className="text-xl font-bold text-[var(--text-primary)] mb-6">新增門市</h1>
         <StoreForm regions={regions} />
       </div>
     );
@@ -29,7 +29,7 @@ export default async function StoreEditPage({
 
   return (
     <div>
-      <h1 className="text-xl font-bold text-gray-100 mb-6">編輯門市</h1>
+      <h1 className="text-xl font-bold text-[var(--text-primary)] mb-6">編輯門市</h1>
       <StoreForm store={store} regions={regions} />
     </div>
   );

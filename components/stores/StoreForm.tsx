@@ -64,13 +64,13 @@ export function StoreForm({
   }
 
   const inputClass =
-    "w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-gray-100 focus:outline-none focus:border-amber-500";
-  const labelClass = "block text-sm text-gray-400 mb-1";
+    "w-full px-3 py-2 bg-[var(--bg-tertiary)] border border-[var(--border-strong)] rounded-lg text-[var(--text-primary)] focus:outline-none focus:border-[var(--brand-accent)]";
+  const labelClass = "block text-sm text-[var(--text-secondary)] mb-1";
 
   return (
     <form
       onSubmit={handleSubmit}
-      className="max-w-full lg:max-w-2xl bg-gray-900 rounded-xl border border-gray-800 p-6 space-y-4"
+      className="max-w-full lg:max-w-2xl bg-[var(--bg-secondary)] rounded-xl border border-[var(--border-strong)] p-6 space-y-4"
     >
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
@@ -200,21 +200,21 @@ export function StoreForm({
           onChange={(e) => update("isActive", e.target.checked)}
           className="accent-amber-500"
         />
-        <label className="text-sm text-gray-400">啟用</label>
+        <label className="text-sm text-[var(--text-secondary)]">啟用</label>
       </div>
 
       <div className="flex gap-3 pt-2">
         <button
           type="submit"
           disabled={loading}
-          className="bg-amber-600 hover:bg-amber-500 text-white px-6 py-2 rounded-lg font-bold transition disabled:opacity-50"
+          className="bg-[var(--brand-primary)] hover:bg-[var(--text-secondary)] text-white px-6 py-2 rounded-lg font-bold transition disabled:opacity-50"
         >
           {loading ? "儲存中..." : "儲存"}
         </button>
         <button
           type="button"
           onClick={() => router.push("/stores")}
-          className="bg-gray-700 hover:bg-gray-600 text-gray-300 px-6 py-2 rounded-lg transition"
+          className="bg-[var(--border-strong)] hover:bg-[var(--bg-tertiary)] text-[var(--text-secondary)] px-6 py-2 rounded-lg transition"
         >
           取消
         </button>

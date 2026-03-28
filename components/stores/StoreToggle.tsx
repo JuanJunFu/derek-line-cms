@@ -33,7 +33,7 @@ export function StoreToggle({
       onClick={toggle}
       disabled={loading}
       className={`text-sm font-medium ${
-        isActive ? "text-green-400" : "text-gray-500"
+        isActive ? "text-emerald-600" : "text-[var(--text-muted)]"
       } hover:opacity-80 transition disabled:opacity-50`}
     >
       {isActive ? "● 啟用" : "○ 停用"}

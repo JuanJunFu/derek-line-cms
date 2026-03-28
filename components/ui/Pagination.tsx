@@ -26,11 +26,11 @@ export function Pagination({ page, totalPages, onPageChange }: PaginationProps) 
   const btnBase =
     "px-3 py-1.5 text-xs rounded-lg border transition";
   const btnActive =
-    "bg-amber-600 border-amber-600 text-white";
+    "bg-[var(--brand-primary)] border-[var(--brand-accent)] text-white";
   const btnNormal =
-    "border-gray-700 text-gray-400 hover:text-gray-200 hover:border-gray-600";
+    "border-[var(--border-strong)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-[var(--border-strong)]";
   const btnDisabled =
-    "border-gray-800 text-gray-600 cursor-not-allowed";
+    "border-[var(--border-strong)] text-[var(--text-muted)] cursor-not-allowed";
 
   return (
     <div className="flex items-center justify-center gap-1.5 mt-4">
@@ -44,7 +44,7 @@ export function Pagination({ page, totalPages, onPageChange }: PaginationProps) 
 
       {pages.map((p, i) =>
         p === "..." ? (
-          <span key={`dots-${i}`} className="text-gray-600 px-1">
+          <span key={`dots-${i}`} className="text-[var(--text-muted)] px-1">
             …
           </span>
         ) : (

@@ -107,14 +107,14 @@ export default async function AlertSettingsPage() {
 
   return (
     <div>
-      <h1 className="text-xl font-bold text-gray-100 mb-6">⚙️ 閾值設定</h1>
+      <h1 className="text-xl font-bold text-[var(--text-primary)] mb-6">⚙️ 閾值設定</h1>
 
       {/* Admin LINE IDs */}
-      <div className="bg-gray-900 rounded-xl border border-gray-800 p-4 mb-6">
-        <h2 className="text-sm font-bold text-gray-200 mb-2">
+      <div className="bg-[var(--bg-secondary)] rounded-xl border border-[var(--border-strong)] p-4 mb-6">
+        <h2 className="text-sm font-bold text-[var(--text-primary)] mb-2">
           📩 通知接收者（管理員 LINE User ID）
         </h2>
-        <p className="text-xs text-gray-500 mb-3">
+        <p className="text-xs text-[var(--text-muted)] mb-3">
           多個 ID 用逗號分隔。可從 LINE OA 管理後台查看。
         </p>
         <form action={saveAdminIds} className="flex gap-2">
@@ -123,11 +123,11 @@ export default async function AlertSettingsPage() {
             type="text"
             defaultValue={setting?.value ?? ""}
             placeholder="U1234...,U5678..."
-            className="flex-1 bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-200"
+            className="flex-1 bg-[var(--bg-tertiary)] border border-[var(--border-strong)] rounded-lg px-3 py-2 text-sm text-[var(--text-primary)]"
           />
           <button
             type="submit"
-            className="bg-amber-600 hover:bg-amber-500 text-white text-sm px-4 py-2 rounded-lg"
+            className="bg-[var(--brand-primary)] hover:bg-[var(--text-secondary)] text-white text-sm px-4 py-2 rounded-lg"
           >
             儲存
           </button>
@@ -135,14 +135,14 @@ export default async function AlertSettingsPage() {
       </div>
 
       {/* Alert Rules */}
-      <div className="bg-gray-900 rounded-xl border border-gray-800 p-4">
+      <div className="bg-[var(--bg-secondary)] rounded-xl border border-[var(--border-strong)] p-4">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-sm font-bold text-gray-200">📋 通知規則</h2>
+          <h2 className="text-sm font-bold text-[var(--text-primary)]">📋 通知規則</h2>
           {rules.length === 0 && (
             <form action={seedDefaultRules}>
               <button
                 type="submit"
-                className="text-sm bg-amber-600 hover:bg-amber-500 text-white px-3 py-1.5 rounded-lg"
+                className="text-sm bg-[var(--brand-primary)] hover:bg-[var(--text-secondary)] text-white px-3 py-1.5 rounded-lg"
               >
                 建立預設規則
               </button>
@@ -151,7 +151,7 @@ export default async function AlertSettingsPage() {
         </div>
 
         {rules.length === 0 ? (
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-[var(--text-muted)]">
             尚無規則，點擊「建立預設規則」初始化 4 條預設通知。
           </p>
         ) : (
@@ -161,16 +161,16 @@ export default async function AlertSettingsPage() {
                 key={rule.id}
                 className={`border rounded-lg p-4 ${
                   rule.isActive
-                    ? "border-gray-700 bg-gray-800/50"
-                    : "border-gray-800 bg-gray-900/50 opacity-60"
+                    ? "border-[var(--border-strong)] bg-[var(--bg-tertiary)]/50"
+                    : "border-[var(--border-strong)] bg-[var(--bg-secondary)]/50 opacity-60"
                 }`}
               >
                 <div className="flex items-center justify-between mb-3">
                   <div>
-                    <span className="text-sm font-bold text-gray-200">
+                    <span className="text-sm font-bold text-[var(--text-primary)]">
                       {rule.name}
                     </span>
-                    <p className="text-xs text-gray-500 mt-0.5">
+                    <p className="text-xs text-[var(--text-muted)] mt-0.5">
                       {RULE_TYPES[rule.eventType] ?? rule.eventType}
                     </p>
                   </div>
@@ -185,8 +185,8 @@ export default async function AlertSettingsPage() {
                       type="submit"
                       className={`text-xs px-3 py-1 rounded-full ${
                         rule.isActive
-                          ? "bg-green-900/40 text-green-400"
-                          : "bg-gray-800 text-gray-500"
+                          ? "bg-emerald-50 text-emerald-600"
+                          : "bg-[var(--bg-tertiary)] text-[var(--text-muted)]"
                       }`}
                     >
                       {rule.isActive ? "啟用中" : "已停用"}
@@ -201,7 +201,7 @@ export default async function AlertSettingsPage() {
                   <input type="hidden" name="id" value={rule.id} />
 
                   <div>
-                    <label className="text-xs text-gray-500 block mb-1">
+                    <label className="text-xs text-[var(--text-muted)] block mb-1">
                       觸發次數
                     </label>
                     <input
@@ -209,12 +209,12 @@ export default async function AlertSettingsPage() {
                       type="number"
                       min={1}
                       defaultValue={rule.threshold}
-                      className="w-20 bg-gray-800 border border-gray-700 rounded px-2 py-1 text-sm text-gray-200"
+                      className="w-20 bg-[var(--bg-tertiary)] border border-[var(--border-strong)] rounded px-2 py-1 text-sm text-[var(--text-primary)]"
                     />
                   </div>
 
                   <div>
-                    <label className="text-xs text-gray-500 block mb-1">
+                    <label className="text-xs text-[var(--text-muted)] block mb-1">
                       時間窗口 (分鐘)
                     </label>
                     <input
@@ -222,7 +222,7 @@ export default async function AlertSettingsPage() {
                       type="number"
                       min={0}
                       defaultValue={rule.windowMin}
-                      className="w-20 bg-gray-800 border border-gray-700 rounded px-2 py-1 text-sm text-gray-200"
+                      className="w-20 bg-[var(--bg-tertiary)] border border-[var(--border-strong)] rounded px-2 py-1 text-sm text-[var(--text-primary)]"
                     />
                   </div>
 
@@ -233,12 +233,12 @@ export default async function AlertSettingsPage() {
                       defaultChecked={rule.notifyLine}
                       className="w-4 h-4 rounded"
                     />
-                    <label className="text-xs text-gray-400">LINE 推播</label>
+                    <label className="text-xs text-[var(--text-secondary)]">LINE 推播</label>
                   </div>
 
                   <button
                     type="submit"
-                    className="text-xs bg-gray-700 hover:bg-gray-600 text-gray-300 px-3 py-1.5 rounded"
+                    className="text-xs bg-[var(--border-strong)] hover:bg-[var(--bg-tertiary)] text-[var(--text-secondary)] px-3 py-1.5 rounded"
                   >
                     更新
                   </button>

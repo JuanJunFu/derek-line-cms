@@ -93,12 +93,12 @@ export function LeadsClient() {
 
   return (
     <div>
-      <h1 className="text-xl font-bold text-gray-100 mb-6">🎯 客戶關係矩陣</h1>
+      <h1 className="text-xl font-bold text-[var(--text-primary)] mb-6">🎯 客戶關係矩陣</h1>
 
       {/* ── Scatter Plot ── */}
       {data && data.data.length > 0 && (
-        <div className="bg-gray-900 rounded-xl border border-gray-800 p-4 mb-4 overflow-x-auto">
-          <p className="text-xs text-gray-500 mb-2">
+        <div className="bg-[var(--bg-secondary)] rounded-xl border border-[var(--border-strong)] p-4 mb-4 overflow-x-auto">
+          <p className="text-xs text-[var(--text-muted)] mb-2">
             X 軸：長期關係分（0-100）｜Y 軸：短期購買意圖（HOT/WARM/COLD）｜每點 = 一位客戶
           </p>
           <ScatterPlot
@@ -130,18 +130,18 @@ export function LeadsClient() {
                   <p className={`text-sm font-bold ${meta.titleColor}`}>
                     {meta.emoji} {meta.title}
                   </p>
-                  <p className="text-xs text-gray-500">{meta.subtitle}</p>
+                  <p className="text-xs text-[var(--text-muted)]">{meta.subtitle}</p>
                 </div>
                 <span className={`text-2xl font-bold ${meta.titleColor}`}>
                   {count}
                 </span>
               </div>
-              <p className="text-xs text-gray-600 mb-2">{meta.desc}</p>
+              <p className="text-xs text-[var(--text-muted)] mb-2">{meta.desc}</p>
               <div className="space-y-1">
                 {leads.map((l) => (
                   <div
                     key={l.userId}
-                    className="flex items-center justify-between text-xs text-gray-400"
+                    className="flex items-center justify-between text-xs text-[var(--text-secondary)]"
                   >
                     <span className="truncate max-w-[140px]">
                       {l.displayName || l.userId.slice(0, 12) + "…"}
@@ -156,13 +156,13 @@ export function LeadsClient() {
                   </div>
                 ))}
                 {count > 3 && (
-                  <p className="text-xs text-gray-600">
+                  <p className="text-xs text-[var(--text-muted)]">
                     還有 {count - 3} 人…
                   </p>
                 )}
               </div>
               {isActive && (
-                <p className="text-xs text-amber-500 mt-2">
+                <p className="text-xs text-[var(--brand-accent)] mt-2">
                   ✓ 篩選中（再點取消）
                 </p>
               )}
@@ -181,7 +181,7 @@ export function LeadsClient() {
       {/* ── Lead List ── */}
       <div className="mt-4 space-y-2">
         {loading ? (
-          <div className="text-center py-12 text-gray-500 text-sm">
+          <div className="text-center py-12 text-[var(--text-muted)] text-sm">
             載入中...
           </div>
         ) : data && data.data.length > 0 ? (
@@ -189,7 +189,7 @@ export function LeadsClient() {
             <LeadRow key={lead.userId} lead={lead} />
           ))
         ) : (
-          <div className="text-center py-12 text-gray-500 text-sm">
+          <div className="text-center py-12 text-[var(--text-muted)] text-sm">
             {filters.q || filters.quadrant || filters.tag || filters.level || filters.type
               ? "沒有符合條件的客戶"
               : "尚無客戶資料"}
@@ -212,28 +212,28 @@ export function LeadsClient() {
 // ── Lead Row ──
 function LeadRow({ lead }: { lead: ScoredProfile }) {
   const scoreColors: Record<string, string> = {
-    HOT: "text-red-400",
-    WARM: "text-amber-400",
-    COLD: "text-gray-400",
+    HOT: "text-red-600",
+    WARM: "text-[var(--brand-accent)]",
+    COLD: "text-[var(--text-secondary)]",
   };
 
   return (
     <Link
       href={`/leads/${encodeURIComponent(lead.userId)}`}
-      className="flex items-center justify-between bg-gray-800/50 rounded-lg p-3 hover:bg-gray-800 transition cursor-pointer"
+      className="flex items-center justify-between bg-[var(--bg-tertiary)]/50 rounded-lg p-3 hover:bg-[var(--bg-tertiary)] transition cursor-pointer"
     >
       <div className="min-w-0 flex-1 mr-3">
         <div className="flex items-center gap-2 mb-1">
           <span
-            className={`text-xs font-bold ${scoreColors[lead.liveScore] ?? "text-gray-400"}`}
+            className={`text-xs font-bold ${scoreColors[lead.liveScore] ?? "text-[var(--text-secondary)]"}`}
           >
             {lead.liveScore}
           </span>
-          <p className="text-sm text-gray-200 font-medium truncate">
+          <p className="text-sm text-[var(--text-primary)] font-medium truncate">
             {lead.displayName || lead.userId.slice(0, 12) + "..."}
           </p>
           {lead.customerType === "returning" && (
-            <span className="text-xs text-blue-400 shrink-0">
+            <span className="text-xs text-blue-600 shrink-0">
               🔄 老客戶
             </span>
           )}
@@ -248,7 +248,7 @@ function LeadRow({ lead }: { lead: ScoredProfile }) {
             </span>
           ))}
           {lead.tags.length > 4 && (
-            <span className="text-xs text-gray-600">
+            <span className="text-xs text-[var(--text-muted)]">
               +{lead.tags.length - 4}
             </span>
           )}
@@ -263,19 +263,19 @@ function LeadRow({ lead }: { lead: ScoredProfile }) {
           >
             {lead.relationshipLevel}
           </span>
-          <div className="w-12 bg-gray-700 rounded-full h-1.5">
+          <div className="w-12 bg-[var(--border-strong)] rounded-full h-1.5">
             <div
-              className="bg-amber-500 h-1.5 rounded-full"
+              className="bg-[var(--brand-accent)] h-1.5 rounded-full"
               style={{
                 width: `${Math.min(100, lead.relationshipScore)}%`,
               }}
             />
           </div>
         </div>
-        <p className="text-xs text-gray-500">
+        <p className="text-xs text-[var(--text-muted)]">
           {lead.totalEvents} 次互動
         </p>
-        <p className="text-xs text-gray-600">{timeAgo(lead.lastActive)}</p>
+        <p className="text-xs text-[var(--text-muted)]">{timeAgo(lead.lastActive)}</p>
       </div>
     </Link>
   );

@@ -11,9 +11,9 @@ interface User {
 }
 
 const ROLE_LABELS: Record<string, { label: string; color: string }> = {
-  ADMIN: { label: "管理員", color: "bg-red-900/30 text-red-400 border-red-700" },
-  EDITOR: { label: "編輯者", color: "bg-blue-900/30 text-blue-400 border-blue-700" },
-  VIEWER: { label: "檢視者", color: "bg-gray-800 text-gray-400 border-gray-700" },
+  ADMIN: { label: "管理員", color: "bg-red-50 text-red-600 border-red-300" },
+  EDITOR: { label: "編輯者", color: "bg-blue-50 text-blue-600 border-blue-300" },
+  VIEWER: { label: "檢視者", color: "bg-[var(--bg-tertiary)] text-[var(--text-secondary)] border-[var(--border-strong)]" },
 };
 
 export function UsersClient({
@@ -116,33 +116,33 @@ export function UsersClient({
   return (
     <div>
       {error && (
-        <div className="mb-4 bg-red-900/30 border border-red-700 rounded-lg px-3 py-2 text-sm text-red-300">
+        <div className="mb-4 bg-red-50 border border-red-300 rounded-lg px-3 py-2 text-sm text-red-600">
           {error}
         </div>
       )}
       {success && (
-        <div className="mb-4 bg-green-900/30 border border-green-700 rounded-lg px-3 py-2 text-sm text-green-300">
+        <div className="mb-4 bg-emerald-50 border border-emerald-300 rounded-lg px-3 py-2 text-sm text-emerald-600">
           {success}
         </div>
       )}
 
       {/* Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
-        <div className="bg-gray-900 border border-gray-800 rounded-xl p-3 text-center">
-          <p className="text-2xl font-bold text-gray-200">{users.length}</p>
-          <p className="text-xs text-gray-500 mt-0.5">使用者總數</p>
+        <div className="bg-[var(--bg-secondary)] border border-[var(--border-strong)] rounded-xl p-3 text-center">
+          <p className="text-2xl font-bold text-[var(--text-primary)]">{users.length}</p>
+          <p className="text-xs text-[var(--text-muted)] mt-0.5">使用者總數</p>
         </div>
-        <div className="bg-red-900/20 border border-red-800/40 rounded-xl p-3 text-center">
-          <p className="text-2xl font-bold text-red-400">
+        <div className="bg-red-50 border border-red-200 rounded-xl p-3 text-center">
+          <p className="text-2xl font-bold text-red-600">
             {users.filter((u) => u.role === "ADMIN").length}
           </p>
-          <p className="text-xs text-gray-500 mt-0.5">管理員</p>
+          <p className="text-xs text-[var(--text-muted)] mt-0.5">管理員</p>
         </div>
-        <div className="bg-blue-900/20 border border-blue-800/40 rounded-xl p-3 text-center">
-          <p className="text-2xl font-bold text-blue-400">
+        <div className="bg-blue-50 border border-blue-200 rounded-xl p-3 text-center">
+          <p className="text-2xl font-bold text-blue-600">
             {users.filter((u) => u.role === "EDITOR").length}
           </p>
-          <p className="text-xs text-gray-500 mt-0.5">編輯者</p>
+          <p className="text-xs text-[var(--text-muted)] mt-0.5">編輯者</p>
         </div>
       </div>
 
@@ -150,7 +150,7 @@ export function UsersClient({
       {!showAdd && (
         <button
           onClick={() => setShowAdd(true)}
-          className="mb-6 text-sm bg-amber-600 hover:bg-amber-500 text-white rounded-lg px-4 py-2 transition"
+          className="mb-6 text-sm bg-[var(--brand-primary)] hover:bg-[var(--text-secondary)] text-white rounded-lg px-4 py-2 transition"
         >
           + 新增使用者
         </button>
@@ -158,33 +158,33 @@ export function UsersClient({
 
       {/* Add user form */}
       {showAdd && (
-        <div className="mb-6 bg-gray-900 border border-amber-800/50 rounded-xl p-4">
-          <h3 className="text-sm font-bold text-gray-300 mb-3">新增 Google 登入使用者</h3>
-          <p className="text-xs text-gray-500 mb-3">
+        <div className="mb-6 bg-[var(--bg-secondary)] border border-[var(--brand-accent)]/20 rounded-xl p-4">
+          <h3 className="text-sm font-bold text-[var(--text-secondary)] mb-3">新增 Google 登入使用者</h3>
+          <p className="text-xs text-[var(--text-muted)] mb-3">
             輸入使用者的 Gmail 信箱，儲存後該帳號即可使用 Google 登入後台。
           </p>
           <div className="space-y-3">
             <div>
-              <label className="block text-xs text-gray-500 mb-1">Gmail 信箱</label>
+              <label className="block text-xs text-[var(--text-muted)] mb-1">Gmail 信箱</label>
               <input
                 type="email"
                 value={newEmail}
                 onChange={(e) => setNewEmail(e.target.value)}
                 placeholder="user@gmail.com"
-                className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-200 focus:outline-none focus:border-amber-500"
+                className="w-full bg-[var(--bg-tertiary)] border border-[var(--border-strong)] rounded-lg px-3 py-2 text-sm text-[var(--text-primary)] focus:outline-none focus:border-[var(--brand-accent)]"
               />
             </div>
             <div>
-              <label className="block text-xs text-gray-500 mb-1">顯示名稱</label>
+              <label className="block text-xs text-[var(--text-muted)] mb-1">顯示名稱</label>
               <input
                 value={newName}
                 onChange={(e) => setNewName(e.target.value)}
                 placeholder="王小明"
-                className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-200 focus:outline-none focus:border-amber-500"
+                className="w-full bg-[var(--bg-tertiary)] border border-[var(--border-strong)] rounded-lg px-3 py-2 text-sm text-[var(--text-primary)] focus:outline-none focus:border-[var(--brand-accent)]"
               />
             </div>
             <div>
-              <label className="block text-xs text-gray-500 mb-1">角色權限</label>
+              <label className="block text-xs text-[var(--text-muted)] mb-1">角色權限</label>
               <div className="flex gap-2">
                 {(["ADMIN", "EDITOR", "VIEWER"] as const).map((r) => {
                   const meta = ROLE_LABELS[r];
@@ -194,7 +194,7 @@ export function UsersClient({
                       type="button"
                       onClick={() => setNewRole(r)}
                       className={`text-xs px-3 py-1.5 rounded-lg border transition ${
-                        newRole === r ? meta.color : "border-gray-700 text-gray-500 hover:text-gray-300"
+                        newRole === r ? meta.color : "border-[var(--border-strong)] text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
                       }`}
                     >
                       {meta.label}
@@ -207,13 +207,13 @@ export function UsersClient({
               <button
                 onClick={addUser}
                 disabled={saving || !newEmail || !newName}
-                className="bg-amber-600 hover:bg-amber-500 text-white rounded-lg px-4 py-2 text-sm transition disabled:opacity-50"
+                className="bg-[var(--brand-primary)] hover:bg-[var(--text-secondary)] text-white rounded-lg px-4 py-2 text-sm transition disabled:opacity-50"
               >
                 {saving ? "新增中..." : "新增使用者"}
               </button>
               <button
                 onClick={() => setShowAdd(false)}
-                className="text-gray-500 hover:text-gray-300 text-sm transition px-4 py-2"
+                className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] text-sm transition px-4 py-2"
               >
                 取消
               </button>
@@ -232,15 +232,15 @@ export function UsersClient({
           return (
             <div
               key={user.id}
-              className={`bg-gray-900 border rounded-xl p-4 transition ${
-                isEditing ? "border-amber-600" : "border-gray-800"
+              className={`bg-[var(--bg-secondary)] border rounded-xl p-4 transition ${
+                isEditing ? "border-[var(--brand-accent)]" : "border-[var(--border-strong)]"
               }`}
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3 flex-1 min-w-0">
                   {/* Avatar placeholder */}
-                  <div className="w-9 h-9 rounded-full bg-gray-800 flex items-center justify-center shrink-0">
-                    <span className="text-sm text-gray-400">
+                  <div className="w-9 h-9 rounded-full bg-[var(--bg-tertiary)] flex items-center justify-center shrink-0">
+                    <span className="text-sm text-[var(--text-secondary)]">
                       {user.name.charAt(0).toUpperCase()}
                     </span>
                   </div>
@@ -249,17 +249,17 @@ export function UsersClient({
                       <input
                         value={editName}
                         onChange={(e) => setEditName(e.target.value)}
-                        className="bg-gray-800 border border-gray-700 rounded px-2 py-0.5 text-sm text-gray-200 focus:outline-none focus:border-amber-500 mb-0.5"
+                        className="bg-[var(--bg-tertiary)] border border-[var(--border-strong)] rounded px-2 py-0.5 text-sm text-[var(--text-primary)] focus:outline-none focus:border-[var(--brand-accent)] mb-0.5"
                       />
                     ) : (
-                      <p className="text-sm font-medium text-gray-200 truncate">
+                      <p className="text-sm font-medium text-[var(--text-primary)] truncate">
                         {user.name}
                         {isMe && (
-                          <span className="text-xs text-amber-500 ml-2">（你）</span>
+                          <span className="text-xs text-[var(--brand-accent)] ml-2">（你）</span>
                         )}
                       </p>
                     )}
-                    <p className="text-xs text-gray-500 truncate">{user.email}</p>
+                    <p className="text-xs text-[var(--text-muted)] truncate">{user.email}</p>
                   </div>
                 </div>
 
@@ -269,7 +269,7 @@ export function UsersClient({
                       <select
                         value={editRole}
                         onChange={(e) => setEditRole(e.target.value)}
-                        className="bg-gray-800 border border-gray-700 rounded px-2 py-1 text-xs text-gray-200 focus:outline-none focus:border-amber-500"
+                        className="bg-[var(--bg-tertiary)] border border-[var(--border-strong)] rounded px-2 py-1 text-xs text-[var(--text-primary)] focus:outline-none focus:border-[var(--brand-accent)]"
                       >
                         <option value="ADMIN">管理員</option>
                         <option value="EDITOR">編輯者</option>
@@ -278,13 +278,13 @@ export function UsersClient({
                       <button
                         onClick={() => updateUser(user.id)}
                         disabled={saving}
-                        className="text-xs bg-amber-600 hover:bg-amber-500 text-white rounded px-3 py-1 transition disabled:opacity-50"
+                        className="text-xs bg-[var(--brand-primary)] hover:bg-[var(--text-secondary)] text-white rounded px-3 py-1 transition disabled:opacity-50"
                       >
                         儲存
                       </button>
                       <button
                         onClick={() => setEditingId(null)}
-                        className="text-xs text-gray-500 hover:text-gray-300 transition"
+                        className="text-xs text-[var(--text-muted)] hover:text-[var(--text-secondary)] transition"
                       >
                         取消
                       </button>
@@ -298,14 +298,14 @@ export function UsersClient({
                       </span>
                       <button
                         onClick={() => startEdit(user)}
-                        className="text-xs text-amber-400 hover:text-amber-300 transition"
+                        className="text-xs text-[var(--brand-accent)] hover:text-[var(--brand-accent)] transition"
                       >
                         編輯
                       </button>
                       {!isMe && (
                         <button
                           onClick={() => deleteUser(user.id, user.email)}
-                          className="text-xs text-red-400 hover:text-red-300 transition"
+                          className="text-xs text-red-600 hover:text-red-600 transition"
                         >
                           移除
                         </button>

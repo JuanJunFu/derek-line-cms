@@ -29,10 +29,10 @@ const SEQ_LABELS: Record<string, string> = {
 };
 
 const STATUS_STYLES: Record<string, { bg: string; text: string; label: string }> = {
-  pending:    { bg: "bg-amber-900/30", text: "text-amber-400", label: "⏳ 待發送" },
-  processing: { bg: "bg-blue-900/30",  text: "text-blue-400",  label: "⚙️ 處理中" },
-  sent:       { bg: "bg-green-900/30", text: "text-green-400", label: "✅ 已發送" },
-  cancelled:  { bg: "bg-gray-800",     text: "text-gray-500",  label: "✖ 已取消" },
+  pending:    { bg: "bg-[var(--brand-accent)]/10", text: "text-[var(--brand-accent)]", label: "⏳ 待發送" },
+  processing: { bg: "bg-blue-50",  text: "text-blue-600",  label: "⚙️ 處理中" },
+  sent:       { bg: "bg-emerald-50", text: "text-emerald-600", label: "✅ 已發送" },
+  cancelled:  { bg: "bg-[var(--bg-tertiary)]",     text: "text-[var(--text-muted)]",  label: "✖ 已取消" },
 };
 
 export function SequenceTable({ messages }: { messages: ScheduledMessage[] }) {
@@ -85,13 +85,13 @@ export function SequenceTable({ messages }: { messages: ScheduledMessage[] }) {
   }
 
   if (messages.length === 0) {
-    return <p className="text-sm text-gray-500 py-4 text-center">無排程訊息</p>;
+    return <p className="text-sm text-[var(--text-muted)] py-4 text-center">無排程訊息</p>;
   }
 
   return (
     <div>
       {error && (
-        <div className="mb-3 bg-red-900/30 border border-red-700 rounded-lg px-3 py-2 text-sm text-red-300">
+        <div className="mb-3 bg-red-50 border border-red-300 rounded-lg px-3 py-2 text-sm text-red-600">
           {error}
         </div>
       )}
@@ -103,7 +103,7 @@ export function SequenceTable({ messages }: { messages: ScheduledMessage[] }) {
           return (
             <div
               key={msg.id}
-              className={`rounded-lg border border-gray-800 p-3 ${msg.status === "cancelled" ? "opacity-50" : ""}`}
+              className={`rounded-lg border border-[var(--border-strong)] p-3 ${msg.status === "cancelled" ? "opacity-50" : ""}`}
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0 flex-1">
@@ -111,17 +111,17 @@ export function SequenceTable({ messages }: { messages: ScheduledMessage[] }) {
                     <span className={`text-xs px-2 py-0.5 rounded-full ${st.bg} ${st.text} font-medium`}>
                       {st.label}
                     </span>
-                    <span className="text-xs text-gray-400 font-medium">
+                    <span className="text-xs text-[var(--text-secondary)] font-medium">
                       {SEQ_LABELS[msg.sequenceId] ?? msg.sequenceId}
                     </span>
-                    <span className="text-xs text-gray-500">
+                    <span className="text-xs text-[var(--text-muted)]">
                       › {STEP_LABELS[msg.stepId] ?? msg.stepId}
                     </span>
                   </div>
-                  <p className="text-xs text-gray-500 truncate">
+                  <p className="text-xs text-[var(--text-muted)] truncate">
                     用戶：{msg.userId.slice(0, 20)}…
                   </p>
-                  <p className="text-xs text-gray-600 mt-0.5">
+                  <p className="text-xs text-[var(--text-muted)] mt-0.5">
                     {msg.status === "sent" && msg.sentAt
                       ? `已發送：${new Date(msg.sentAt).toLocaleString("zh-TW", { timeZone: "Asia/Taipei" })}`
                       : `預計發送：${new Date(msg.scheduledAt).toLocaleString("zh-TW", { timeZone: "Asia/Taipei" })}`}
@@ -136,14 +136,14 @@ export function SequenceTable({ messages }: { messages: ScheduledMessage[] }) {
                         setError(null);
                       }}
                       disabled={isPending && actionId === msg.id}
-                      className="text-xs text-blue-400 hover:text-blue-300 transition disabled:opacity-50"
+                      className="text-xs text-blue-600 hover:text-blue-600 transition disabled:opacity-50"
                     >
                       重新排程
                     </button>
                     <button
                       onClick={() => handleCancel(msg.id)}
                       disabled={isPending && actionId === msg.id}
-                      className="text-xs text-red-400 hover:text-red-300 transition disabled:opacity-50"
+                      className="text-xs text-red-600 hover:text-red-600 transition disabled:opacity-50"
                     >
                       {actionId === msg.id ? "處理中…" : "取消"}
                     </button>
@@ -157,18 +157,18 @@ export function SequenceTable({ messages }: { messages: ScheduledMessage[] }) {
                     type="datetime-local"
                     value={rescheduleDate}
                     onChange={(e) => setRescheduleDate(e.target.value)}
-                    className="text-xs bg-gray-800 border border-gray-700 rounded px-2 py-1 text-gray-200 focus:outline-none focus:border-amber-500"
+                    className="text-xs bg-[var(--bg-tertiary)] border border-[var(--border-strong)] rounded px-2 py-1 text-[var(--text-primary)] focus:outline-none focus:border-[var(--brand-accent)]"
                   />
                   <button
                     onClick={() => handleReschedule(msg.id)}
                     disabled={isPending && actionId === msg.id}
-                    className="text-xs bg-amber-600 hover:bg-amber-500 text-white rounded px-3 py-1 transition disabled:opacity-50"
+                    className="text-xs bg-[var(--brand-primary)] hover:bg-[var(--text-secondary)] text-white rounded px-3 py-1 transition disabled:opacity-50"
                   >
                     確認
                   </button>
                   <button
                     onClick={() => { setRescheduleId(null); setRescheduleDate(""); }}
-                    className="text-xs text-gray-500 hover:text-gray-300 transition"
+                    className="text-xs text-[var(--text-muted)] hover:text-[var(--text-secondary)] transition"
                   >
                     取消
                   </button>

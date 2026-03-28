@@ -21,17 +21,17 @@ const TAG_ZH: Record<string, string> = {
 };
 
 const TAG_COLOR: Record<string, string> = {
-  "Intent:": "bg-blue-900/40 text-blue-300 border-blue-700/40",
-  "Region:": "bg-green-900/40 text-green-300 border-green-700/40",
-  "Status:": "bg-red-900/40 text-red-300 border-red-700/40",
-  "Role:":   "bg-yellow-900/40 text-yellow-300 border-yellow-700/40",
+  "Intent:": "bg-blue-50 text-blue-600 border-blue-300/40",
+  "Region:": "bg-emerald-50 text-emerald-600 border-emerald-300/40",
+  "Status:": "bg-red-50 text-red-600 border-red-300/40",
+  "Role:":   "bg-yellow-50 text-yellow-600 border-yellow-300",
 };
 
 function tagColor(tag: string) {
   for (const [prefix, cls] of Object.entries(TAG_COLOR)) {
     if (tag.startsWith(prefix)) return cls;
   }
-  return "bg-gray-800 text-gray-400 border-gray-700";
+  return "bg-[var(--bg-tertiary)] text-[var(--text-secondary)] border-[var(--border-strong)]";
 }
 
 const REL_COLORS: Record<string, string> = {
@@ -111,16 +111,16 @@ export default async function GraphPage() {
 
   return (
     <div>
-      <h1 className="text-xl font-bold text-gray-100 mb-1">🕸️ 客戶關係圖</h1>
-      <p className="text-xs text-gray-500 mb-6">
+      <h1 className="text-xl font-bold text-[var(--text-primary)] mb-1">🕸️ 客戶關係圖</h1>
+      <p className="text-xs text-[var(--text-muted)] mb-6">
         Top 200 客戶（依關係分排序）× 意圖標籤 × 地區分佈
       </p>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
         {/* ── Left: Tag nodes with user count ── */}
         <div className="col-span-1 space-y-4">
-          <div className="bg-gray-900 border border-gray-800 rounded-xl p-4">
-            <h2 className="text-xs font-bold text-gray-400 mb-3">🏷️ 標籤節點（用戶數）</h2>
+          <div className="bg-[var(--bg-secondary)] border border-[var(--border-strong)] rounded-xl p-4">
+            <h2 className="text-xs font-bold text-[var(--text-secondary)] mb-3">🏷️ 標籤節點（用戶數）</h2>
             <div className="space-y-1.5">
               {tagNodes.map(([tag, { userIds, label }]) => {
                 const pct = Math.round((userIds.length / profiles.length) * 100);
@@ -130,11 +130,11 @@ export default async function GraphPage() {
                       <span className={`text-xs px-1.5 py-0.5 rounded border ${tagColor(tag)}`}>
                         {label}
                       </span>
-                      <span className="text-xs text-gray-500">{userIds.length} 人 ({pct}%)</span>
+                      <span className="text-xs text-[var(--text-muted)]">{userIds.length} 人 ({pct}%)</span>
                     </div>
-                    <div className="w-full bg-gray-800 rounded-full h-1">
+                    <div className="w-full bg-[var(--bg-tertiary)] rounded-full h-1">
                       <div
-                        className="h-1 rounded-full bg-amber-600"
+                        className="h-1 rounded-full bg-[var(--brand-primary)]"
                         style={{ width: `${pct}%` }}
                       />
                     </div>
@@ -146,15 +146,15 @@ export default async function GraphPage() {
 
           {/* Store interaction nodes */}
           {storeEvents.length > 0 && (
-            <div className="bg-gray-900 border border-gray-800 rounded-xl p-4">
-              <h2 className="text-xs font-bold text-gray-400 mb-3">🏪 門市互動節點</h2>
+            <div className="bg-[var(--bg-secondary)] border border-[var(--border-strong)] rounded-xl p-4">
+              <h2 className="text-xs font-bold text-[var(--text-secondary)] mb-3">🏪 門市互動節點</h2>
               <div className="space-y-1.5">
                 {storeEvents.map((s) => (
                   <div key={s.storeId} className="flex items-center justify-between text-xs">
-                    <span className="text-gray-300 truncate max-w-[120px]">
+                    <span className="text-[var(--text-secondary)] truncate max-w-[120px]">
                       {storeNameMap[s.storeId!] ?? s.storeId}
                     </span>
-                    <span className="text-amber-400 font-mono">{s._count}</span>
+                    <span className="text-[var(--brand-accent)] font-mono">{s._count}</span>
                   </div>
                 ))}
               </div>
@@ -165,13 +165,13 @@ export default async function GraphPage() {
         {/* ── Center + Right: User clusters grouped by primary tag ── */}
         <div className="col-span-2 space-y-4">
           {sortedGroups.map(([tag, users]) => (
-            <div key={tag} className="bg-gray-900 border border-gray-800 rounded-xl p-4">
+            <div key={tag} className="bg-[var(--bg-secondary)] border border-[var(--border-strong)] rounded-xl p-4">
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
                   <span className={`text-xs px-2 py-0.5 rounded border ${tagColor(tag)}`}>
                     {TAG_ZH[tag] ?? (tag === "uncategorized" ? "未分類" : tag)}
                   </span>
-                  <span className="text-xs text-gray-500">{users.length} 人</span>
+                  <span className="text-xs text-[var(--text-muted)]">{users.length} 人</span>
                 </div>
                 <RelLevelBar users={users} />
               </div>
@@ -181,13 +181,13 @@ export default async function GraphPage() {
                   <Link
                     key={u.userId}
                     href={`/leads/${encodeURIComponent(u.userId)}`}
-                    className={`flex items-center justify-between bg-gray-800/50 rounded-lg px-2 py-1.5 border-l-2 hover:bg-gray-800 transition ${REL_COLORS[u.relationshipLevel ?? "新識"] ?? "border-l-gray-700"}`}
+                    className={`flex items-center justify-between bg-[var(--bg-tertiary)]/50 rounded-lg px-2 py-1.5 border-l-2 hover:bg-[var(--bg-tertiary)] transition ${REL_COLORS[u.relationshipLevel ?? "新識"] ?? "border-l-gray-700"}`}
                   >
                     <div className="min-w-0">
-                      <p className="text-xs text-gray-200 truncate">
+                      <p className="text-xs text-[var(--text-primary)] truncate">
                         {u.displayName || u.userId.slice(0, 12) + "…"}
                       </p>
-                      <p className="text-xs text-gray-600">
+                      <p className="text-xs text-[var(--text-muted)]">
                         {u.relationshipLevel ?? "新識"} · {u.relationshipScore ?? 0}分
                       </p>
                     </div>
@@ -198,8 +198,8 @@ export default async function GraphPage() {
                   </Link>
                 ))}
                 {users.length > 8 && (
-                  <div className="flex items-center justify-center bg-gray-800/30 rounded-lg px-2 py-1.5 border border-gray-700/30">
-                    <span className="text-xs text-gray-600">+{users.length - 8} 人</span>
+                  <div className="flex items-center justify-center bg-[var(--bg-tertiary)]/30 rounded-lg px-2 py-1.5 border border-[var(--border-strong)]/30">
+                    <span className="text-xs text-[var(--text-muted)]">+{users.length - 8} 人</span>
                   </div>
                 )}
               </div>
@@ -218,7 +218,7 @@ function RelLevelBar({
   users: { relationshipLevel: string | null }[];
 }) {
   const levels = ["新識", "認識", "熟識", "信任", "忠誠"];
-  const colors  = ["bg-gray-600", "bg-blue-600", "bg-emerald-600", "bg-amber-500", "bg-orange-500"];
+  const colors  = ["bg-gray-600", "bg-blue-600", "bg-emerald-600", "bg-[var(--brand-accent)]", "bg-orange-500"];
   const counts  = levels.map((lv) => users.filter((u) => (u.relationshipLevel ?? "新識") === lv).length);
   const total   = users.length;
 
@@ -230,7 +230,7 @@ function RelLevelBar({
         return (
           <div key={lv} title={`${lv}: ${counts[i]}`} className="flex items-center gap-0.5">
             <div className={`w-2 h-2 rounded-full ${colors[i]}`} />
-            <span className="text-xs text-gray-600">{counts[i]}</span>
+            <span className="text-xs text-[var(--text-muted)]">{counts[i]}</span>
           </div>
         );
       })}

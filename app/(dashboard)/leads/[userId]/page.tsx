@@ -41,7 +41,7 @@ const TAG_ZH: Record<string, string> = {
 function getEventDotColor(eventType: string): string {
   if (eventType === "FOLLOW") return "bg-green-500";
   if (eventType === "UNFOLLOW") return "bg-red-500";
-  if (["STORE_CALL", "STORE_NAV", "STORE_LINE"].includes(eventType)) return "bg-amber-500";
+  if (["STORE_CALL", "STORE_NAV", "STORE_LINE"].includes(eventType)) return "bg-[var(--brand-accent)]";
   if (eventType === "PRODUCT_VIEW") return "bg-blue-500";
   if (eventType === "REGION_SELECT") return "bg-emerald-500";
   if (eventType === "MESSAGE") return "bg-purple-500";
@@ -131,16 +131,16 @@ export default async function UserTimelinePage({
   const refProfileMap = Object.fromEntries(refProfiles.map((p) => [p.userId, p]));
 
   const scoreColors: Record<string, string> = {
-    HOT: "text-red-400 bg-red-900/30 border border-red-700",
-    WARM: "text-amber-400 bg-amber-900/30 border border-amber-700",
-    COLD: "text-gray-400 bg-gray-800 border border-gray-700",
+    HOT: "text-red-600 bg-red-50 border border-red-300",
+    WARM: "text-[var(--brand-accent)] bg-[var(--brand-accent)]/10 border border-[var(--brand-accent)]/30",
+    COLD: "text-[var(--text-secondary)] bg-[var(--bg-tertiary)] border border-[var(--border-strong)]",
   };
 
   const relLevelColors: Record<string, string> = {
-    "新識": "text-gray-400",
-    "認識": "text-blue-400",
+    "新識": "text-[var(--text-secondary)]",
+    "認識": "text-blue-600",
     "熟識": "text-emerald-400",
-    "信任": "text-amber-400",
+    "信任": "text-[var(--brand-accent)]",
     "忠誠": "text-orange-400",
   };
 
@@ -158,22 +158,22 @@ export default async function UserTimelinePage({
     <div className="max-w-3xl">
       <Link
         href="/leads"
-        className="text-amber-500 hover:text-amber-400 text-sm mb-4 inline-block"
+        className="text-[var(--brand-accent)] hover:text-[var(--brand-accent)] text-sm mb-4 inline-block"
       >
         ← 返回客戶列表
       </Link>
 
-      <h1 className="text-xl font-bold text-gray-100 mb-1">
+      <h1 className="text-xl font-bold text-[var(--text-primary)] mb-1">
         {profile.displayName || decodedUserId}
       </h1>
-      <p className="text-xs text-gray-500 mb-4">
+      <p className="text-xs text-[var(--text-muted)] mb-4">
         LINE ID: {decodedUserId} ·
         {profile.customerType === "returning" ? " 老客戶 🔄" : " 新客戶 🌱"} ·
         首次加入 {profile.firstSeen.toLocaleDateString("zh-TW", { timeZone: "Asia/Taipei" })}
       </p>
 
       {/* ── Dual-track Score Card ── */}
-      <div className="bg-gray-900 rounded-xl border border-gray-800 p-4 mb-4">
+      <div className="bg-[var(--bg-secondary)] rounded-xl border border-[var(--border-strong)] p-4 mb-4">
         <div className="flex items-start justify-between mb-3">
           <div className="flex items-center gap-2 flex-wrap">
             {/* Lead score */}
@@ -181,14 +181,14 @@ export default async function UserTimelinePage({
               {profile.leadScore === "HOT" ? "🔥 HOT" : profile.leadScore === "WARM" ? "🟠 WARM" : "❄️ COLD"}
             </span>
             {/* Relationship level */}
-            <span className={`px-3 py-1 rounded-full text-sm font-semibold bg-gray-800 border border-gray-700 ${relLevelColors[profile.relationshipLevel ?? "新識"]}`}>
+            <span className={`px-3 py-1 rounded-full text-sm font-semibold bg-[var(--bg-tertiary)] border border-[var(--border-strong)] ${relLevelColors[profile.relationshipLevel ?? "新識"]}`}>
               關係：{profile.relationshipLevel ?? "新識"}（{profile.relationshipScore ?? 0}分）
             </span>
             {profile.isBlocked && (
-              <span className="px-2 py-1 rounded-full text-xs bg-red-900/50 text-red-300">已封鎖</span>
+              <span className="px-2 py-1 rounded-full text-xs bg-red-50 text-red-600">已封鎖</span>
             )}
           </div>
-          <div className="text-right text-xs text-gray-500 shrink-0 ml-2">
+          <div className="text-right text-xs text-[var(--text-muted)] shrink-0 ml-2">
             <p>共 {profile.totalEvents} 次互動</p>
             <p>最後：{profile.lastActive.toLocaleDateString("zh-TW", { timeZone: "Asia/Taipei" })}</p>
           </div>
@@ -196,13 +196,13 @@ export default async function UserTimelinePage({
 
         {/* Relationship score bar */}
         <div className="mb-3">
-          <div className="flex justify-between text-xs text-gray-500 mb-1">
+          <div className="flex justify-between text-xs text-[var(--text-muted)] mb-1">
             <span>關係分 {profile.relationshipScore ?? 0}/100</span>
             <span>目標：下一等級</span>
           </div>
-          <div className="w-full bg-gray-800 rounded-full h-2">
+          <div className="w-full bg-[var(--bg-tertiary)] rounded-full h-2">
             <div
-              className="bg-amber-500 h-2 rounded-full transition-all"
+              className="bg-[var(--brand-accent)] h-2 rounded-full transition-all"
               style={{ width: `${profile.relationshipScore ?? 0}%` }}
             />
           </div>
@@ -215,55 +215,55 @@ export default async function UserTimelinePage({
               key={tag}
               className={`text-xs px-2 py-0.5 rounded ${
                 tag.startsWith("Intent:")
-                  ? "bg-blue-900/40 text-blue-300"
+                  ? "bg-blue-50 text-blue-600"
                   : tag.startsWith("Region:")
-                    ? "bg-green-900/40 text-green-300"
+                    ? "bg-emerald-50 text-emerald-600"
                     : tag.startsWith("Status:")
-                      ? "bg-red-900/40 text-red-300"
+                      ? "bg-red-50 text-red-600"
                       : tag.startsWith("Role:")
-                        ? "bg-yellow-900/40 text-yellow-300"
-                        : "bg-gray-700 text-gray-300"
+                        ? "bg-yellow-50 text-yellow-600"
+                        : "bg-[var(--border-strong)] text-[var(--text-secondary)]"
               }`}
             >
               {TAG_ZH[tag] ?? tag}
             </span>
           ))}
           {profile.tags.length === 0 && (
-            <span className="text-xs text-gray-600">尚無標籤</span>
+            <span className="text-xs text-[var(--text-muted)]">尚無標籤</span>
           )}
         </div>
       </div>
 
       {/* ── AI Suggestion ── */}
-      <div className="bg-amber-950/30 border border-amber-800/50 rounded-xl p-3 mb-4">
-        <p className="text-xs font-bold text-amber-400 mb-1">💡 建議行動</p>
-        <p className="text-sm text-amber-100">{aiSuggestion}</p>
+      <div className="bg-[var(--brand-accent)]/10 border border-[var(--brand-accent)]/20 rounded-xl p-3 mb-4">
+        <p className="text-xs font-bold text-[var(--brand-accent)] mb-1">💡 建議行動</p>
+        <p className="text-sm text-[var(--text-primary)]">{aiSuggestion}</p>
       </div>
 
       {/* ── Referral Relationships ── */}
       {(referralAsReferee || referralsAsReferrer.length > 0) && (
-        <div className="bg-gray-900 border border-gray-800 rounded-xl p-3 mb-4">
-          <p className="text-xs font-bold text-gray-400 mb-2">🤝 推薦關係</p>
+        <div className="bg-[var(--bg-secondary)] border border-[var(--border-strong)] rounded-xl p-3 mb-4">
+          <p className="text-xs font-bold text-[var(--text-secondary)] mb-2">🤝 推薦關係</p>
 
           {/* Who referred this user */}
           {referralAsReferee && (
             <div className="flex items-center gap-2 text-xs mb-2">
-              <span className="text-gray-500">被推薦人：由</span>
+              <span className="text-[var(--text-muted)]">被推薦人：由</span>
               <Link
                 href={`/leads/${encodeURIComponent(referralAsReferee.referrerUserId)}`}
-                className="text-amber-400 hover:text-amber-300"
+                className="text-[var(--brand-accent)] hover:text-[var(--brand-accent)]"
               >
                 {refProfileMap[referralAsReferee.referrerUserId]?.displayName ??
                   referralAsReferee.referrerUserId.slice(0, 12) + "…"}
               </Link>
-              <span className="text-gray-500">推薦（碼：{referralAsReferee.code}）</span>
+              <span className="text-[var(--text-muted)]">推薦（碼：{referralAsReferee.code}）</span>
             </div>
           )}
 
           {/* Users this person referred */}
           {referralsAsReferrer.length > 0 && (
             <div>
-              <p className="text-xs text-gray-500 mb-1">
+              <p className="text-xs text-[var(--text-muted)] mb-1">
                 推薦人：已推薦 {referralsAsReferrer.filter((r) => r.status === "COMPLETED").length} 人
                 {referralsAsReferrer.filter((r) => r.status === "PENDING").length > 0 &&
                   `（${referralsAsReferrer.filter((r) => r.status === "PENDING").length} 組待使用）`}
@@ -271,20 +271,20 @@ export default async function UserTimelinePage({
               <div className="space-y-1">
                 {referralsAsReferrer.map((r) => (
                   <div key={r.id} className="flex items-center gap-2 text-xs">
-                    <span className="font-mono text-amber-400">{r.code}</span>
-                    <span className={r.status === "COMPLETED" ? "text-green-400" : "text-gray-600"}>
+                    <span className="font-mono text-[var(--brand-accent)]">{r.code}</span>
+                    <span className={r.status === "COMPLETED" ? "text-emerald-600" : "text-[var(--text-muted)]"}>
                       {r.status === "COMPLETED" ? "✅" : "⏳"}
                     </span>
                     {r.refereeUserId ? (
                       <Link
                         href={`/leads/${encodeURIComponent(r.refereeUserId)}`}
-                        className="text-gray-300 hover:text-amber-400"
+                        className="text-[var(--text-secondary)] hover:text-[var(--brand-accent)]"
                       >
                         {refProfileMap[r.refereeUserId]?.displayName ??
                           r.refereeUserId.slice(0, 12) + "…"}
                       </Link>
                     ) : (
-                      <span className="text-gray-600">等待使用</span>
+                      <span className="text-[var(--text-muted)]">等待使用</span>
                     )}
                   </div>
                 ))}
@@ -296,21 +296,21 @@ export default async function UserTimelinePage({
 
       {/* ── Sequence State ── */}
       {Object.keys(sequenceState).length > 0 && (
-        <div className="bg-gray-900 border border-gray-800 rounded-xl p-3 mb-4">
-          <p className="text-xs font-bold text-gray-400 mb-2">📬 序列狀態</p>
+        <div className="bg-[var(--bg-secondary)] border border-[var(--border-strong)] rounded-xl p-3 mb-4">
+          <p className="text-xs font-bold text-[var(--text-secondary)] mb-2">📬 序列狀態</p>
           <div className="space-y-1">
             {sequenceState.new_customer && (
               <div className="flex items-center justify-between text-xs">
-                <span className="text-gray-300">新客教育序列</span>
-                <span className={sequenceState.new_customer.completedAt ? "text-green-400" : "text-amber-400"}>
+                <span className="text-[var(--text-secondary)]">新客教育序列</span>
+                <span className={sequenceState.new_customer.completedAt ? "text-emerald-600" : "text-[var(--brand-accent)]"}>
                   {sequenceState.new_customer.completedAt ? "✅ 已完成" : "⏳ 進行中"}
                 </span>
               </div>
             )}
             {sequenceState.repair && (
               <div className="flex items-center justify-between text-xs">
-                <span className="text-gray-300">維修服務序列</span>
-                <span className={sequenceState.repair.completedAt ? "text-green-400" : "text-amber-400"}>
+                <span className="text-[var(--text-secondary)]">維修服務序列</span>
+                <span className={sequenceState.repair.completedAt ? "text-emerald-600" : "text-[var(--brand-accent)]"}>
                   {sequenceState.repair.completedAt ? "✅ 已完成" : "⏳ 進行中"}
                 </span>
               </div>
@@ -320,16 +320,16 @@ export default async function UserTimelinePage({
       )}
 
       {/* ── Journey Timeline ── */}
-      <h2 className="text-sm font-bold text-amber-500 mb-4">
+      <h2 className="text-sm font-bold text-[var(--brand-accent)] mb-4">
         🕐 完整旅程時間軸（{events.length} 筆事件）
       </h2>
 
       {events.length === 0 ? (
-        <p className="text-sm text-gray-500">無紀錄</p>
+        <p className="text-sm text-[var(--text-muted)]">無紀錄</p>
       ) : (
         <div className="relative">
           {/* Timeline line */}
-          <div className="absolute left-4 top-0 bottom-0 w-px bg-gray-800" />
+          <div className="absolute left-4 top-0 bottom-0 w-px bg-[var(--bg-tertiary)]" />
 
           <div className="space-y-0">
             {events.map((event, i) => {
@@ -344,7 +344,7 @@ export default async function UserTimelinePage({
                 <div key={event.id}>
                   {showDate && (
                     <div className="pl-10 py-2">
-                      <span className="text-xs font-bold text-gray-500">
+                      <span className="text-xs font-bold text-[var(--text-muted)]">
                         {event.createdAt.toLocaleDateString("zh-TW", {
                           timeZone: "Asia/Taipei",
                           year: "numeric",
@@ -365,16 +365,16 @@ export default async function UserTimelinePage({
                     {/* Content */}
                     <div className={`flex-1 rounded-lg px-3 py-2 ${
                       ["STORE_CALL", "STORE_NAV", "STORE_LINE"].includes(event.eventType)
-                        ? "bg-amber-950/40 border border-amber-800/30"
+                        ? "bg-[var(--brand-accent)]/10 border border-[var(--brand-accent)]/20"
                         : event.eventType === "FOLLOW"
-                          ? "bg-green-950/30 border border-green-800/20"
-                          : "bg-gray-900/50"
+                          ? "bg-emerald-50 border border-emerald-200"
+                          : "bg-[var(--bg-secondary)]/50"
                     }`}>
                       <div className="flex items-center justify-between">
-                        <span className="text-sm text-gray-200">
+                        <span className="text-sm text-[var(--text-primary)]">
                           {EVENT_NAMES[event.eventType] ?? event.eventType}
                         </span>
-                        <span className="text-xs text-gray-600">
+                        <span className="text-xs text-[var(--text-muted)]">
                           {event.createdAt.toLocaleTimeString("zh-TW", {
                             hour: "2-digit",
                             minute: "2-digit",
@@ -384,24 +384,24 @@ export default async function UserTimelinePage({
 
                       {/* Event details */}
                       {eventData.keyword && (
-                        <p className="text-xs text-gray-400 mt-0.5">
+                        <p className="text-xs text-[var(--text-secondary)] mt-0.5">
                           訊息：「{String(eventData.keyword).slice(0, 40)}」
                         </p>
                       )}
                       {eventData.regionName && (
-                        <p className="text-xs text-gray-400 mt-0.5">地區：{eventData.regionName}</p>
+                        <p className="text-xs text-[var(--text-secondary)] mt-0.5">地區：{eventData.regionName}</p>
                       )}
                       {eventData.storeName && (
-                        <p className="text-xs text-gray-400 mt-0.5">門市：{eventData.storeName}</p>
+                        <p className="text-xs text-[var(--text-secondary)] mt-0.5">門市：{eventData.storeName}</p>
                       )}
                       {eventData.category && (
-                        <p className="text-xs text-gray-400 mt-0.5">
+                        <p className="text-xs text-[var(--text-secondary)] mt-0.5">
                           產品：{eventData.category}
                           {eventData.series ? ` / ${eventData.series}` : ""}
                         </p>
                       )}
                       {eventData.postbackAction && (
-                        <p className="text-xs text-blue-400 mt-0.5">→ {eventData.postbackAction}</p>
+                        <p className="text-xs text-blue-600 mt-0.5">→ {eventData.postbackAction}</p>
                       )}
                     </div>
                   </div>
@@ -415,19 +415,19 @@ export default async function UserTimelinePage({
       {/* ── Upcoming Scheduled Messages ── */}
       {scheduledMessages.filter((m) => m.status === "pending").length > 0 && (
         <div className="mt-6">
-          <h2 className="text-sm font-bold text-gray-400 mb-3">📅 待發送序列訊息</h2>
+          <h2 className="text-sm font-bold text-[var(--text-secondary)] mb-3">📅 待發送序列訊息</h2>
           <div className="space-y-2">
             {scheduledMessages
               .filter((m) => m.status === "pending")
               .map((msg) => (
                 <div
                   key={msg.id}
-                  className="flex items-center justify-between bg-gray-900 border border-gray-800 rounded-lg px-3 py-2 text-xs"
+                  className="flex items-center justify-between bg-[var(--bg-secondary)] border border-[var(--border-strong)] rounded-lg px-3 py-2 text-xs"
                 >
-                  <span className="text-gray-400">
+                  <span className="text-[var(--text-secondary)]">
                     {msg.sequenceId.replace("hardcode_", "")} / {msg.stepId}
                   </span>
-                  <span className="text-gray-500">
+                  <span className="text-[var(--text-muted)]">
                     預計 {new Date(msg.scheduledAt).toLocaleDateString("zh-TW", { timeZone: "Asia/Taipei" })}
                     {" "}
                     {new Date(msg.scheduledAt).toLocaleTimeString("zh-TW", { timeZone: "Asia/Taipei", hour: "2-digit", minute: "2-digit" })}

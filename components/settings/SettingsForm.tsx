@@ -111,7 +111,7 @@ export function SettingsForm({ settings }: { settings: SiteSetting[] }) {
   }
 
   const inputClass =
-    "w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-gray-100 focus:outline-none focus:border-amber-500";
+    "w-full px-3 py-2 bg-[var(--bg-tertiary)] border border-[var(--border-strong)] rounded-lg text-[var(--text-primary)] focus:outline-none focus:border-[var(--brand-accent)]";
 
   // Build grouped and ungrouped settings
   const groupedKeys = new Set(GROUPS.flatMap((g) => g.keys));
@@ -124,13 +124,13 @@ export function SettingsForm({ settings }: { settings: SiteSetting[] }) {
     return (
       <div key={s.key} className="py-3">
         <div className="flex items-center gap-2 mb-1">
-          <label className="text-sm font-medium text-amber-500">
+          <label className="text-sm font-medium text-[var(--brand-accent)]">
             {s.label}
           </label>
-          <span className="text-xs font-mono text-gray-600">{s.key}</span>
+          <span className="text-xs font-mono text-[var(--text-muted)]">{s.key}</span>
         </div>
         {DESCRIPTIONS[s.key] && (
-          <p className="text-xs text-gray-500 mb-2">
+          <p className="text-xs text-[var(--text-muted)] mb-2">
             {DESCRIPTIONS[s.key]}
           </p>
         )}
@@ -146,7 +146,7 @@ export function SettingsForm({ settings }: { settings: SiteSetting[] }) {
                     ? env === "production"
                       ? "bg-green-700 text-white"
                       : "bg-yellow-700 text-white"
-                    : "bg-gray-800 border border-gray-700 text-gray-400 hover:text-gray-200"
+                    : "bg-[var(--bg-tertiary)] border border-[var(--border-strong)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
                 }`}
               >
                 {env === "production" ? "正式環境" : "測試環境"}
@@ -159,7 +159,7 @@ export function SettingsForm({ settings }: { settings: SiteSetting[] }) {
               type="color"
               value={values[s.key]}
               onChange={(e) => update(s.key, e.target.value)}
-              className="w-10 h-10 rounded cursor-pointer border border-gray-700"
+              className="w-10 h-10 rounded cursor-pointer border border-[var(--border-strong)]"
             />
             <input
               className={inputClass + " flex-1"}
@@ -168,7 +168,7 @@ export function SettingsForm({ settings }: { settings: SiteSetting[] }) {
               placeholder="#B89A6A"
             />
             <div
-              className="w-20 h-10 rounded-lg border border-gray-700"
+              className="w-20 h-10 rounded-lg border border-[var(--border-strong)]"
               style={{ backgroundColor: values[s.key] }}
             />
           </div>
@@ -200,12 +200,12 @@ export function SettingsForm({ settings }: { settings: SiteSetting[] }) {
         return (
           <div
             key={group.title}
-            className="bg-gray-900 rounded-xl border border-gray-800 p-5"
+            className="bg-[var(--bg-secondary)] rounded-xl border border-[var(--border-strong)] p-5"
           >
-            <h2 className="text-sm font-bold text-gray-300 mb-1 pb-2 border-b border-gray-800">
+            <h2 className="text-sm font-bold text-[var(--text-secondary)] mb-1 pb-2 border-b border-[var(--border-strong)]">
               {group.title}
             </h2>
-            <div className="divide-y divide-gray-800">
+            <div className="divide-y divide-[var(--border-subtle)]">
               {groupSettings.map((s) => renderField(s))}
             </div>
           </div>
@@ -214,11 +214,11 @@ export function SettingsForm({ settings }: { settings: SiteSetting[] }) {
 
       {/* Ungrouped settings */}
       {ungrouped.length > 0 && (
-        <div className="bg-gray-900 rounded-xl border border-gray-800 p-5">
-          <h2 className="text-sm font-bold text-gray-300 mb-1 pb-2 border-b border-gray-800">
+        <div className="bg-[var(--bg-secondary)] rounded-xl border border-[var(--border-strong)] p-5">
+          <h2 className="text-sm font-bold text-[var(--text-secondary)] mb-1 pb-2 border-b border-[var(--border-strong)]">
             其他設定
           </h2>
-          <div className="divide-y divide-gray-800">
+          <div className="divide-y divide-[var(--border-subtle)]">
             {ungrouped.map((s) => renderField(s))}
           </div>
         </div>
@@ -228,12 +228,12 @@ export function SettingsForm({ settings }: { settings: SiteSetting[] }) {
         <button
           type="submit"
           disabled={loading}
-          className="bg-amber-600 hover:bg-amber-500 text-white px-6 py-2 rounded-lg font-bold transition disabled:opacity-50"
+          className="bg-[var(--brand-primary)] hover:bg-[var(--text-secondary)] text-white px-6 py-2 rounded-lg font-bold transition disabled:opacity-50"
         >
           {loading ? "儲存中..." : "儲存所有設定"}
         </button>
         {saved && (
-          <span className="text-green-400 text-sm">已儲存，LINE Bot 即時生效</span>
+          <span className="text-emerald-600 text-sm">已儲存，LINE Bot 即時生效</span>
         )}
       </div>
     </form>

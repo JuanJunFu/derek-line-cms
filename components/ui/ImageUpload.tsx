@@ -52,14 +52,14 @@ export function ImageUpload({
       {value ? (
         <div className="relative inline-block">
           {imgError ? (
-            <div className="w-full sm:w-48 h-32 rounded-lg border border-gray-700 bg-gray-800 flex items-center justify-center">
-              <span className="text-xs text-gray-500">圖片無法載入</span>
+            <div className="w-full sm:w-48 h-32 rounded-lg border border-[var(--border-strong)] bg-[var(--bg-tertiary)] flex items-center justify-center">
+              <span className="text-xs text-[var(--text-muted)]">圖片無法載入</span>
             </div>
           ) : (
             <img
               src={value}
               alt="門市圖片"
-              className="w-full sm:w-48 h-32 object-cover rounded-lg border border-gray-700"
+              className="w-full sm:w-48 h-32 object-cover rounded-lg border border-[var(--border-strong)]"
               onError={() => setImgError(true)}
             />
           )}
@@ -78,8 +78,8 @@ export function ImageUpload({
         <label
           className={`flex flex-col items-center justify-center w-full sm:w-48 h-32 rounded-lg border-2 border-dashed cursor-pointer transition ${
             dragOver
-              ? "border-amber-400 bg-amber-900/20"
-              : "border-gray-700 bg-gray-800 hover:border-gray-600"
+              ? "border-amber-400 bg-[var(--brand-accent)]/10"
+              : "border-[var(--border-strong)] bg-[var(--bg-tertiary)] hover:border-[var(--border-strong)]"
           } ${uploading ? "opacity-50 pointer-events-none" : ""}`}
           onDragOver={(e) => {
             e.preventDefault();
@@ -103,7 +103,7 @@ export function ImageUpload({
             }}
           />
           <span className="text-2xl mb-1">{uploading ? "⏳" : "📷"}</span>
-          <span className="text-xs text-gray-400">
+          <span className="text-xs text-[var(--text-secondary)]">
             {uploading ? "上傳中..." : "點擊或拖放圖片"}
           </span>
         </label>

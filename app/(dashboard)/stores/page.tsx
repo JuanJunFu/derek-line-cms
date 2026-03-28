@@ -158,10 +158,10 @@ export default async function StoresPage() {
   return (
     <div>
       <div className="flex justify-between items-center mb-4">
-        <h1 className="text-xl font-bold text-gray-100">🏪 門市管理</h1>
+        <h1 className="text-xl font-bold text-[var(--text-primary)]">🏪 門市管理</h1>
         <Link
           href="/stores/new"
-          className="bg-amber-600 hover:bg-amber-500 text-white px-4 py-2 rounded-lg text-sm font-bold transition"
+          className="bg-[var(--brand-primary)] hover:bg-[var(--text-secondary)] text-white px-4 py-2 rounded-lg text-sm font-bold transition"
         >
           ＋ 新增門市
         </Link>
@@ -169,39 +169,39 @@ export default async function StoresPage() {
 
       {/* ── 意圖情報摘要卡 ── */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
-        <div className="bg-gray-900 rounded-xl border border-gray-800 p-4">
-          <p className="text-xs text-gray-500">本月意向轉化率</p>
-          <p className="text-2xl font-bold text-amber-400">{conversionRate}%</p>
-          <p className="text-xs text-gray-600 mt-1">導航+致電 / 門市查看</p>
+        <div className="bg-[var(--bg-secondary)] rounded-xl border border-[var(--border-strong)] p-4">
+          <p className="text-xs text-[var(--text-muted)]">本月意向轉化率</p>
+          <p className="text-2xl font-bold text-[var(--brand-accent)]">{conversionRate}%</p>
+          <p className="text-xs text-[var(--text-muted)] mt-1">導航+致電 / 門市查看</p>
         </div>
-        <div className="bg-gray-900 rounded-xl border border-gray-800 p-4">
-          <p className="text-xs text-gray-500">本週熱門區域</p>
-          <p className="text-2xl font-bold text-green-400">{hotRegion}</p>
+        <div className="bg-[var(--bg-secondary)] rounded-xl border border-[var(--border-strong)] p-4">
+          <p className="text-xs text-[var(--text-muted)]">本週熱門區域</p>
+          <p className="text-2xl font-bold text-emerald-600">{hotRegion}</p>
           {hotRegionGrowth > 0 && (
-            <p className="text-xs text-green-500 mt-1">↗ 成長 {hotRegionGrowth}%</p>
+            <p className="text-xs text-emerald-600 mt-1">↗ 成長 {hotRegionGrowth}%</p>
           )}
         </div>
-        <div className="bg-gray-900 rounded-xl border border-gray-800 p-4">
-          <p className="text-xs text-gray-500">熱門意圖分佈</p>
-          <p className="text-lg font-bold text-blue-400">
+        <div className="bg-[var(--bg-secondary)] rounded-xl border border-[var(--border-strong)] p-4">
+          <p className="text-xs text-[var(--text-muted)]">熱門意圖分佈</p>
+          <p className="text-lg font-bold text-blue-600">
             {topIntent ? (INTENT_ZH[topIntent[0]] ?? topIntent[0]) : "—"}
           </p>
           {topIntent && (
-            <p className="text-xs text-blue-500 mt-1">佔全部意圖 {topIntentPct}%</p>
+            <p className="text-xs text-blue-600 mt-1">佔全部意圖 {topIntentPct}%</p>
           )}
         </div>
-        <div className="bg-gray-900 rounded-xl border border-gray-800 p-4">
-          <p className="text-xs text-gray-500">熱線索數量</p>
-          <p className="text-2xl font-bold text-red-400">{hotProfiles}</p>
-          <p className="text-xs text-gray-600 mt-1">30 天內高購買意圖</p>
+        <div className="bg-[var(--bg-secondary)] rounded-xl border border-[var(--border-strong)] p-4">
+          <p className="text-xs text-[var(--text-muted)]">熱線索數量</p>
+          <p className="text-2xl font-bold text-red-600">{hotProfiles}</p>
+          <p className="text-xs text-[var(--text-muted)] mt-1">30 天內高購買意圖</p>
         </div>
       </div>
 
       {/* ── 門市表格（含動態指標） ── */}
-      <div className="bg-gray-900 rounded-xl border border-gray-800 overflow-x-auto">
+      <div className="bg-[var(--bg-secondary)] rounded-xl border border-[var(--border-strong)] overflow-x-auto">
         <table className="w-full text-sm min-w-[700px]">
           <thead>
-            <tr className="bg-gray-800 text-amber-500">
+            <tr className="bg-[var(--bg-tertiary)] text-[var(--brand-accent)]">
               <th className="p-3 text-left font-medium">門市名稱</th>
               <th className="p-3 text-left font-medium">類型</th>
               <th className="p-3 text-left font-medium">地區</th>
@@ -226,11 +226,11 @@ export default async function StoresPage() {
               return (
                 <tr
                   key={s.id}
-                  className="border-t border-gray-800 hover:bg-gray-800/50 transition"
+                  className="border-t border-[var(--border-strong)] hover:bg-[var(--bg-tertiary)]/50 transition"
                 >
                   <td className="p-3">
-                    <p className="font-medium text-gray-200">{s.name}</p>
-                    <p className="text-xs text-gray-600">{s.phone}</p>
+                    <p className="font-medium text-[var(--text-primary)]">{s.name}</p>
+                    <p className="text-xs text-[var(--text-muted)]">{s.phone}</p>
                   </td>
                   <td className="p-3">
                     <span
@@ -240,35 +240,35 @@ export default async function StoresPage() {
                       {cfg?.label}
                     </span>
                   </td>
-                  <td className="p-3 text-gray-400">{s.region?.name}</td>
+                  <td className="p-3 text-[var(--text-secondary)]">{s.region?.name}</td>
                   <td className="p-3 text-right">
                     <span
                       className={`font-bold ${
                         rate >= 10
-                          ? "text-green-400"
+                          ? "text-emerald-600"
                           : rate >= 5
-                            ? "text-amber-400"
+                            ? "text-[var(--brand-accent)]"
                             : rate > 0
-                              ? "text-gray-400"
-                              : "text-gray-600"
+                              ? "text-[var(--text-secondary)]"
+                              : "text-[var(--text-muted)]"
                       }`}
                     >
                       {rate > 0 ? `${rate}%` : "—"}
                     </span>
                     {rate >= 10 && (
-                      <span className="text-xs text-green-600 ml-1">(極高)</span>
+                      <span className="text-xs text-emerald-700 ml-1">(極高)</span>
                     )}
                     {hasAnomaly && (
-                      <span className="text-xs text-red-400 ml-1" title="高查看但零行動">⚠️</span>
+                      <span className="text-xs text-red-600 ml-1" title="高查看但零行動">⚠️</span>
                     )}
                   </td>
                   <td className="p-3">
                     {affinity ? (
-                      <span className="text-xs px-2 py-0.5 rounded bg-blue-900/30 text-blue-300">
+                      <span className="text-xs px-2 py-0.5 rounded bg-blue-50 text-blue-600">
                         {affinity}
                       </span>
                     ) : (
-                      <span className="text-xs text-gray-600">—</span>
+                      <span className="text-xs text-[var(--text-muted)]">—</span>
                     )}
                   </td>
                   <td className="p-3">
@@ -277,13 +277,13 @@ export default async function StoresPage() {
                   <td className="p-3 flex gap-2">
                     <Link
                       href={`/stores/${s.id}`}
-                      className="text-amber-500 hover:text-amber-400 font-medium text-xs"
+                      className="text-[var(--brand-accent)] hover:text-[var(--brand-accent)] font-medium text-xs"
                     >
                       編輯
                     </Link>
                     <Link
                       href="/analytics/stores"
-                      className="text-blue-400 hover:text-blue-300 text-xs"
+                      className="text-blue-600 hover:text-blue-600 text-xs"
                     >
                       趨勢
                     </Link>

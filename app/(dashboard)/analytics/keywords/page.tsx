@@ -178,42 +178,42 @@ export default async function KeywordsPage() {
 
   return (
     <div className="max-w-full lg:max-w-4xl">
-      <h1 className="text-xl font-bold text-gray-100 mb-1">☁️ 意圖關鍵詞雲</h1>
-      <p className="text-xs text-gray-500 mb-6">
+      <h1 className="text-xl font-bold text-[var(--text-primary)] mb-1">☁️ 意圖關鍵詞雲</h1>
+      <p className="text-xs text-[var(--text-muted)] mb-6">
         過去 30 天用戶輸入但機器人未能回應的訊息 ·
         共 {unmatchedTotal} 筆 · {uniqueUnmatched} 位不重複用戶
       </p>
 
       {sorted.length === 0 ? (
-        <div className="bg-gray-900 border border-gray-800 rounded-xl p-8 text-center">
-          <p className="text-gray-500">過去 30 天內無未匹配訊息</p>
+        <div className="bg-[var(--bg-secondary)] border border-[var(--border-strong)] rounded-xl p-8 text-center">
+          <p className="text-[var(--text-muted)]">過去 30 天內無未匹配訊息</p>
         </div>
       ) : (
         <>
           {/* ── Word Cloud SVG ── */}
-          <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 mb-6">
-            <h2 className="text-xs font-bold text-gray-400 mb-4">詞頻視覺化（字體越大 = 出現越多次）</h2>
+          <div className="bg-[var(--bg-secondary)] border border-[var(--border-strong)] rounded-xl p-6 mb-6">
+            <h2 className="text-xs font-bold text-[var(--text-secondary)] mb-4">詞頻視覺化（字體越大 = 出現越多次）</h2>
             <WordCloud words={sorted.slice(0, 40)} maxCount={maxCount} />
           </div>
 
           {/* ── Top keywords table ── */}
-          <div className="bg-gray-900 border border-gray-800 rounded-xl p-4 mb-6">
-            <h2 className="text-xs font-bold text-gray-400 mb-3">📊 關鍵詞排行（前 20）</h2>
+          <div className="bg-[var(--bg-secondary)] border border-[var(--border-strong)] rounded-xl p-4 mb-6">
+            <h2 className="text-xs font-bold text-[var(--text-secondary)] mb-3">📊 關鍵詞排行（前 20）</h2>
             <div className="space-y-1.5">
               {sorted.slice(0, 20).map(({ word, count, uniqueUsers }, i) => {
                 const pct = Math.round((count / maxCount) * 100);
                 return (
                   <div key={word} className="flex items-center gap-3">
-                    <span className="text-xs text-gray-600 w-5 text-right">{i + 1}</span>
-                    <span className="text-sm text-gray-200 w-32 truncate font-medium">{word}</span>
-                    <div className="flex-1 bg-gray-800 rounded-full h-2">
+                    <span className="text-xs text-[var(--text-muted)] w-5 text-right">{i + 1}</span>
+                    <span className="text-sm text-[var(--text-primary)] w-32 truncate font-medium">{word}</span>
+                    <div className="flex-1 bg-[var(--bg-tertiary)] rounded-full h-2">
                       <div
-                        className="bg-amber-600 h-2 rounded-full"
+                        className="bg-[var(--brand-primary)] h-2 rounded-full"
                         style={{ width: `${pct}%` }}
                       />
                     </div>
-                    <span className="text-xs text-amber-400 w-10 text-right font-mono">{count}</span>
-                    <span className="text-xs text-gray-600 w-16 text-right">{uniqueUsers} 人</span>
+                    <span className="text-xs text-[var(--brand-accent)] w-10 text-right font-mono">{count}</span>
+                    <span className="text-xs text-[var(--text-muted)] w-16 text-right">{uniqueUsers} 人</span>
                   </div>
                 );
               })}
@@ -222,23 +222,23 @@ export default async function KeywordsPage() {
 
           {/* ── Co-occurrence matrix ── */}
           {coTagData.length > 0 && (
-            <div className="bg-gray-900 border border-gray-800 rounded-xl p-4 mb-6">
-              <h2 className="text-xs font-bold text-gray-400 mb-1">🔗 關鍵詞 × 客戶標籤關聯</h2>
-              <p className="text-xs text-gray-600 mb-4">輸入這些詞的用戶，同時擁有哪些意圖/地區標籤</p>
+            <div className="bg-[var(--bg-secondary)] border border-[var(--border-strong)] rounded-xl p-4 mb-6">
+              <h2 className="text-xs font-bold text-[var(--text-secondary)] mb-1">🔗 關鍵詞 × 客戶標籤關聯</h2>
+              <p className="text-xs text-[var(--text-muted)] mb-4">輸入這些詞的用戶，同時擁有哪些意圖/地區標籤</p>
               <div className="space-y-4">
                 {coTagData.map(({ word, tags }) => (
                   <div key={word}>
-                    <p className="text-sm font-bold text-amber-400 mb-1.5">「{word}」</p>
+                    <p className="text-sm font-bold text-[var(--brand-accent)] mb-1.5">「{word}」</p>
                     <div className="flex flex-wrap gap-2">
                       {tags.map(({ tag, count }) => (
                         <div
                           key={tag}
                           className={`flex items-center gap-1.5 text-xs px-2 py-1 rounded-lg ${
-                            tag.startsWith("Intent:") ? "bg-blue-900/40 text-blue-300"
-                            : tag.startsWith("Region:") ? "bg-green-900/40 text-green-300"
-                            : tag.startsWith("Status:") ? "bg-red-900/40 text-red-300"
-                            : tag.startsWith("Role:")   ? "bg-yellow-900/40 text-yellow-300"
-                            : "bg-gray-700 text-gray-300"
+                            tag.startsWith("Intent:") ? "bg-blue-50 text-blue-600"
+                            : tag.startsWith("Region:") ? "bg-emerald-50 text-emerald-600"
+                            : tag.startsWith("Status:") ? "bg-red-50 text-red-600"
+                            : tag.startsWith("Role:")   ? "bg-yellow-50 text-yellow-600"
+                            : "bg-[var(--border-strong)] text-[var(--text-secondary)]"
                           }`}
                         >
                           <span>{TAG_ZH[tag] ?? tag}</span>
@@ -253,9 +253,9 @@ export default async function KeywordsPage() {
           )}
 
           {/* ── Actionable insights ── */}
-          <div className="bg-amber-950/30 border border-amber-800/40 rounded-xl p-4">
-            <h2 className="text-xs font-bold text-amber-400 mb-2">💡 可行動洞察</h2>
-            <ul className="space-y-1.5 text-sm text-amber-100">
+          <div className="bg-[var(--brand-accent)]/10 border border-[var(--brand-accent)]/20 rounded-xl p-4">
+            <h2 className="text-xs font-bold text-[var(--brand-accent)] mb-2">💡 可行動洞察</h2>
+            <ul className="space-y-1.5 text-sm text-[var(--text-primary)]">
               {sorted[0] && (
                 <li>「{sorted[0].word}」出現 {sorted[0].count} 次，是最常見的未匹配詞 — 考慮新增此關鍵字的自動回覆。</li>
               )}

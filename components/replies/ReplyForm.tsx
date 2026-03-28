@@ -48,13 +48,13 @@ export function ReplyForm({ reply }: { reply?: AutoReply }) {
   }
 
   const inputClass =
-    "w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-gray-100 focus:outline-none focus:border-amber-500";
-  const labelClass = "block text-sm text-gray-400 mb-1";
+    "w-full px-3 py-2 bg-[var(--bg-tertiary)] border border-[var(--border-strong)] rounded-lg text-[var(--text-primary)] focus:outline-none focus:border-[var(--brand-accent)]";
+  const labelClass = "block text-sm text-[var(--text-secondary)] mb-1";
 
   return (
     <form
       onSubmit={handleSubmit}
-      className="max-w-2xl bg-gray-900 rounded-xl border border-gray-800 p-6 space-y-4"
+      className="max-w-2xl bg-[var(--bg-secondary)] rounded-xl border border-[var(--border-strong)] p-6 space-y-4"
     >
       <div>
         <label className={labelClass}>
@@ -78,12 +78,12 @@ export function ReplyForm({ reply }: { reply?: AutoReply }) {
           placeholder="回覆文字訊息，或輸入系統指令"
         />
         {form.message === "SHOW_REGION_MENU" && (
-          <p className="text-xs text-amber-400 mt-1">
+          <p className="text-xs text-[var(--brand-accent)] mt-1">
             系統指令：收到此關鍵字時，會自動顯示地區選單（非文字回覆）
           </p>
         )}
         {form.message === "SHOW_PRODUCT_MENU" && (
-          <p className="text-xs text-amber-400 mt-1">
+          <p className="text-xs text-[var(--brand-accent)] mt-1">
             系統指令：收到此關鍵字時，會自動顯示產品分類選單（非文字回覆）
           </p>
         )}
@@ -91,14 +91,14 @@ export function ReplyForm({ reply }: { reply?: AutoReply }) {
           <button
             type="button"
             onClick={() => update("message", "SHOW_REGION_MENU")}
-            className="text-xs bg-gray-800 hover:bg-gray-700 text-amber-500 px-2 py-1 rounded transition"
+            className="text-xs bg-[var(--bg-tertiary)] hover:bg-[var(--border-strong)] text-[var(--brand-accent)] px-2 py-1 rounded transition"
           >
             插入：顯示地區選單
           </button>
           <button
             type="button"
             onClick={() => update("message", "SHOW_PRODUCT_MENU")}
-            className="text-xs bg-gray-800 hover:bg-gray-700 text-amber-500 px-2 py-1 rounded transition"
+            className="text-xs bg-[var(--bg-tertiary)] hover:bg-[var(--border-strong)] text-[var(--brand-accent)] px-2 py-1 rounded transition"
           >
             插入：顯示產品選單
           </button>
@@ -122,7 +122,7 @@ export function ReplyForm({ reply }: { reply?: AutoReply }) {
             onChange={(e) => update("isActive", e.target.checked)}
             className="accent-amber-500"
           />
-          <label className="text-sm text-gray-400">啟用</label>
+          <label className="text-sm text-[var(--text-secondary)]">啟用</label>
         </div>
       </div>
 
@@ -130,14 +130,14 @@ export function ReplyForm({ reply }: { reply?: AutoReply }) {
         <button
           type="submit"
           disabled={loading}
-          className="bg-amber-600 hover:bg-amber-500 text-white px-6 py-2 rounded-lg font-bold transition disabled:opacity-50"
+          className="bg-[var(--brand-primary)] hover:bg-[var(--text-secondary)] text-white px-6 py-2 rounded-lg font-bold transition disabled:opacity-50"
         >
           {loading ? "儲存中..." : "儲存"}
         </button>
         <button
           type="button"
           onClick={() => router.push("/replies")}
-          className="bg-gray-700 hover:bg-gray-600 text-gray-300 px-6 py-2 rounded-lg transition"
+          className="bg-[var(--border-strong)] hover:bg-[var(--bg-tertiary)] text-[var(--text-secondary)] px-6 py-2 rounded-lg transition"
         >
           取消
         </button>

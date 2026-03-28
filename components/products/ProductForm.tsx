@@ -108,13 +108,13 @@ export function ProductForm({ category }: { category?: Category }) {
   }
 
   const inputClass =
-    "w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-gray-100 focus:outline-none focus:border-amber-500";
-  const labelClass = "block text-sm text-gray-400 mb-1";
+    "w-full px-3 py-2 bg-[var(--bg-tertiary)] border border-[var(--border-strong)] rounded-lg text-[var(--text-primary)] focus:outline-none focus:border-[var(--brand-accent)]";
+  const labelClass = "block text-sm text-[var(--text-secondary)] mb-1";
 
   return (
     <form
       onSubmit={handleSubmit}
-      className="max-w-full lg:max-w-3xl bg-gray-900 rounded-xl border border-gray-800 p-6 space-y-5"
+      className="max-w-full lg:max-w-3xl bg-[var(--bg-secondary)] rounded-xl border border-[var(--border-strong)] p-6 space-y-5"
     >
       {/* Basic info */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -192,27 +192,27 @@ export function ProductForm({ category }: { category?: Category }) {
             onChange={(e) => update("isActive", e.target.checked)}
             className="accent-amber-500"
           />
-          <label className="text-sm text-gray-400">啟用（LINE Bot 選單中顯示）</label>
+          <label className="text-sm text-[var(--text-secondary)]">啟用（LINE Bot 選單中顯示）</label>
         </div>
       </div>
 
       {/* Subcategories */}
       <div>
         <div className="flex justify-between items-center mb-3">
-          <label className="text-sm font-bold text-gray-300">
+          <label className="text-sm font-bold text-[var(--text-secondary)]">
             子分類（{subs.length}）
           </label>
           <button
             type="button"
             onClick={addSub}
-            className="text-xs bg-gray-800 hover:bg-gray-700 text-amber-500 px-3 py-1 rounded transition"
+            className="text-xs bg-[var(--bg-tertiary)] hover:bg-[var(--border-strong)] text-[var(--brand-accent)] px-3 py-1 rounded transition"
           >
             ＋ 新增子分類
           </button>
         </div>
 
         {subs.length === 0 && (
-          <p className="text-xs text-gray-500 italic">
+          <p className="text-xs text-[var(--text-muted)] italic">
             無子分類時，LINE Bot 會直接導向官網連結
           </p>
         )}
@@ -221,13 +221,13 @@ export function ProductForm({ category }: { category?: Category }) {
           {subs.map((sub, i) => (
             <div
               key={i}
-              className="flex items-center gap-2 bg-gray-800/50 rounded-lg p-2"
+              className="flex items-center gap-2 bg-[var(--bg-tertiary)]/50 rounded-lg p-2"
             >
               <div className="flex flex-col gap-0.5">
                 <button
                   type="button"
                   onClick={() => moveSub(i, -1)}
-                  className="text-gray-500 hover:text-gray-300 text-xs leading-none"
+                  className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] text-xs leading-none"
                   disabled={i === 0}
                 >
                   ▲
@@ -235,26 +235,26 @@ export function ProductForm({ category }: { category?: Category }) {
                 <button
                   type="button"
                   onClick={() => moveSub(i, 1)}
-                  className="text-gray-500 hover:text-gray-300 text-xs leading-none"
+                  className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] text-xs leading-none"
                   disabled={i === subs.length - 1}
                 >
                   ▼
                 </button>
               </div>
               <input
-                className="flex-1 px-2 py-1.5 bg-gray-800 border border-gray-700 rounded text-sm text-gray-100 focus:outline-none focus:border-amber-500"
+                className="flex-1 px-2 py-1.5 bg-[var(--bg-tertiary)] border border-[var(--border-strong)] rounded text-sm text-[var(--text-primary)] focus:outline-none focus:border-[var(--brand-accent)]"
                 value={sub.name}
                 onChange={(e) => updateSub(i, "name", e.target.value)}
                 placeholder="子分類名稱"
               />
               <input
-                className="w-32 px-2 py-1.5 bg-gray-800 border border-gray-700 rounded text-sm text-gray-100 focus:outline-none focus:border-amber-500"
+                className="w-32 px-2 py-1.5 bg-[var(--bg-tertiary)] border border-[var(--border-strong)] rounded text-sm text-[var(--text-primary)] focus:outline-none focus:border-[var(--brand-accent)]"
                 value={sub.slug}
                 onChange={(e) => updateSub(i, "slug", e.target.value)}
                 placeholder="slug"
               />
               <input
-                className="flex-1 px-2 py-1.5 bg-gray-800 border border-gray-700 rounded text-sm text-gray-100 focus:outline-none focus:border-amber-500"
+                className="flex-1 px-2 py-1.5 bg-[var(--bg-tertiary)] border border-[var(--border-strong)] rounded text-sm text-[var(--text-primary)] focus:outline-none focus:border-[var(--brand-accent)]"
                 value={sub.url}
                 onChange={(e) => updateSub(i, "url", e.target.value)}
                 placeholder="官網連結 URL"
@@ -262,7 +262,7 @@ export function ProductForm({ category }: { category?: Category }) {
               <button
                 type="button"
                 onClick={() => removeSub(i)}
-                className="text-red-400 hover:text-red-300 text-sm px-1"
+                className="text-red-600 hover:text-red-600 text-sm px-1"
               >
                 ✕
               </button>
@@ -276,14 +276,14 @@ export function ProductForm({ category }: { category?: Category }) {
         <button
           type="submit"
           disabled={loading}
-          className="bg-amber-600 hover:bg-amber-500 text-white px-6 py-2 rounded-lg font-bold transition disabled:opacity-50"
+          className="bg-[var(--brand-primary)] hover:bg-[var(--text-secondary)] text-white px-6 py-2 rounded-lg font-bold transition disabled:opacity-50"
         >
           {loading ? "儲存中..." : "儲存"}
         </button>
         <button
           type="button"
           onClick={() => router.push("/products")}
-          className="bg-gray-700 hover:bg-gray-600 text-gray-300 px-6 py-2 rounded-lg transition"
+          className="bg-[var(--border-strong)] hover:bg-[var(--bg-tertiary)] text-[var(--text-secondary)] px-6 py-2 rounded-lg transition"
         >
           取消
         </button>
@@ -291,7 +291,7 @@ export function ProductForm({ category }: { category?: Category }) {
           <button
             type="button"
             onClick={handleDelete}
-            className="ml-auto text-red-400 hover:text-red-300 text-sm"
+            className="ml-auto text-red-600 hover:text-red-600 text-sm"
           >
             刪除此分類
           </button>

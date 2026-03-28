@@ -24,11 +24,11 @@ export default async function AlertsPage() {
     <div>
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-xl font-bold text-gray-100">🔔 通知中心</h1>
-          <p className="text-xs text-gray-500 mt-1">
+          <h1 className="text-xl font-bold text-[var(--text-primary)]">🔔 通知中心</h1>
+          <p className="text-xs text-[var(--text-muted)] mt-1">
             潛在客戶即時警報 — 共 {logs.length} 筆通知
             {unreadCount > 0 && (
-              <span className="text-amber-400 ml-2">
+              <span className="text-[var(--brand-accent)] ml-2">
                 ({unreadCount} 筆未讀)
               </span>
             )}
@@ -36,16 +36,16 @@ export default async function AlertsPage() {
         </div>
         <Link
           href="/alerts/settings"
-          className="text-sm bg-gray-800 hover:bg-gray-700 text-gray-300 px-3 py-1.5 rounded-lg"
+          className="text-sm bg-[var(--bg-tertiary)] hover:bg-[var(--border-strong)] text-[var(--text-secondary)] px-3 py-1.5 rounded-lg"
         >
           ⚙️ 閾值設定
         </Link>
       </div>
 
       {logs.length === 0 ? (
-        <div className="bg-gray-900 rounded-xl border border-gray-800 p-8 text-center">
-          <p className="text-gray-500">尚無通知紀錄</p>
-          <p className="text-xs text-gray-600 mt-2">
+        <div className="bg-[var(--bg-secondary)] rounded-xl border border-[var(--border-strong)] p-8 text-center">
+          <p className="text-[var(--text-muted)]">尚無通知紀錄</p>
+          <p className="text-xs text-[var(--text-muted)] mt-2">
             當用戶觸發高意圖行為時，系統會自動產生通知
           </p>
         </div>
@@ -54,38 +54,38 @@ export default async function AlertsPage() {
           {logs.map((log) => (
             <div
               key={log.id}
-              className={`bg-gray-900 rounded-xl border p-4 ${
+              className={`bg-[var(--bg-secondary)] rounded-xl border p-4 ${
                 !log.isRead
-                  ? "border-amber-700/50 bg-amber-950/10"
-                  : "border-gray-800"
+                  ? "border-[var(--brand-accent)]/30 bg-[var(--brand-accent)]/10"
+                  : "border-[var(--border-strong)]"
               }`}
             >
               <div className="flex items-start justify-between">
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-1">
-                    <span className="text-sm font-bold text-gray-200">
+                    <span className="text-sm font-bold text-[var(--text-primary)]">
                       {log.rule.name}
                     </span>
                     {log.lineNotified && (
-                      <span className="text-xs bg-green-900/40 text-green-400 px-1.5 py-0.5 rounded">
+                      <span className="text-xs bg-emerald-50 text-emerald-600 px-1.5 py-0.5 rounded">
                         LINE 已通知
                       </span>
                     )}
                     {!log.isRead && (
-                      <span className="text-xs bg-amber-900/40 text-amber-400 px-1.5 py-0.5 rounded">
+                      <span className="text-xs bg-[var(--brand-accent)]/15 text-[var(--brand-accent)] px-1.5 py-0.5 rounded">
                         新
                       </span>
                     )}
                   </div>
 
-                  <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-gray-400 mb-2">
+                  <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-[var(--text-secondary)] mb-2">
                     {log.storeName && <span>🏪 {log.storeName}</span>}
                     {log.regionName && <span>📍 {log.regionName}</span>}
                     <span>
                       👤{" "}
                       <Link
                         href={`/leads/${encodeURIComponent(log.userId)}`}
-                        className="text-amber-400 hover:underline"
+                        className="text-[var(--brand-accent)] hover:underline"
                       >
                         {log.userName || log.userId.slice(0, 12) + "..."}
                       </Link>
@@ -97,7 +97,7 @@ export default async function AlertsPage() {
                       {log.tags.slice(0, 5).map((tag) => (
                         <span
                           key={tag}
-                          className="text-xs px-1.5 py-0.5 rounded bg-gray-800 text-gray-400"
+                          className="text-xs px-1.5 py-0.5 rounded bg-[var(--bg-tertiary)] text-[var(--text-secondary)]"
                         >
                           {tag}
                         </span>
@@ -106,7 +106,7 @@ export default async function AlertsPage() {
                   )}
                 </div>
 
-                <div className="text-right text-xs text-gray-600 whitespace-nowrap ml-4">
+                <div className="text-right text-xs text-[var(--text-muted)] whitespace-nowrap ml-4">
                   {formatTime(log.createdAt)}
                 </div>
               </div>
