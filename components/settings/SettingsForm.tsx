@@ -10,28 +10,17 @@ const DESCRIPTIONS: Record<string, string> = {
   region_menu_title: "地區選單上方的標題文字",
   no_store_message: "選擇地區後若沒有門市時的提示",
   store_intro_prefix: "門市卡片上方的引導文字（{region} 會被替換為地區名稱）",
-  line_oa_id_production: "正式環境的 LINE 官方帳號 ID（@xxx 格式）",
-  line_oa_id_test: "測試環境的 LINE 官方帳號 ID（@xxx 格式）",
-  line_oa_url_production: "正式環境加好友連結",
-  line_oa_url_test: "測試環境加好友連結",
-  line_active_env: "目前使用的環境：production 或 test",
+  line_oa_id_production: "正式環境的 LINE 官方帳號 ID（推薦碼分享連結會使用此 ID）",
+  line_oa_id_test: "測試環境的 LINE 官方帳號 ID",
+  line_active_env: "切換正式/測試環境，影響 Bot 使用的 LINE 帳號和推薦連結",
   referral_brand_name: "推薦卡片上顯示的品牌名稱",
   referral_share_text:
     "推薦分享訊息模板（可用變數：{brand}、{code}、{url}）",
-  flex_brand_color: "Flex 訊息按鈕和標題的品牌色",
-  flex_brand_name: "Flex 訊息中的品牌名稱",
-  flex_welcome_title: "Day0 歡迎訊息的副標題",
-  flex_welcome_body: "Day0 歡迎訊息的內文",
-  flex_day3_title: "Day3 品類教育訊息的標題",
-  flex_day3_body: "Day3 品類教育訊息的內文",
-  flex_day30_title: "Day30 追蹤訊息的標題",
-  flex_day30_body: "Day30 追蹤訊息的內文",
-  flex_repair_phone: "維修服務的客服電話",
-  flex_repair_hours: "維修服務的服務時間",
-  alert_line_user_ids: "接收通知的管理員 LINE User IDs（逗號分隔）",
+  flex_brand_color: "所有 Flex 訊息的按鈕和標題顏色",
+  flex_brand_name: "所有 Flex 訊息中顯示的品牌名稱",
+  alert_line_user_ids: "接收系統通知的管理員 LINE User IDs（逗號分隔多位）",
 };
 
-// Human-readable labels for settings keys
 const LABELS: Record<string, string> = {
   welcome_message: "加好友歡迎訊息",
   fallback_message: "系統忙碌提示",
@@ -40,57 +29,37 @@ const LABELS: Record<string, string> = {
   store_intro_prefix: "門市卡片前綴文字",
   line_oa_id_production: "正式 LINE@ ID",
   line_oa_id_test: "測試 LINE@ ID",
-  line_oa_url_production: "正式加好友連結",
-  line_oa_url_test: "測試加好友連結",
   line_active_env: "目前環境",
   referral_brand_name: "推薦品牌名稱",
   referral_share_text: "推薦分享訊息",
   flex_brand_color: "品牌色",
   flex_brand_name: "品牌名稱",
-  flex_welcome_title: "歡迎訊息標題",
-  flex_welcome_body: "歡迎訊息內文",
-  flex_day3_title: "Day3 訊息標題",
-  flex_day3_body: "Day3 訊息內文",
-  flex_day30_title: "Day30 訊息標題",
-  flex_day30_body: "Day30 訊息內文",
-  flex_repair_phone: "維修客服電話",
-  flex_repair_hours: "維修服務時間",
   alert_line_user_ids: "通知管理員 LINE User IDs",
 };
 
-// Default values for new settings
+// Pre-filled defaults for DEREK 德瑞克衛浴
 const DEFAULTS: Record<string, string> = {
   line_active_env: "production",
-  line_oa_id_production: "",
-  line_oa_id_test: "",
-  line_oa_url_production: "",
-  line_oa_url_test: "",
+  line_oa_id_production: "@417cnroq",
+  line_oa_id_test: "@897utgnk",
   referral_brand_name: "DEREK 德瑞克衛浴",
   referral_share_text:
-    "🤝 {brand} — 好友推薦\n\n我的推薦碼：{code}\n\n👉 點擊加入並自動輸入推薦碼：\n{url}",
+    "🤝 DEREK 德瑞克衛浴 — 好友推薦\n\n我的推薦碼：{code}\n\n👉 點擊加入並自動輸入推薦碼：\n{url}",
   flex_brand_color: "#B89A6A",
   flex_brand_name: "DEREK 德瑞克衛浴",
-  flex_welcome_title: "",
-  flex_welcome_body: "",
-  flex_day3_title: "",
-  flex_day3_body: "",
-  flex_day30_title: "",
-  flex_day30_body: "",
-  flex_repair_phone: "",
-  flex_repair_hours: "",
+  welcome_message:
+    "親愛的顧客您好 👋 感謝您加入 DEREK 德瑞克衛浴！請點選下方選單「尋找門市」找到您附近的服務據點，或輸入「產品」瀏覽完整產品目錄 🛁",
+  fallback_message: "系統暫時忙碌，請稍後再試 🙏",
+  region_menu_title: "📍 請選擇您所在的地區",
+  no_store_message: "該地區目前沒有服務據點，請聯繫客服 📞",
+  store_intro_prefix: "以下是 {region} 的服務據點 👇",
 };
 
-// Group settings by category
+// Simplified groups — removed unused URL fields and moved sequence content to 序列管理
 const GROUPS: { title: string; keys: string[] }[] = [
   {
     title: "🔗 LINE 官方帳號",
-    keys: [
-      "line_active_env",
-      "line_oa_id_production",
-      "line_oa_url_production",
-      "line_oa_id_test",
-      "line_oa_url_test",
-    ],
+    keys: ["line_active_env", "line_oa_id_production", "line_oa_id_test"],
   },
   {
     title: "💬 Bot 訊息設定",
@@ -107,19 +76,8 @@ const GROUPS: { title: string; keys: string[] }[] = [
     keys: ["referral_brand_name", "referral_share_text"],
   },
   {
-    title: "🎨 Flex 訊息模板",
-    keys: [
-      "flex_brand_color",
-      "flex_brand_name",
-      "flex_welcome_title",
-      "flex_welcome_body",
-      "flex_day3_title",
-      "flex_day3_body",
-      "flex_day30_title",
-      "flex_day30_body",
-      "flex_repair_phone",
-      "flex_repair_hours",
-    ],
+    title: "🎨 品牌外觀",
+    keys: ["flex_brand_color", "flex_brand_name"],
   },
 ];
 
@@ -128,20 +86,14 @@ export function SettingsForm({ settings }: { settings: SiteSetting[] }) {
   const [loading, setLoading] = useState(false);
   const [saved, setSaved] = useState(false);
 
-  // Build a map of existing settings
   const settingMap = Object.fromEntries(settings.map((s) => [s.key, s]));
-
-  // Collect ALL keys: grouped + ungrouped from DB
   const allGroupedKeys = new Set(GROUPS.flatMap((g) => g.keys));
 
-  // Initialize values: existing DB values + defaults for missing keys
   const [values, setValues] = useState<Record<string, string>>(() => {
     const initial: Record<string, string> = {};
-    // Add all existing settings
     for (const s of settings) {
       initial[s.key] = s.value;
     }
-    // Add defaults for grouped keys not in DB
     for (const key of allGroupedKeys) {
       if (!(key in initial)) {
         initial[key] = DEFAULTS[key] ?? "";
@@ -159,7 +111,6 @@ export function SettingsForm({ settings }: { settings: SiteSetting[] }) {
     e.preventDefault();
     setLoading(true);
 
-    // Send ALL keys (both existing and new)
     const payload = Object.entries(values).map(([key, value]) => ({
       key,
       value: value ?? "",
@@ -183,7 +134,6 @@ export function SettingsForm({ settings }: { settings: SiteSetting[] }) {
   const inputClass =
     "w-full px-3 py-2 bg-[var(--bg-tertiary)] border border-[var(--border-strong)] rounded-lg text-[var(--text-primary)] focus:outline-none focus:border-[var(--brand-accent)] text-sm";
 
-  // Ungrouped settings from DB
   const ungrouped = settings.filter((s) => !allGroupedKeys.has(s.key));
 
   function renderField(key: string) {
@@ -297,6 +247,14 @@ export function SettingsForm({ settings }: { settings: SiteSetting[] }) {
           </div>
         </div>
       )}
+
+      <div className="bg-[var(--bg-secondary)] rounded-xl border border-[var(--border-subtle)] p-4">
+        <p className="text-xs text-[var(--text-muted)] mb-2">
+          💡 序列訊息內容（Day0 歡迎 / Day3 品類教育 / Day30 追蹤 / 維修服務）請至
+          <a href="/sequences" className="text-[var(--brand-accent)] hover:underline ml-1">📬 序列管理</a>
+          中編輯。
+        </p>
+      </div>
 
       <div className="flex items-center gap-4">
         <button
