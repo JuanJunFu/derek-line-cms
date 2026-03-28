@@ -65,6 +65,39 @@ function generateAreas(
   return areas;
 }
 
+const RICH_MENU_PRESETS = [
+  {
+    id: "new-customer",
+    icon: "🌱",
+    label: "新客版",
+    name: "新客圖文選單",
+    layout: "2x3" as LayoutType,
+    areas: [
+      { label: "品牌介紹", action: { type: "message", text: "品牌介紹" } },
+      { label: "產品目錄", action: { type: "message", text: "產品目錄" } },
+      { label: "門市查詢", action: { type: "message", text: "門市" } },
+      { label: "免費丈量", action: { type: "message", text: "預約丈量" } },
+      { label: "優惠活動", action: { type: "message", text: "最新優惠" } },
+      { label: "聯繫客服", action: { type: "message", text: "客服" } },
+    ],
+  },
+  {
+    id: "vip-customer",
+    icon: "🔄",
+    label: "熟客版",
+    name: "熟客圖文選單",
+    layout: "2x3" as LayoutType,
+    areas: [
+      { label: "會員優惠", action: { type: "message", text: "會員優惠" } },
+      { label: "維修預約", action: { type: "message", text: "預約維修" } },
+      { label: "推薦好友", action: { type: "message", text: "推薦" } },
+      { label: "最新活動", action: { type: "message", text: "最新活動" } },
+      { label: "新品上架", action: { type: "message", text: "新品" } },
+      { label: "聯繫客服", action: { type: "message", text: "客服" } },
+    ],
+  },
+];
+
 export function RichMenuClient({
   initialMenus,
 }: {
@@ -276,17 +309,46 @@ export function RichMenuClient({
 
   return (
     <div>
-      {/* Create button */}
+      {/* Presets + Create button */}
       {!showForm && (
-        <button
-          onClick={() => {
-            resetForm();
-            setShowForm(true);
-          }}
-          className="mb-6 bg-[var(--brand-primary)] hover:bg-[var(--text-secondary)] text-white px-4 py-2 rounded-lg text-sm font-bold transition"
-        >
-          + 新增圖文選單
-        </button>
+        <div className="mb-6 space-y-3">
+          <div>
+            <h3 className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider mb-2">快速建立</h3>
+            <div className="flex flex-wrap gap-2">
+              {RICH_MENU_PRESETS.map((preset) => (
+                <button
+                  key={preset.id}
+                  onClick={() => {
+                    resetForm();
+                    setFormName(preset.name);
+                    setFormLayout(preset.layout);
+                    const generated = generateAreas(preset.layout, 2500, 1686);
+                    setFormAreas(
+                      generated.map((area, i) => ({
+                        ...area,
+                        action: preset.areas[i]?.action || area.action,
+                      }))
+                    );
+                    setShowForm(true);
+                  }}
+                  className="flex items-center gap-1.5 text-sm border border-[var(--border-strong)] text-[var(--text-secondary)] hover:border-[var(--brand-accent)] hover:text-[var(--brand-accent)] rounded-lg px-3 py-2 transition bg-[var(--card-bg)]"
+                >
+                  <span>{preset.icon}</span>
+                  <span>{preset.label}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+          <button
+            onClick={() => {
+              resetForm();
+              setShowForm(true);
+            }}
+            className="bg-[var(--brand-primary)] hover:bg-[var(--text-secondary)] text-white px-4 py-2 rounded-lg text-sm font-bold transition"
+          >
+            + 自訂圖文選單
+          </button>
+        </div>
       )}
 
       {/* Create / Edit Form */}

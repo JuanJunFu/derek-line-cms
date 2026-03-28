@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
-import { Noto_Sans_JP } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
 
-const notoSansJP = Noto_Sans_JP({
-  variable: "--font-noto-sans-jp",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "700"],
+  weight: ["300", "400", "500", "600", "700"],
   display: "swap",
 });
 
@@ -20,7 +20,22 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="zh-TW" className={`${notoSansJP.variable} h-full antialiased`}>
+    <html lang="zh-TW" className={`${inter.variable} h-full antialiased theme-corporate`} suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              try {
+                var t = localStorage.getItem('derek-theme');
+                if (t && ['theme-corporate','theme-minimal','theme-dark'].includes(t)) {
+                  document.documentElement.classList.remove('theme-corporate');
+                  document.documentElement.classList.add(t);
+                }
+              } catch(e) {}
+            `,
+          }}
+        />
+      </head>
       <body className="min-h-full flex flex-col">{children}</body>
     </html>
   );

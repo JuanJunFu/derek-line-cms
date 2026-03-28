@@ -34,6 +34,39 @@ const MSG_TYPES = [
   { value: "json", label: "自訂 JSON" },
 ];
 
+const PRESETS = [
+  {
+    id: "new-welcome",
+    icon: "🌱",
+    label: "新客歡迎",
+    name: "新客歡迎推播",
+    messageType: "text",
+    textContent: "歡迎加入 DEREK 德瑞克衛浴！\n\n感謝您的關注，我們提供高品質的衛浴設備與專業服務。\n\n新朋友專屬好禮：\n首次諮詢即享免費丈量服務\n\n有任何問題，歡迎隨時傳訊息給我們！",
+    audienceType: "tags",
+    tagsInclude: "CustomerType:new",
+  },
+  {
+    id: "vip-revisit",
+    icon: "🔄",
+    label: "熟客回訪",
+    name: "熟客專屬優惠",
+    messageType: "text",
+    textContent: "親愛的老朋友，好久不見！\n\n感謝您一直以來的支持，特別為您準備了專屬回饋：\n\n會員獨享 — 指定商品 85 折\n再享免費安裝服務\n\n歡迎回來，讓我們繼續為您打造理想的衛浴空間！",
+    audienceType: "tags",
+    tagsInclude: "CustomerType:returning",
+  },
+  {
+    id: "event-invite",
+    icon: "🎪",
+    label: "活動通知",
+    name: "展覽/促銷活動邀請",
+    messageType: "text",
+    textContent: "DEREK 德瑞克衛浴邀請您！\n\n【活動名稱】\n日期：\n時間：\n地點：\n\n活動限定優惠：\n現場下單享額外折扣\n\n名額有限，歡迎提前預約！",
+    audienceType: "all",
+    tagsInclude: "",
+  },
+];
+
 export function BroadcastClient({ initialBroadcasts }: { initialBroadcasts: Broadcast[] }) {
   const [broadcasts, setBroadcasts] = useState<Broadcast[]>(initialBroadcasts);
   const [showNew, setShowNew] = useState(false);
@@ -159,6 +192,32 @@ export function BroadcastClient({ initialBroadcasts }: { initialBroadcasts: Broa
           <p className="text-xs text-[var(--text-muted)] mt-0.5">累計送達</p>
         </div>
       </div>
+
+      {/* Presets */}
+      {!showNew && (
+        <div className="mb-6">
+          <h3 className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider mb-2">快速建立</h3>
+          <div className="flex flex-wrap gap-2">
+            {PRESETS.map((p) => (
+              <button
+                key={p.id}
+                onClick={() => {
+                  setShowNew(true);
+                  setName(p.name);
+                  setMessageType(p.messageType);
+                  setTextContent(p.textContent);
+                  setAudienceType(p.audienceType);
+                  setTagsInclude(p.tagsInclude);
+                }}
+                className="flex items-center gap-1.5 text-sm border border-[var(--border-strong)] text-[var(--text-secondary)] hover:border-[var(--brand-accent)] hover:text-[var(--brand-accent)] rounded-lg px-3 py-2 transition bg-[var(--card-bg)]"
+              >
+                <span>{p.icon}</span>
+                <span>{p.label}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Actions */}
       <div className="flex gap-2 mb-6">
