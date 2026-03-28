@@ -363,66 +363,9 @@ async function handleEvent(event: WebhookEvent, eventIndex: number) {
         return;
       }
 
-      // Store action (two-step: record → reply with clickable URI button)
-      if (action === "STORE_CALL" || action === "STORE_NAV" || action === "STORE_LINE") {
-        const storeId = params.get("storeId") ?? "";
-        const uri = decodeURIComponent(params.get("uri") ?? "");
-
-        if (userId) {
-          await trackEvent(userId, action, { storeId }, webhookEventId);
-        }
-
-        if (uri) {
-          const labelMap = {
-            STORE_CALL: { text: "📞 請點擊下方按鈕撥號", btn: "📞 立即撥打", color: "#1a1a1a" },
-            STORE_NAV: { text: "📍 請點擊下方按鈕開啟導航", btn: "📍 開啟 Google Maps", color: "#06C755" },
-            STORE_LINE: { text: "💬 請點擊下方按鈕開啟門市 LINE", btn: "💬 加入門市 LINE", color: "#06C755" },
-          };
-          const lbl = labelMap[action as keyof typeof labelMap];
-
-          await lineClient.replyMessage({
-            replyToken: event.replyToken,
-            messages: [
-              {
-                type: "flex",
-                altText: lbl.text,
-                contents: {
-                  type: "bubble",
-                  body: {
-                    type: "box",
-                    layout: "vertical",
-                    contents: [
-                      { type: "text", text: lbl.text, size: "sm", color: "#888888", wrap: true },
-                    ],
-                    paddingAll: "16px",
-                  },
-                  footer: {
-                    type: "box",
-                    layout: "vertical",
-                    contents: [
-                      {
-                        type: "button",
-                        style: "primary",
-                        color: lbl.color,
-                        action: { type: "uri", label: lbl.btn, uri: uri },
-                      },
-                    ],
-                  },
-                },
-              } as any,
-            ],
-          });
-          if (userId) {
-            logChatMessage({
-              userId,
-              direction: "outbound",
-              msgType: "flex",
-              content: { altText: lbl.text },
-            }).catch((e) => console.error("[chatlog] outbound store action:", e));
-          }
-        }
-        return;
-      }
+      // NOTE: STORE_CALL / STORE_NAV / STORE_LINE tracking is now handled by
+      // /api/v1/track/redirect (302 redirect with server-side event logging).
+      // Buttons in storeCard.ts use direct URI actions through the tracking redirect.
     }
 
     // Unsupported event types — silently ignore

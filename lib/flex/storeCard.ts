@@ -110,11 +110,13 @@ function buildStoreCard(store: Store & { region: Region }): Record<string, any> 
   }
 
   // ── Footer buttons (gold.html: dark "致電" + green "LINE/導航") ──
-  // Use direct URI actions — one tap to open (no postback round-trip).
-  // Tracking is already captured by STORE_VIEW when the carousel is shown.
+  // URI actions with tracking redirect — one tap opens target AND records the click.
+  // Flow: LINE opens our /api/v1/track/redirect → server logs event → 302 to target.
+  const baseUrl = process.env.NEXTAUTH_URL || "https://drweber.uk";
   const footerContents: object[] = [];
 
   if (hasPhone) {
+    const trackUrl = `${baseUrl}/api/v1/track/redirect?action=STORE_CALL&storeId=${store.id}&uri=${encodeURIComponent("tel:" + cleanPhone)}`;
     footerContents.push({
       type: "button",
       style: "primary",
@@ -123,12 +125,14 @@ function buildStoreCard(store: Store & { region: Region }): Record<string, any> 
       action: {
         type: "uri",
         label: isMainStore ? "📞 立即致電" : "📞 致電",
-        uri: "tel:" + cleanPhone,
+        uri: trackUrl,
       },
     });
   }
 
   if (store.lineId) {
+    const lineUri = "https://line.me/R/ti/p/" + store.lineId;
+    const trackUrl = `${baseUrl}/api/v1/track/redirect?action=STORE_LINE&storeId=${store.id}&uri=${encodeURIComponent(lineUri)}`;
     footerContents.push({
       type: "button",
       style: "primary",
@@ -137,11 +141,12 @@ function buildStoreCard(store: Store & { region: Region }): Record<string, any> 
       action: {
         type: "uri",
         label: "💬 門市LINE",
-        uri: "https://line.me/R/ti/p/" + store.lineId,
+        uri: trackUrl,
       },
     });
   } else if (store.googleMapUrl || hasAddress) {
     const mapUrl = store.googleMapUrl || ("https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(store.address));
+    const trackUrl = `${baseUrl}/api/v1/track/redirect?action=STORE_NAV&storeId=${store.id}&uri=${encodeURIComponent(mapUrl)}`;
     footerContents.push({
       type: "button",
       style: "primary",
@@ -150,7 +155,7 @@ function buildStoreCard(store: Store & { region: Region }): Record<string, any> 
       action: {
         type: "uri",
         label: "📍 導航前往",
-        uri: mapUrl,
+        uri: trackUrl,
       },
     });
   }
