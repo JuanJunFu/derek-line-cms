@@ -35,6 +35,7 @@ export default async function DashboardLayout({
           <NavLink href="/leads">客戶矩陣</NavLink>
           <NavLink href="/war-room">戰情室</NavLink>
           <NavLink href="/sequences">序列管理</NavLink>
+          <NavLink href="/rich-menus">圖文選單</NavLink>
           <NavLink href="/referrals">推薦管理</NavLink>
           <NavLink href="/segments">受眾分群</NavLink>
           <NavLink href="/tags">標籤管理</NavLink>
