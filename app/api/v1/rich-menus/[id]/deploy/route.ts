@@ -42,7 +42,7 @@ export async function POST(
     chatBarText: "選單",
     areas: areas.map((area) => ({
       bounds: area.bounds,
-      action: area.action,
+      action: area.action as any,
     })),
   });
 

@@ -18,7 +18,7 @@ export default async function RichMenusPage() {
           管理 LINE 圖文選單的建立、部署與預設設定
         </p>
       </div>
-      <RichMenuClient initialMenus={menus} />
+      <RichMenuClient initialMenus={menus as any} />
     </div>
   );
 }
