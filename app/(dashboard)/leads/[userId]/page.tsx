@@ -391,6 +391,7 @@ export default async function UserTimelinePage({
                               </span>
                               <span className="text-xs text-[var(--text-muted)]">
                                 {event.createdAt.toLocaleTimeString("zh-TW", {
+                                  timeZone: "Asia/Taipei",
                                   hour: "2-digit",
                                   minute: "2-digit",
                                 })}

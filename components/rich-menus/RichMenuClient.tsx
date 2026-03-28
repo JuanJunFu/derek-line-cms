@@ -686,7 +686,7 @@ export function RichMenuClient({
                 </p>
                 <p className="text-xs text-[var(--text-muted)]">
                   建立於{" "}
-                  {new Date(menu.createdAt).toLocaleDateString("zh-TW")}
+                  {new Date(menu.createdAt).toLocaleDateString("zh-TW", { timeZone: "Asia/Taipei" })}
                 </p>
               </div>
 

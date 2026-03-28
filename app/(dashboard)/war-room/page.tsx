@@ -70,7 +70,7 @@ export default async function WarRoomPage() {
           <h1 className="text-xl font-bold text-[var(--text-primary)]">🎯 意圖戰情室</h1>
           <p className="text-xs text-[var(--text-muted)] mt-0.5">
             即時高意向客戶監控 · 每 30 秒自動更新 ·{" "}
-            最後更新：{now.toLocaleTimeString("zh-TW", { hour: "2-digit", minute: "2-digit", second: "2-digit" })}
+            最後更新：{now.toLocaleTimeString("zh-TW", { timeZone: "Asia/Taipei", hour: "2-digit", minute: "2-digit", second: "2-digit" })}
           </p>
         </div>
         <div className="flex items-center gap-1.5">

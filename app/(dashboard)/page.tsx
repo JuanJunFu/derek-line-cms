@@ -99,6 +99,7 @@ export default async function DashboardPage() {
         <p className="text-sm text-[var(--text-muted)] mt-1">
           DEREK 德瑞克衛浴 LINE 後台 ·{" "}
           {now.toLocaleDateString("zh-TW", {
+            timeZone: "Asia/Taipei",
             year: "numeric",
             month: "long",
             day: "numeric",

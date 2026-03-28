@@ -510,7 +510,7 @@ export function SegmentClient({
                 </div>
                 <div className="flex items-center gap-2 ml-4 shrink-0">
                   <span className="text-xs text-[var(--text-muted)]">
-                    {new Date(seg.createdAt).toLocaleDateString("zh-TW")}
+                    {new Date(seg.createdAt).toLocaleDateString("zh-TW", { timeZone: "Asia/Taipei" })}
                   </span>
                   <button
                     onClick={() => handleEdit(seg)}
