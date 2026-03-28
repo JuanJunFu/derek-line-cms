@@ -143,7 +143,7 @@ function buildStoreCard(store: Store & { region: Region }): Record<string, any> 
       },
     });
   } else if (store.googleMapUrl || hasAddress) {
-    const mapUrl = "https://www.google.com/maps/search/" + encodeURIComponent(store.address);
+    const mapUrl = store.googleMapUrl || ("https://www.google.com/maps/search/" + encodeURIComponent(store.address));
     footerContents.push({
       type: "button",
       style: "primary",
