@@ -11,16 +11,25 @@ export async function GET() {
 
 export async function PUT(req: NextRequest) {
   const session = await auth();
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!session)
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const body = await req.json();
-  const { settings } = body as { settings: { key: string; value: string }[] };
+  const { settings } = body as {
+    settings: { key: string; value: string; label?: string }[];
+  };
 
+  // Use upsert so new settings are created automatically
   await Promise.all(
     settings.map((s) =>
-      prisma.siteSetting.update({
+      prisma.siteSetting.upsert({
         where: { key: s.key },
-        data: { value: s.value },
+        update: { value: s.value ?? "" },
+        create: {
+          key: s.key,
+          value: s.value ?? "",
+          label: s.label || s.key,
+        },
       })
     )
   );
