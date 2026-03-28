@@ -159,19 +159,31 @@ export function calculateRelationshipDelta(
 
 /**
  * Determine customerType based on event and existing data.
- * Returns "returning" if repair keyword detected, otherwise keeps existing.
+ * Auto-upgrade to "returning" when:
+ * 1. Repair keyword detected (維修/漏水/故障...)
+ * 2. Relationship score >= 41 (熟識 level)
+ * Once "returning", never auto-downgrade (manual only via CMS).
  */
 export function determineCustomerType(
   eventType: string,
   data: TrackingData,
-  existingType: string
+  existingType: string,
+  newRelationshipScore?: number
 ): string {
   if (existingType === CUSTOMER_TYPES.RETURNING) return CUSTOMER_TYPES.RETURNING;
+
+  // Rule 1: Repair keywords
   if (eventType === "MESSAGE" && data.keyword) {
     if (REPAIR_KEYWORDS.some((kw) => data.keyword!.includes(kw))) {
       return CUSTOMER_TYPES.RETURNING;
     }
   }
+
+  // Rule 2: Relationship score >= 41 (熟識)
+  if (newRelationshipScore !== undefined && newRelationshipScore >= 41) {
+    return CUSTOMER_TYPES.RETURNING;
+  }
+
   return existingType;
 }
 
@@ -261,9 +273,9 @@ export async function trackEvent(
     const newRelScore = Math.min(currentRelScore + delta, RELATIONSHIP_SCORE_MAX);
     const newRelLevel = getRelationshipLevel(newRelScore);
 
-    // 8. Determine customer type
+    // 8. Determine customer type (with relationship score threshold)
     const currentCustomerType = existing?.customerType ?? CUSTOMER_TYPES.NEW;
-    const newCustomerType = determineCustomerType(eventType, data, currentCustomerType);
+    const newCustomerType = determineCustomerType(eventType, data, currentCustomerType, newRelScore);
 
     // 9. Upsert profile
     await prisma.userProfile.upsert({

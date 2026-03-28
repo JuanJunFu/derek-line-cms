@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { UserDetailTabs } from "@/components/leads/UserDetailTabs";
+import { CustomerTypeToggle } from "@/components/leads/CustomerTypeToggle";
 
 export const dynamic = "force-dynamic";
 
@@ -169,7 +170,6 @@ export default async function UserTimelinePage({
       </h1>
       <p className="text-xs text-[var(--text-muted)] mb-4">
         LINE ID: {decodedUserId} ·
-        {profile.customerType === "returning" ? " 老客戶 🔄" : " 新客戶 🌱"} ·
         首次加入 {profile.firstSeen.toLocaleDateString("zh-TW", { timeZone: "Asia/Taipei" })}
       </p>
 
@@ -238,6 +238,16 @@ export default async function UserTimelinePage({
                 )}
               </div>
             </div>
+
+            {/* ── Customer Type Toggle ── */}
+            <CustomerTypeToggle
+              userId={decodedUserId}
+              initialType={profile.customerType ?? "new"}
+              relationshipScore={profile.relationshipScore ?? 0}
+              relationshipLevel={profile.relationshipLevel ?? "新識"}
+              totalEvents={profile.totalEvents ?? 0}
+              tags={profile.tags}
+            />
 
             {/* ── AI Suggestion ── */}
             <div className="bg-[var(--brand-accent)]/10 border border-[var(--brand-accent)]/20 rounded-xl p-3 mb-4">
