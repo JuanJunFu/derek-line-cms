@@ -204,6 +204,16 @@ async function handleEvent(event: WebhookEvent, eventIndex: number) {
       const params = new URLSearchParams(event.postback.data);
       const action = params.get("action");
 
+      // Log inbound postback
+      if (userId) {
+        logChatMessage({
+          userId,
+          direction: "inbound",
+          msgType: "postback",
+          content: { data: event.postback.data, displayText: action ?? "" },
+        }).catch((e) => console.error("[chatlog] inbound postback:", e));
+      }
+
       // Generic Postback tracking (for sequence buttons)
       if (userId) {
         await trackEvent(
@@ -221,6 +231,14 @@ async function handleEvent(event: WebhookEvent, eventIndex: number) {
           replyToken: event.replyToken,
           messages: [menu as any],
         });
+        if (userId) {
+          logChatMessage({
+            userId,
+            direction: "outbound",
+            msgType: "flex",
+            content: { altText: "產品選單" },
+          }).catch((e) => console.error("[chatlog] outbound product menu pb:", e));
+        }
         return;
       }
 
@@ -231,6 +249,14 @@ async function handleEvent(event: WebhookEvent, eventIndex: number) {
           replyToken: event.replyToken,
           messages: [menu as any],
         });
+        if (userId) {
+          logChatMessage({
+            userId,
+            direction: "outbound",
+            msgType: "flex",
+            content: { altText: "地區選單" },
+          }).catch((e) => console.error("[chatlog] outbound region menu pb:", e));
+        }
         return;
       }
 
@@ -258,6 +284,14 @@ async function handleEvent(event: WebhookEvent, eventIndex: number) {
             replyToken: event.replyToken,
             messages: [{ type: "text", text: cfg.no_store_message }],
           });
+          if (userId) {
+            logChatMessage({
+              userId,
+              direction: "outbound",
+              msgType: "text",
+              content: { text: cfg.no_store_message },
+            }).catch((e) => console.error("[chatlog] outbound no store:", e));
+          }
         } else {
           const regionName = stores[0].region.name;
           const introText = cfg.store_intro_prefix.replace(
@@ -280,6 +314,20 @@ async function handleEvent(event: WebhookEvent, eventIndex: number) {
             replyToken: event.replyToken,
             messages: [{ type: "text", text: introText }, carousel as any],
           });
+          if (userId) {
+            logChatMessage({
+              userId,
+              direction: "outbound",
+              msgType: "text",
+              content: { text: introText },
+            }).catch((e) => console.error("[chatlog] outbound store intro:", e));
+            logChatMessage({
+              userId,
+              direction: "outbound",
+              msgType: "flex",
+              content: { altText: `${regionName} 門市` },
+            }).catch((e) => console.error("[chatlog] outbound store carousel:", e));
+          }
         }
         return;
       }
@@ -303,6 +351,14 @@ async function handleEvent(event: WebhookEvent, eventIndex: number) {
             replyToken: event.replyToken,
             messages: [reply as any],
           });
+          if (userId) {
+            logChatMessage({
+              userId,
+              direction: "outbound",
+              msgType: "flex",
+              content: { altText: `產品：${category}` },
+            }).catch((e) => console.error("[chatlog] outbound product:", e));
+          }
         }
         return;
       }
@@ -356,6 +412,14 @@ async function handleEvent(event: WebhookEvent, eventIndex: number) {
               } as any,
             ],
           });
+          if (userId) {
+            logChatMessage({
+              userId,
+              direction: "outbound",
+              msgType: "flex",
+              content: { altText: lbl.text },
+            }).catch((e) => console.error("[chatlog] outbound store action:", e));
+          }
         }
         return;
       }

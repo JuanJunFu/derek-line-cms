@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import { UserDetailTabs } from "@/components/leads/UserDetailTabs";
 
 export const dynamic = "force-dynamic";
 
