@@ -332,12 +332,14 @@ model RichMenu {
   id          String    @id @default(cuid())
   name        String
   lineMenuId  String?                           // LINE 端的 richMenuId
+  aliasId     String?                           // LINE 端的 richMenuAliasId (用於選單切換)
   imageUrl    String?                           // 選單圖片 URL
   size        Json      @default("{\"width\":2500,\"height\":1686}")
   areas       Json      @default("[]")          // [{ bounds: {x,y,w,h}, action: {type,data} }]
   isDefault   Boolean   @default(false)
   isActive    Boolean   @default(true)
   env         String    @default("production")  // production | test
+  pairedWith  String?                           // 配對選單的 id (互相切換)
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 

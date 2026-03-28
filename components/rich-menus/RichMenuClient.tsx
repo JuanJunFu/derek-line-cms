@@ -8,18 +8,27 @@ type RichMenu = {
   id: string;
   name: string;
   lineMenuId: string | null;
+  aliasId: string | null;
   imageUrl: string | null;
   size: { width: number; height: number };
   areas: Area[];
   isDefault: boolean;
   isActive: boolean;
   env: string;
+  pairedWith: string | null;
   createdAt: string;
 };
 
 type Area = {
   bounds: { x: number; y: number; width: number; height: number };
-  action: { type: string; uri?: string; data?: string; text?: string; label?: string };
+  action: {
+    type: string;
+    uri?: string;
+    data?: string;
+    text?: string;
+    label?: string;
+    richMenuAliasId?: string;
+  };
 };
 
 type LayoutType = "2col" | "3col" | "2x3";
@@ -70,30 +79,32 @@ const RICH_MENU_PRESETS = [
     id: "new-customer",
     icon: "🌱",
     label: "新客版",
-    name: "新客圖文選單",
+    desc: "適合初次加入的客戶：品牌認識、產品瀏覽、門市查詢",
+    name: "DEREK 新客選單",
     layout: "2x3" as LayoutType,
     areas: [
-      { label: "品牌介紹", action: { type: "message", text: "品牌介紹" } },
-      { label: "產品目錄", action: { type: "message", text: "產品目錄" } },
-      { label: "門市查詢", action: { type: "message", text: "門市" } },
-      { label: "免費丈量", action: { type: "message", text: "預約丈量" } },
-      { label: "優惠活動", action: { type: "message", text: "最新優惠" } },
-      { label: "聯繫客服", action: { type: "message", text: "客服" } },
+      { label: "📍 尋找門市", action: { type: "message" as const, text: "門市" } },
+      { label: "🛁 產品目錄", action: { type: "message" as const, text: "產品" } },
+      { label: "📞 聯絡我們", action: { type: "uri" as const, uri: "tel:0800063366", label: "免費客服專線" } },
+      { label: "🌐 品牌官網", action: { type: "uri" as const, uri: "https://www.lcb.com.tw", label: "DEREK 官網" } },
+      { label: "🤝 推薦好友", action: { type: "message" as const, text: "推薦" } },
+      { label: "🔄 切換熟客選單", action: { type: "richmenuswitch" as const, richMenuAliasId: "richmenu-alias-vip", data: "richmenu-changed-to-vip" } },
     ],
   },
   {
     id: "vip-customer",
-    icon: "🔄",
+    icon: "💎",
     label: "熟客版",
-    name: "熟客圖文選單",
+    desc: "適合回購客戶：維修預約、推薦碼、新品資訊",
+    name: "DEREK 熟客選單",
     layout: "2x3" as LayoutType,
     areas: [
-      { label: "會員優惠", action: { type: "message", text: "會員優惠" } },
-      { label: "維修預約", action: { type: "message", text: "預約維修" } },
-      { label: "推薦好友", action: { type: "message", text: "推薦" } },
-      { label: "最新活動", action: { type: "message", text: "最新活動" } },
-      { label: "新品上架", action: { type: "message", text: "新品" } },
-      { label: "聯繫客服", action: { type: "message", text: "客服" } },
+      { label: "🔧 維修預約", action: { type: "message" as const, text: "維修" } },
+      { label: "🤝 推薦好友", action: { type: "message" as const, text: "推薦" } },
+      { label: "📞 聯絡我們", action: { type: "uri" as const, uri: "tel:0800063366", label: "免費客服專線" } },
+      { label: "📍 尋找門市", action: { type: "message" as const, text: "門市" } },
+      { label: "🛁 產品目錄", action: { type: "message" as const, text: "產品" } },
+      { label: "🔄 切換新客選單", action: { type: "richmenuswitch" as const, richMenuAliasId: "richmenu-alias-new", data: "richmenu-changed-to-new" } },
     ],
   },
 ];
@@ -109,6 +120,7 @@ export function RichMenuClient({
   const [editingId, setEditingId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
+  const [pairDeploying, setPairDeploying] = useState(false);
 
   // Form state
   const [formName, setFormName] = useState("");
@@ -136,7 +148,7 @@ export function RichMenuClient({
 
   function updateAreaAction(
     index: number,
-    field: "type" | "uri" | "data" | "text" | "label",
+    field: "type" | "uri" | "data" | "text" | "label" | "richMenuAliasId",
     value: string
   ) {
     setFormAreas((prev: Area[]) =>
@@ -163,6 +175,14 @@ export function RichMenuClient({
 
     setFormAreas(areas);
     setShowForm(true);
+  }
+
+  async function refreshMenus() {
+    const listRes = await fetch("/api/v1/rich-menus");
+    if (listRes.ok) {
+      const data = await listRes.json();
+      setMenus(data.menus);
+    }
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -192,12 +212,7 @@ export function RichMenuClient({
       if (res.ok) {
         resetForm();
         router.refresh();
-        // Re-fetch menus
-        const listRes = await fetch("/api/v1/rich-menus");
-        if (listRes.ok) {
-          const data = await listRes.json();
-          setMenus(data.menus);
-        }
+        await refreshMenus();
       } else {
         const err = await res.json();
         alert(err.error || "操作失敗");
@@ -217,11 +232,7 @@ export function RichMenuClient({
         method: "POST",
       });
       if (res.ok) {
-        const listRes = await fetch("/api/v1/rich-menus");
-        if (listRes.ok) {
-          const data = await listRes.json();
-          setMenus(data.menus);
-        }
+        await refreshMenus();
       } else {
         const err = await res.json();
         alert(err.error || "部署失敗");
@@ -241,11 +252,7 @@ export function RichMenuClient({
         method: "POST",
       });
       if (res.ok) {
-        const listRes = await fetch("/api/v1/rich-menus");
-        if (listRes.ok) {
-          const data = await listRes.json();
-          setMenus(data.menus);
-        }
+        await refreshMenus();
       } else {
         const err = await res.json();
         alert(err.error || "設定失敗");
@@ -274,6 +281,28 @@ export function RichMenuClient({
       alert("刪除失敗，請重試");
     } finally {
       setActionLoading(null);
+    }
+  }
+
+  // Deploy paired menus: create both on LINE + aliases, then set new-customer as default
+  async function handleDeployPair() {
+    if (!confirm("將部署「新客版」和「熟客版」兩個選單到 LINE，並建立切換別名。新客版將設為預設選單。確定繼續？")) return;
+    setPairDeploying(true);
+    try {
+      const res = await fetch("/api/v1/rich-menus/deploy-pair", {
+        method: "POST",
+      });
+      const data = await res.json();
+      if (res.ok) {
+        alert(`配對部署成功！\n新客選單: ${data.newCustomerMenuId}\n熟客選單: ${data.vipCustomerMenuId}\n新客版已設為預設選單。`);
+        await refreshMenus();
+      } else {
+        alert(data.error || "配對部署失敗");
+      }
+    } catch {
+      alert("配對部署失敗，請重試");
+    } finally {
+      setPairDeploying(false);
     }
   }
 
@@ -307,6 +336,12 @@ export function RichMenuClient({
     return labels[index] || `${index + 1}`;
   }
 
+  // Find paired menus in the list
+  const hasPairedMenus = menus.some(m => m.pairedWith);
+  const newCustomerMenu = menus.find(m => m.name.includes("新客"));
+  const vipCustomerMenu = menus.find(m => m.name.includes("熟客"));
+  const canDeployPair = newCustomerMenu && vipCustomerMenu && newCustomerMenu.imageUrl && vipCustomerMenu.imageUrl;
+
   return (
     <div>
       {/* Presets + Create button */}
@@ -339,6 +374,41 @@ export function RichMenuClient({
               ))}
             </div>
           </div>
+
+          {/* Deploy Pair button */}
+          {canDeployPair && (
+            <div className="bg-gradient-to-r from-emerald-50 to-blue-50 border border-emerald-200 rounded-xl p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-sm font-bold text-[var(--text-primary)]">🔄 配對部署（新客 ↔ 熟客 切換）</h3>
+                  <p className="text-xs text-[var(--text-muted)] mt-0.5">
+                    同時部署兩個選單到 LINE，建立切換別名，新客版設為預設
+                  </p>
+                </div>
+                <button
+                  onClick={handleDeployPair}
+                  disabled={pairDeploying}
+                  className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-sm font-bold transition disabled:opacity-50 shrink-0"
+                >
+                  {pairDeploying ? "部署中..." : "配對部署"}
+                </button>
+              </div>
+              <div className="flex gap-3 mt-3">
+                <div className="flex-1 bg-white/60 rounded-lg p-2 text-center">
+                  <p className="text-xs text-[var(--text-muted)]">🌱 新客版</p>
+                  <p className="text-xs font-medium text-[var(--text-primary)] truncate">{newCustomerMenu?.name}</p>
+                  {newCustomerMenu?.lineMenuId && <p className="text-xs text-emerald-600">已部署</p>}
+                </div>
+                <div className="flex items-center text-lg">⇄</div>
+                <div className="flex-1 bg-white/60 rounded-lg p-2 text-center">
+                  <p className="text-xs text-[var(--text-muted)]">💎 熟客版</p>
+                  <p className="text-xs font-medium text-[var(--text-primary)] truncate">{vipCustomerMenu?.name}</p>
+                  {vipCustomerMenu?.lineMenuId && <p className="text-xs text-emerald-600">已部署</p>}
+                </div>
+              </div>
+            </div>
+          )}
+
           <button
             onClick={() => {
               resetForm();
@@ -443,11 +513,12 @@ export function RichMenuClient({
                         onChange={(e) =>
                           updateAreaAction(i, "type", e.target.value)
                         }
-                        className="bg-[var(--bg-secondary)] border border-[var(--border-strong)] rounded-lg px-2 py-1.5 text-sm text-[var(--text-primary)] min-w-[100px]"
+                        className="bg-[var(--bg-secondary)] border border-[var(--border-strong)] rounded-lg px-2 py-1.5 text-sm text-[var(--text-primary)] min-w-[120px]"
                       >
                         <option value="uri">URI 連結</option>
                         <option value="postback">Postback</option>
                         <option value="message">發送文字</option>
+                        <option value="richmenuswitch">選單切換</option>
                       </select>
                       {area.action.type === "uri" && (
                         <>
@@ -503,6 +574,28 @@ export function RichMenuClient({
                           placeholder="發送的文字 (例: 門市)"
                           className="flex-1 bg-[var(--bg-secondary)] border border-[var(--border-strong)] rounded-lg px-2 py-1.5 text-sm text-[var(--text-primary)]"
                         />
+                      )}
+                      {area.action.type === "richmenuswitch" && (
+                        <>
+                          <input
+                            type="text"
+                            value={area.action.richMenuAliasId || ""}
+                            onChange={(e) =>
+                              updateAreaAction(i, "richMenuAliasId", e.target.value)
+                            }
+                            placeholder="目標別名 (例: richmenu-alias-vip)"
+                            className="flex-1 bg-[var(--bg-secondary)] border border-[var(--border-strong)] rounded-lg px-2 py-1.5 text-sm text-[var(--text-primary)]"
+                          />
+                          <input
+                            type="text"
+                            value={area.action.data || ""}
+                            onChange={(e) =>
+                              updateAreaAction(i, "data", e.target.value)
+                            }
+                            placeholder="postback data"
+                            className="sm:w-44 bg-[var(--bg-secondary)] border border-[var(--border-strong)] rounded-lg px-2 py-1.5 text-sm text-[var(--text-primary)]"
+                          />
+                        </>
                       )}
                     </div>
                   </div>
@@ -568,6 +661,11 @@ export function RichMenuClient({
                   >
                     {menu.env}
                   </span>
+                  {menu.pairedWith && (
+                    <span className="text-xs px-2 py-0.5 rounded-full bg-purple-50 text-purple-600 font-medium">
+                      🔄 已配對
+                    </span>
+                  )}
                 </div>
                 <p className="text-xs text-[var(--text-muted)] mt-1">
                   {(menu.areas as Area[])?.length || 0} 個區域
@@ -576,6 +674,13 @@ export function RichMenuClient({
                       {" "}
                       &middot; LINE ID:{" "}
                       <span className="font-mono">{menu.lineMenuId.slice(0, 12)}...</span>
+                    </>
+                  )}
+                  {menu.aliasId && (
+                    <>
+                      {" "}
+                      &middot; 別名:{" "}
+                      <span className="font-mono text-purple-600">{menu.aliasId}</span>
                     </>
                   )}
                 </p>
