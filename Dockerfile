@@ -31,6 +31,9 @@ COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
 
+# Create uploads directory with proper permissions for local fallback storage
+RUN mkdir -p /app/public/uploads/stores && chown -R nextjs:nodejs /app/public/uploads
+
 USER nextjs
 EXPOSE 3000
 ENV PORT=3000
