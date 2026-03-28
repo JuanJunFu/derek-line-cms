@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { NavLink } from "@/components/ui/NavLink";
+import { MobileSidebar } from "@/components/ui/MobileSidebar";
 
 export default async function DashboardLayout({
   children,
@@ -12,13 +13,13 @@ export default async function DashboardLayout({
 
   return (
     <div className="min-h-screen flex">
-      {/* Sidebar */}
-      <aside className="w-56 bg-gray-900 border-r border-gray-800 flex flex-col">
+      {/* Sidebar (responsive: slide-out on mobile, fixed on desktop) */}
+      <MobileSidebar>
         <div className="p-4 border-b border-gray-800">
           <h1 className="text-lg font-bold text-amber-500">DEREK</h1>
           <p className="text-xs text-gray-500">德瑞克衛浴 CMS</p>
         </div>
-        <nav className="flex-1 p-3 space-y-1">
+        <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
           <NavLink href="/stores">🏪 門市管理</NavLink>
           <NavLink href="/regions">📍 地區管理</NavLink>
           <NavLink href="/products">📦 產品分類</NavLink>
@@ -49,10 +50,12 @@ export default async function DashboardLayout({
             </button>
           </form>
         </div>
-      </aside>
+      </MobileSidebar>
 
-      {/* Main content */}
-      <main className="flex-1 p-6 bg-gray-950">{children}</main>
+      {/* Main content - add top padding on mobile for the fixed header */}
+      <main className="flex-1 p-4 md:p-6 bg-gray-950 pt-16 md:pt-6 min-w-0">
+        {children}
+      </main>
     </div>
   );
 }

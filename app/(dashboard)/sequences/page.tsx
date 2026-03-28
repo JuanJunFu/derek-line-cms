@@ -61,7 +61,7 @@ export default async function SequencesPage({
   };
 
   return (
-    <div className="max-w-3xl">
+    <div className="max-w-full lg:max-w-3xl">
       <div className="flex items-center justify-between mb-1">
         <h1 className="text-xl font-bold text-gray-100">📬 序列訊息管理</h1>
         <a
@@ -76,7 +76,7 @@ export default async function SequencesPage({
       </p>
 
       {/* ── Stats Row ── */}
-      <div className="grid grid-cols-3 gap-3 mb-6">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
         <div className="bg-amber-900/20 border border-amber-800/40 rounded-xl p-3 text-center">
           <p className="text-2xl font-bold text-amber-400">{countMap.pending ?? 0}</p>
           <p className="text-xs text-gray-500 mt-0.5">待發送</p>

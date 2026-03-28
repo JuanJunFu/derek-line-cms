@@ -20,8 +20,8 @@ export default async function RepliesPage() {
         </Link>
       </div>
 
-      <div className="bg-gray-900 rounded-xl border border-gray-800 overflow-hidden">
-        <table className="w-full text-sm">
+      <div className="bg-gray-900 rounded-xl border border-gray-800 overflow-x-auto">
+        <table className="w-full text-sm min-w-[600px]">
           <thead>
             <tr className="bg-gray-800 text-amber-500">
               <th className="p-3 text-left font-medium">排序</th>

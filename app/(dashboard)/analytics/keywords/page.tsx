@@ -177,7 +177,7 @@ export default async function KeywordsPage() {
   const maxCount = sorted[0]?.count ?? 1;
 
   return (
-    <div className="max-w-4xl">
+    <div className="max-w-full lg:max-w-4xl">
       <h1 className="text-xl font-bold text-gray-100 mb-1">☁️ 意圖關鍵詞雲</h1>
       <p className="text-xs text-gray-500 mb-6">
         過去 30 天用戶輸入但機器人未能回應的訊息 ·

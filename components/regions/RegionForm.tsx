@@ -78,7 +78,7 @@ export function RegionForm({ region }: { region?: Region }) {
       onSubmit={handleSubmit}
       className="max-w-2xl bg-gray-900 rounded-xl border border-gray-800 p-6 space-y-4"
     >
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label className={labelClass}>地區名稱 *</label>
           <input
@@ -111,7 +111,7 @@ export function RegionForm({ region }: { region?: Region }) {
         />
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label className={labelClass}>排序</label>
           <input

@@ -11,6 +11,7 @@ export function ImageUpload({
 }) {
   const [uploading, setUploading] = useState(false);
   const [dragOver, setDragOver] = useState(false);
+  const [imgError, setImgError] = useState(false);
 
   const handleFile = useCallback(
     async (file: File) => {
@@ -31,6 +32,7 @@ export function ImageUpload({
         });
         if (res.ok) {
           const { url } = await res.json();
+          setImgError(false);
           onChange(url);
         } else {
           const err = await res.json();
@@ -49,14 +51,24 @@ export function ImageUpload({
     <div>
       {value ? (
         <div className="relative inline-block">
-          <img
-            src={value}
-            alt="門市圖片"
-            className="w-48 h-32 object-cover rounded-lg border border-gray-700"
-          />
+          {imgError ? (
+            <div className="w-full sm:w-48 h-32 rounded-lg border border-gray-700 bg-gray-800 flex items-center justify-center">
+              <span className="text-xs text-gray-500">圖片無法載入</span>
+            </div>
+          ) : (
+            <img
+              src={value}
+              alt="門市圖片"
+              className="w-full sm:w-48 h-32 object-cover rounded-lg border border-gray-700"
+              onError={() => setImgError(true)}
+            />
+          )}
           <button
             type="button"
-            onClick={() => onChange("")}
+            onClick={() => {
+              setImgError(false);
+              onChange("");
+            }}
             className="absolute -top-2 -right-2 bg-red-500 text-white w-5 h-5 rounded-full text-xs flex items-center justify-center hover:bg-red-400"
           >
             ✕
@@ -64,7 +76,7 @@ export function ImageUpload({
         </div>
       ) : (
         <label
-          className={`flex flex-col items-center justify-center w-48 h-32 rounded-lg border-2 border-dashed cursor-pointer transition ${
+          className={`flex flex-col items-center justify-center w-full sm:w-48 h-32 rounded-lg border-2 border-dashed cursor-pointer transition ${
             dragOver
               ? "border-amber-400 bg-amber-900/20"
               : "border-gray-700 bg-gray-800 hover:border-gray-600"

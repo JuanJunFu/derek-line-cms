@@ -80,7 +80,7 @@ export default async function WarRoomPage() {
       </div>
 
       {/* ── KPI Strip ── */}
-      <div className="grid grid-cols-3 gap-4 mb-6">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
         <div className="bg-red-900/20 border border-red-800/40 rounded-xl p-4 text-center">
           <p className="text-3xl font-bold text-red-400">{totalHot}</p>
           <p className="text-xs text-gray-500 mt-1">🔥 HOT 客戶</p>
@@ -95,7 +95,7 @@ export default async function WarRoomPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* ── Left: HOT Users ── */}
         <div>
           <h2 className="text-sm font-bold text-red-400 mb-3">

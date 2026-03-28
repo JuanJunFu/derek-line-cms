@@ -35,7 +35,7 @@ export default async function ReferralsPage() {
       </p>
 
       {/* Stats */}
-      <div className="grid grid-cols-3 gap-4 mb-6">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
         <div className="bg-green-900/20 border border-green-800/40 rounded-xl p-4 text-center">
           <p className="text-3xl font-bold text-green-400">{completedCount}</p>
           <p className="text-xs text-gray-500 mt-1">✅ 已完成推薦</p>
@@ -56,8 +56,8 @@ export default async function ReferralsPage() {
       </div>
 
       {/* Referral table */}
-      <div className="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden">
-        <table className="w-full text-sm">
+      <div className="bg-gray-900 border border-gray-800 rounded-xl overflow-x-auto">
+        <table className="w-full text-sm min-w-[700px]">
           <thead>
             <tr className="border-b border-gray-800 text-gray-500 text-xs">
               <th className="text-left px-4 py-3">推薦碼</th>

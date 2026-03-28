@@ -164,13 +164,13 @@ export default async function AnalyticsPage() {
       <h1 className="text-xl font-bold text-gray-100 mb-6">📊 互動分析</h1>
 
       {/* Summary cards */}
-      <div className="grid grid-cols-4 gap-4 mb-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
         <StatCard label="今日互動" value={todayCount} />
         <StatCard label="本週互動" value={weekCount} />
         <StatCard label="本月互動" value={monthCount} />
         <StatCard label="活躍用戶" value={totalUsers} color="text-blue-400" />
       </div>
-      <div className="grid grid-cols-2 gap-4 mb-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
         <StatCard label="本月新增好友" value={follows} color="text-green-400" />
         <StatCard label="本月封鎖" value={unfollows} color="text-red-400" />
       </div>
@@ -181,13 +181,13 @@ export default async function AnalyticsPage() {
       </div>
 
       {/* Charts row */}
-      <div className="grid grid-cols-3 gap-6 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
         <DonutChart data={leadScoreData} title="🎯 短期意圖分級" />
         <DonutChart data={relLevelData} title="💎 長期關係等級" />
         <DonutChart data={categoryData} title="🏷️ 熱門產品分類" />
       </div>
 
-      <div className="grid grid-cols-2 gap-6 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
         <DonutChart data={regionData} title="📍 熱門地區分布" />
         <div className="bg-gray-900 rounded-xl border border-gray-800 p-4">
           <BarChart data={eventTypeData} title="📋 事件類型統計（本月）" />
@@ -239,7 +239,7 @@ export default async function AnalyticsPage() {
       {/* ── Sequence Metrics ── */}
       <div className="bg-gray-900 rounded-xl border border-gray-800 p-4">
         <h2 className="text-sm font-bold text-gray-300 mb-4">📬 自動序列指標</h2>
-        <div className="grid grid-cols-4 gap-4 mb-4">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
           <StatCard label="待發送" value={seqPending} color="text-amber-400" />
           <StatCard label="已發送" value={seqSent} color="text-green-400" />
           <StatCard label="處理中" value={seqProcessing} color="text-blue-400" />
@@ -312,9 +312,9 @@ function HourlyChart({ counts }: { counts: number[] }) {
 
 function StatCard({ label, value, color = "text-amber-400" }: { label: string; value: number; color?: string }) {
   return (
-    <div className="bg-gray-900 rounded-xl border border-gray-800 p-4">
+    <div className="bg-gray-900 rounded-xl border border-gray-800 p-3 md:p-4">
       <p className="text-xs text-gray-500">{label}</p>
-      <p className={`text-2xl font-bold ${color}`}>{value.toLocaleString()}</p>
+      <p className={`text-xl md:text-2xl font-bold ${color}`}>{value.toLocaleString()}</p>
     </div>
   );
 }

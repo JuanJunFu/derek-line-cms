@@ -168,7 +168,7 @@ export default async function StoresPage() {
       </div>
 
       {/* ── 意圖情報摘要卡 ── */}
-      <div className="grid grid-cols-4 gap-3 mb-6">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
         <div className="bg-gray-900 rounded-xl border border-gray-800 p-4">
           <p className="text-xs text-gray-500">本月意向轉化率</p>
           <p className="text-2xl font-bold text-amber-400">{conversionRate}%</p>
@@ -198,8 +198,8 @@ export default async function StoresPage() {
       </div>
 
       {/* ── 門市表格（含動態指標） ── */}
-      <div className="bg-gray-900 rounded-xl border border-gray-800 overflow-hidden">
-        <table className="w-full text-sm">
+      <div className="bg-gray-900 rounded-xl border border-gray-800 overflow-x-auto">
+        <table className="w-full text-sm min-w-[700px]">
           <thead>
             <tr className="bg-gray-800 text-amber-500">
               <th className="p-3 text-left font-medium">門市名稱</th>

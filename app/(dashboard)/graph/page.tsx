@@ -116,7 +116,7 @@ export default async function GraphPage() {
         Top 200 客戶（依關係分排序）× 意圖標籤 × 地區分佈
       </p>
 
-      <div className="grid grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
         {/* ── Left: Tag nodes with user count ── */}
         <div className="col-span-1 space-y-4">
           <div className="bg-gray-900 border border-gray-800 rounded-xl p-4">
@@ -176,7 +176,7 @@ export default async function GraphPage() {
                 <RelLevelBar users={users} />
               </div>
 
-              <div className="grid grid-cols-2 gap-1.5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
                 {users.slice(0, 8).map((u) => (
                   <Link
                     key={u.userId}

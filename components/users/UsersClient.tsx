@@ -127,7 +127,7 @@ export function UsersClient({
       )}
 
       {/* Stats */}
-      <div className="grid grid-cols-3 gap-3 mb-6">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
         <div className="bg-gray-900 border border-gray-800 rounded-xl p-3 text-center">
           <p className="text-2xl font-bold text-gray-200">{users.length}</p>
           <p className="text-xs text-gray-500 mt-0.5">使用者總數</p>

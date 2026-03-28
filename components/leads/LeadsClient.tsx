@@ -110,7 +110,7 @@ export function LeadsClient() {
       )}
 
       {/* ── 4-Quadrant Cards ── */}
-      <div className="grid grid-cols-2 gap-3 mb-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
         {(["hot_high", "hot_low", "cold_high", "cold_low"] as Quadrant[]).map((q) => {
           const meta = QUADRANT_META[q];
           const count = quadrantCounts[q];

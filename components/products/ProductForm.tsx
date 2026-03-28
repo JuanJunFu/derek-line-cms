@@ -114,10 +114,10 @@ export function ProductForm({ category }: { category?: Category }) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="max-w-3xl bg-gray-900 rounded-xl border border-gray-800 p-6 space-y-5"
+      className="max-w-full lg:max-w-3xl bg-gray-900 rounded-xl border border-gray-800 p-6 space-y-5"
     >
       {/* Basic info */}
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div>
           <label className={labelClass}>Emoji</label>
           <input
@@ -149,7 +149,7 @@ export function ProductForm({ category }: { category?: Category }) {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label className={labelClass}>意圖標籤 (Intent)</label>
           <select
@@ -175,7 +175,7 @@ export function ProductForm({ category }: { category?: Category }) {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label className={labelClass}>排序（數字越小越前面）</label>
           <input

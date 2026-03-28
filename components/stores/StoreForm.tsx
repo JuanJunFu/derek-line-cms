@@ -70,9 +70,9 @@ export function StoreForm({
   return (
     <form
       onSubmit={handleSubmit}
-      className="max-w-2xl bg-gray-900 rounded-xl border border-gray-800 p-6 space-y-4"
+      className="max-w-full lg:max-w-2xl bg-gray-900 rounded-xl border border-gray-800 p-6 space-y-4"
     >
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label className={labelClass}>門市名稱 *</label>
           <input
@@ -98,7 +98,7 @@ export function StoreForm({
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label className={labelClass}>所屬地區 *</label>
           <select
@@ -134,7 +134,7 @@ export function StoreForm({
         />
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label className={labelClass}>電話 *</label>
           <input
@@ -155,7 +155,7 @@ export function StoreForm({
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label className={labelClass}>門市 LINE ID</label>
           <input

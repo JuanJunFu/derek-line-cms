@@ -301,7 +301,7 @@ export function SequenceEditorClient() {
       </div>
 
       {/* ── Stats ── */}
-      <div className="grid grid-cols-3 gap-3 mb-6">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
         <div className="bg-gray-900 border border-gray-800 rounded-xl p-3 text-center">
           <p className="text-2xl font-bold text-gray-200">{sequences.length}</p>
           <p className="text-xs text-gray-500 mt-0.5">序列總數</p>
@@ -346,7 +346,7 @@ export function SequenceEditorClient() {
             </div>
             <div>
               <label className="block text-xs text-gray-500 mb-1">分類 / 觸發條件</label>
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 {TRIGGER_OPTIONS.map((t) => (
                   <button
                     key={t.value}

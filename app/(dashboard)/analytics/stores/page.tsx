@@ -67,8 +67,8 @@ export default async function StoreAnalyticsPage() {
       <h1 className="text-xl font-bold text-gray-100 mb-6">🏆 據點表現</h1>
       <p className="text-sm text-gray-500 mb-4">過去 30 天數據</p>
 
-      <div className="bg-gray-900 rounded-xl border border-gray-800 overflow-hidden">
-        <table className="w-full text-sm">
+      <div className="bg-gray-900 rounded-xl border border-gray-800 overflow-x-auto">
+        <table className="w-full text-sm min-w-[700px]">
           <thead>
             <tr className="bg-gray-800 text-amber-500">
               <th className="p-3 text-left font-medium">排名</th>
