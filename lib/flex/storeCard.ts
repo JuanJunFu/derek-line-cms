@@ -109,10 +109,11 @@ function buildStoreCard(store: Store & { region: Region }): Record<string, any> 
     }
   }
 
-  // ── Footer buttons (gold.html: dark "致電" + green "LINE") ──
+  // ── Footer buttons (gold.html: dark "致電" + green "LINE/導航") ──
+  // Use direct URI actions — one tap to open (no postback round-trip).
+  // Tracking is already captured by STORE_VIEW when the carousel is shown.
   const footerContents: object[] = [];
 
-  // Two-step Postback buttons (for tracking) — webhook replies with URI
   if (hasPhone) {
     footerContents.push({
       type: "button",
@@ -120,40 +121,36 @@ function buildStoreCard(store: Store & { region: Region }): Record<string, any> 
       color: "#1a1a1a",
       height: "sm",
       action: {
-        type: "postback",
+        type: "uri",
         label: isMainStore ? "📞 立即致電" : "📞 致電",
-        data: `action=STORE_CALL&storeId=${store.id}&uri=${encodeURIComponent("tel:" + cleanPhone)}`,
-        displayText: `致電 ${store.name}`,
+        uri: "tel:" + cleanPhone,
       },
     });
   }
 
   if (store.lineId) {
-    const lineUri = "https://line.me/R/ti/p/" + store.lineId;
     footerContents.push({
       type: "button",
       style: "primary",
       color: "#06C755",
       height: "sm",
       action: {
-        type: "postback",
+        type: "uri",
         label: "💬 門市LINE",
-        data: `action=STORE_LINE&storeId=${store.id}&uri=${encodeURIComponent(lineUri)}`,
-        displayText: `開啟 ${store.name} LINE`,
+        uri: "https://line.me/R/ti/p/" + store.lineId,
       },
     });
   } else if (store.googleMapUrl || hasAddress) {
-    const mapUrl = store.googleMapUrl || ("https://www.google.com/maps/search/" + encodeURIComponent(store.address));
+    const mapUrl = store.googleMapUrl || ("https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(store.address));
     footerContents.push({
       type: "button",
       style: "primary",
       color: "#06C755",
       height: "sm",
       action: {
-        type: "postback",
+        type: "uri",
         label: "📍 導航前往",
-        data: `action=STORE_NAV&storeId=${store.id}&uri=${encodeURIComponent(mapUrl)}`,
-        displayText: `導航到 ${store.name}`,
+        uri: mapUrl,
       },
     });
   }
