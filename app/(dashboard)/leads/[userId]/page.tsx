@@ -45,8 +45,8 @@ function getEventDotColor(eventType: string): string {
   if (eventType === "PRODUCT_VIEW") return "bg-blue-500";
   if (eventType === "REGION_SELECT") return "bg-emerald-500";
   if (eventType === "MESSAGE") return "bg-purple-500";
-  if (eventType === "SEQUENCE_COMPLETE") return "bg-amber-400";
-  return "bg-gray-600";
+  if (eventType === "SEQUENCE_COMPLETE") return "bg-[var(--brand-accent)]";
+  return "bg-[var(--text-muted)]";
 }
 
 function buildAiSuggestion(

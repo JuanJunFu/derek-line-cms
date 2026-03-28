@@ -35,10 +35,10 @@ function tagColor(tag: string) {
 }
 
 const REL_COLORS: Record<string, string> = {
-  "新識": "border-l-gray-600",
+  "新識": "border-l-[var(--text-muted)]",
   "認識": "border-l-blue-600",
   "熟識": "border-l-emerald-600",
-  "信任": "border-l-amber-500",
+  "信任": "border-l-[var(--brand-accent)]",
   "忠誠": "border-l-orange-500",
 };
 
@@ -181,7 +181,7 @@ export default async function GraphPage() {
                   <Link
                     key={u.userId}
                     href={`/leads/${encodeURIComponent(u.userId)}`}
-                    className={`flex items-center justify-between bg-[var(--bg-tertiary)]/50 rounded-lg px-2 py-1.5 border-l-2 hover:bg-[var(--bg-tertiary)] transition ${REL_COLORS[u.relationshipLevel ?? "新識"] ?? "border-l-gray-700"}`}
+                    className={`flex items-center justify-between bg-[var(--bg-tertiary)]/50 rounded-lg px-2 py-1.5 border-l-2 hover:bg-[var(--bg-tertiary)] transition ${REL_COLORS[u.relationshipLevel ?? "新識"] ?? "border-l-[var(--text-muted)]"}`}
                   >
                     <div className="min-w-0">
                       <p className="text-xs text-[var(--text-primary)] truncate">
@@ -218,7 +218,7 @@ function RelLevelBar({
   users: { relationshipLevel: string | null }[];
 }) {
   const levels = ["新識", "認識", "熟識", "信任", "忠誠"];
-  const colors  = ["bg-gray-600", "bg-blue-600", "bg-emerald-600", "bg-[var(--brand-accent)]", "bg-orange-500"];
+  const colors  = ["bg-[var(--text-muted)]", "bg-blue-600", "bg-emerald-600", "bg-[var(--brand-accent)]", "bg-orange-500"];
   const counts  = levels.map((lv) => users.filter((u) => (u.relationshipLevel ?? "新識") === lv).length);
   const total   = users.length;
 

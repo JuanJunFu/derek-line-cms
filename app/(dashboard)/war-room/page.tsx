@@ -206,7 +206,7 @@ export default async function WarRoomPage() {
                         ev?.bg.includes("amber") ? "bg-[var(--brand-accent)]" :
                         ev?.bg.includes("green") ? "bg-green-500" :
                         ev?.bg.includes("blue") ? "bg-blue-500" :
-                        "bg-gray-500"
+                        "bg-[var(--text-muted)]"
                       }`} />
                       <span className="text-xs text-[var(--text-secondary)] flex-1 truncate">
                         {prof?.displayName || e.userId.slice(0, 10) + "…"}

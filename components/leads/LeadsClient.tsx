@@ -122,7 +122,7 @@ export function LeadsClient() {
               key={q}
               onClick={() => handleQuadrantClick(q)}
               className={`rounded-xl border p-3 text-left transition ${meta.color} ${
-                isActive ? "ring-2 ring-amber-500" : ""
+                isActive ? "ring-2 ring-[var(--brand-accent)]" : ""
               }`}
             >
               <div className="flex items-start justify-between mb-2">

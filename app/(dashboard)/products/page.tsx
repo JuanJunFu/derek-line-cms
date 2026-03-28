@@ -58,7 +58,7 @@ export default async function ProductsPage() {
                           href={cat.url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-amber-600 hover:text-[var(--brand-accent)]"
+                          className="text-[var(--brand-accent)] hover:text-[var(--brand-accent)]"
                         >
                           官網連結
                         </a>

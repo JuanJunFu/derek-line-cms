@@ -78,7 +78,7 @@ export function ImageUpload({
         <label
           className={`flex flex-col items-center justify-center w-full sm:w-48 h-32 rounded-lg border-2 border-dashed cursor-pointer transition ${
             dragOver
-              ? "border-amber-400 bg-[var(--brand-accent)]/10"
+              ? "border-[var(--brand-accent)] bg-[var(--brand-accent)]/10"
               : "border-[var(--border-strong)] bg-[var(--bg-tertiary)] hover:border-[var(--border-strong)]"
           } ${uploading ? "opacity-50 pointer-events-none" : ""}`}
           onDragOver={(e) => {

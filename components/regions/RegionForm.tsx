@@ -126,7 +126,7 @@ export function RegionForm({ region }: { region?: Region }) {
             type="checkbox"
             checked={form.isActive}
             onChange={(e) => update("isActive", e.target.checked)}
-            className="accent-amber-500"
+            className="accent-[var(--brand-accent)]"
           />
           <label className="text-sm text-[var(--text-secondary)]">啟用</label>
         </div>
