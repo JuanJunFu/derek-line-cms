@@ -203,7 +203,7 @@ export function SegmentClient({
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-xl font-bold text-[var(--text-primary)]">
-            受眾分群
+            👥 受眾分群
           </h1>
           <p className="text-xs text-[var(--text-muted)] mt-1">
             建立與管理受眾分群，精準推播行銷訊息

@@ -183,7 +183,7 @@ export default async function UserTimelinePage({
                 <div className="flex items-center gap-2 flex-wrap">
                   {/* Lead score */}
                   <span className={`px-3 py-1 rounded-full text-sm font-bold ${scoreColors[profile.leadScore]}`}>
-                    {profile.leadScore === "HOT" ? "🔥 HOT" : profile.leadScore === "WARM" ? "🟠 WARM" : "❄️ COLD"}
+                    {profile.leadScore === "HOT" ? "🔥 高意向" : profile.leadScore === "WARM" ? "🟠 有興趣" : "❄️ 觀望中"}
                   </span>
                   {/* Relationship level */}
                   <span className={`px-3 py-1 rounded-full text-sm font-semibold bg-[var(--bg-tertiary)] border border-[var(--border-strong)] ${relLevelColors[profile.relationshipLevel ?? "新識"]}`}>

@@ -69,7 +69,7 @@ export default async function WarRoomPage() {
         <div>
           <h1 className="text-xl font-bold text-[var(--text-primary)]">🎯 意圖戰情室</h1>
           <p className="text-xs text-[var(--text-muted)] mt-0.5">
-            即時 HOT 客戶監控 · 每 30 秒自動更新 ·{" "}
+            即時高意向客戶監控 · 每 30 秒自動更新 ·{" "}
             最後更新：{now.toLocaleTimeString("zh-TW", { hour: "2-digit", minute: "2-digit", second: "2-digit" })}
           </p>
         </div>
@@ -83,7 +83,7 @@ export default async function WarRoomPage() {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
         <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-center">
           <p className="text-3xl font-bold text-red-600">{totalHot}</p>
-          <p className="text-xs text-[var(--text-muted)] mt-1">🔥 HOT 客戶</p>
+          <p className="text-xs text-[var(--text-muted)] mt-1">🔥 高意向客戶</p>
         </div>
         <div className="bg-[var(--brand-accent)]/10 border border-[var(--brand-accent)]/20 rounded-xl p-4 text-center">
           <p className="text-3xl font-bold text-[var(--brand-accent)]">{todayHighIntent}</p>
@@ -99,11 +99,11 @@ export default async function WarRoomPage() {
         {/* ── Left: HOT Users ── */}
         <div>
           <h2 className="text-sm font-bold text-red-600 mb-3">
-            🔥 HOT 客戶（{hotProfiles.length} 人）
+            🔥 高意向客戶（{hotProfiles.length} 人）
           </h2>
           <div className="space-y-2">
             {hotProfiles.length === 0 ? (
-              <p className="text-sm text-[var(--text-muted)]">目前無 HOT 客戶</p>
+              <p className="text-sm text-[var(--text-muted)]">目前無高意向客戶</p>
             ) : (
               hotProfiles.map((p) => (
                 <Link

@@ -10,8 +10,8 @@ export default async function RepliesPage() {
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-xl font-bold text-[var(--text-primary)]">自動回覆管理</h1>
+      <div className="flex justify-between items-center mb-1">
+        <h1 className="text-xl font-bold text-[var(--text-primary)]">💬 自動回覆管理</h1>
         <Link
           href="/replies/new"
           className="bg-[var(--brand-primary)] hover:bg-[var(--text-secondary)] text-white px-4 py-2 rounded-lg text-sm font-bold transition"
@@ -19,6 +19,9 @@ export default async function RepliesPage() {
           ＋ 新增回覆
         </Link>
       </div>
+      <p className="text-xs text-[var(--text-muted)] mb-6">
+        設定 LINE Bot 收到特定關鍵字時的自動回覆內容，支援文字和 Flex 訊息格式。
+      </p>
 
       <div className="bg-[var(--bg-secondary)] rounded-xl border border-[var(--border-strong)] overflow-x-auto">
         <table className="w-full text-sm min-w-[600px]">

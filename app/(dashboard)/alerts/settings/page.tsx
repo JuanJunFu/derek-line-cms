@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 export const dynamic = "force-dynamic";
 
 const RULE_TYPES: Record<string, string> = {
-  LEAD_HOT: "用戶升級為熱線索 (HOT)",
+  LEAD_HOT: "用戶升級為高意向客戶",
   FALLBACK_3X: "24h 內查無關鍵字 3 次以上",
   STORE_REPEAT: "短時間內反覆查詢同門市",
   NEW_FOLLOW: "新加好友",

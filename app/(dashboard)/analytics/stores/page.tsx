@@ -64,8 +64,10 @@ export default async function StoreAnalyticsPage() {
 
   return (
     <div>
-      <h1 className="text-xl font-bold text-[var(--text-primary)] mb-6">🏆 據點表現</h1>
-      <p className="text-sm text-[var(--text-muted)] mb-4">過去 30 天數據</p>
+      <h1 className="text-xl font-bold text-[var(--text-primary)] mb-1">🏆 據點表現</h1>
+      <p className="text-xs text-[var(--text-muted)] mb-6">
+        各門市過去 30 天的瀏覽、致電、導航和 LINE 聯繫次數，幫助評估線下行銷成效。
+      </p>
 
       <div className="bg-[var(--bg-secondary)] rounded-xl border border-[var(--border-strong)] overflow-x-auto">
         <table className="w-full text-sm min-w-[700px]">

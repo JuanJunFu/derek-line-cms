@@ -11,8 +11,8 @@ export default async function RegionsPage() {
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-xl font-bold text-[var(--text-primary)]">地區管理</h1>
+      <div className="flex justify-between items-center mb-1">
+        <h1 className="text-xl font-bold text-[var(--text-primary)]">📍 地區管理</h1>
         <Link
           href="/regions/new"
           className="bg-[var(--brand-primary)] hover:bg-[var(--text-secondary)] text-white px-4 py-2 rounded-lg text-sm font-bold transition"
@@ -20,6 +20,9 @@ export default async function RegionsPage() {
           ＋ 新增地區
         </Link>
       </div>
+      <p className="text-xs text-[var(--text-muted)] mb-6">
+        設定門市所屬地區，用於客戶地區篩選和就近門市推薦。
+      </p>
 
       <div className="bg-[var(--bg-secondary)] rounded-xl border border-[var(--border-strong)] overflow-x-auto">
         <table className="w-full text-sm min-w-[600px]">

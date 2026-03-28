@@ -157,7 +157,7 @@ export default async function StoresPage() {
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-4">
+      <div className="flex justify-between items-center mb-1">
         <h1 className="text-xl font-bold text-[var(--text-primary)]">🏪 門市管理</h1>
         <Link
           href="/stores/new"
@@ -166,6 +166,9 @@ export default async function StoresPage() {
           ＋ 新增門市
         </Link>
       </div>
+      <p className="text-xs text-[var(--text-muted)] mb-6">
+        管理各門市資訊（地址、電話、營業時間），並追蹤客戶對門市的致電、導航等互動數據。
+      </p>
 
       {/* ── 意圖情報摘要卡 ── */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">

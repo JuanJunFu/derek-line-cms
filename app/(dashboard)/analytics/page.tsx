@@ -121,9 +121,9 @@ export default async function AnalyticsPage() {
 
   // ── Chart data ──
   const leadScoreData = [
-    { label: "🔥 熱線索", value: leadScores.find((l) => l.leadScore === "HOT")?._count ?? 0, color: "#EF4444" },
-    { label: "🟠 溫線索", value: leadScores.find((l) => l.leadScore === "WARM")?._count ?? 0, color: "#F59E0B" },
-    { label: "❄️ 冷線索", value: leadScores.find((l) => l.leadScore === "COLD")?._count ?? 0, color: "#6B7280" },
+    { label: "🔥 高意向", value: leadScores.find((l) => l.leadScore === "HOT")?._count ?? 0, color: "#EF4444" },
+    { label: "🟠 有興趣", value: leadScores.find((l) => l.leadScore === "WARM")?._count ?? 0, color: "#F59E0B" },
+    { label: "❄️ 觀望中", value: leadScores.find((l) => l.leadScore === "COLD")?._count ?? 0, color: "#6B7280" },
   ];
   const relLevelOrder = ["新識", "認識", "熟識", "信任", "忠誠"];
   const relLevelColors = ["#6B7280", "#3B82F6", "#10B981", "#F59E0B", "#F97316"];
@@ -161,7 +161,10 @@ export default async function AnalyticsPage() {
 
   return (
     <div>
-      <h1 className="text-xl font-bold text-[var(--text-primary)] mb-6">📊 互動分析</h1>
+      <h1 className="text-xl font-bold text-[var(--text-primary)] mb-1">📊 互動分析</h1>
+      <p className="text-xs text-[var(--text-muted)] mb-6">
+        追蹤客戶互動趨勢，包含品類興趣、地區分佈、24 小時活躍時段和轉換漏斗分析。
+      </p>
 
       {/* Summary cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-4">

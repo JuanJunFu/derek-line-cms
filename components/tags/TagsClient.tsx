@@ -95,7 +95,7 @@ export function TagsClient({ initialTags }: { initialTags: TagInfo[] }) {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-xl font-bold text-[var(--text-primary)]">
-            標籤管理
+            🏷️ 標籤管理
           </h1>
           <p className="text-sm text-[var(--text-muted)] mt-1">
             管理用戶標籤系統，共 {totalTagTypes} 種標籤，

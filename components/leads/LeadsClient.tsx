@@ -93,7 +93,7 @@ export function LeadsClient() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center justify-between mb-1">
         <h1 className="text-xl font-bold text-[var(--text-primary)]">🎯 客戶關係矩陣</h1>
         <a
           href="/api/v1/leads/export"
@@ -102,12 +102,15 @@ export function LeadsClient() {
           匯出 CSV
         </a>
       </div>
+      <p className="text-xs text-[var(--text-muted)] mb-6">
+        所有加入 LINE 好友的客戶一覽。可依購買意向、關係分數、地區篩選，點擊客戶查看完整互動紀錄。
+      </p>
 
       {/* ── Scatter Plot ── */}
       {data && data.data.length > 0 && (
         <div className="bg-[var(--bg-secondary)] rounded-xl border border-[var(--border-strong)] p-4 mb-4 overflow-x-auto">
           <p className="text-xs text-[var(--text-muted)] mb-2">
-            X 軸：長期關係分（0-100）｜Y 軸：短期購買意圖（HOT/WARM/COLD）｜每點 = 一位客戶
+            X 軸：長期關係分（0-100）｜Y 軸：短期購買意圖（高意向/有興趣/觀望中）｜每點 = 一位客戶
           </p>
           <ScatterPlot
             profiles={data.data}
@@ -235,7 +238,7 @@ function LeadRow({ lead }: { lead: ScoredProfile }) {
           <span
             className={`text-xs font-bold ${scoreColors[lead.liveScore] ?? "text-[var(--text-secondary)]"}`}
           >
-            {lead.liveScore}
+            {lead.liveScore === "HOT" ? "🔥 高意向" : lead.liveScore === "WARM" ? "🟠 有興趣" : "❄️ 觀望中"}
           </span>
           <p className="text-sm text-[var(--text-primary)] font-medium truncate">
             {lead.displayName || lead.userId.slice(0, 12) + "..."}
@@ -403,7 +406,7 @@ function ScatterPlot({
             fontSize="9"
             fill={scoreToColor[s]}
           >
-            {s}
+            {s === "HOT" ? "高意向" : s === "WARM" ? "有興趣" : "觀望中"}
           </text>
         );
       })}
