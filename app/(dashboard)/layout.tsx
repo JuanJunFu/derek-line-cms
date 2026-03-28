@@ -24,6 +24,7 @@ export default async function DashboardLayout({
           <NavLink href="/products">📦 產品分類</NavLink>
           <NavLink href="/replies">💬 自動回覆</NavLink>
           <NavLink href="/settings">⚙️ 系統設定</NavLink>
+          <NavLink href="/users">👤 使用者管理</NavLink>
           <div className="my-2 border-t border-gray-800" />
           <NavLink href="/analytics">📊 互動分析</NavLink>
           <NavLink href="/leads">🎯 客戶矩陣</NavLink>

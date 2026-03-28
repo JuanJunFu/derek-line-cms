@@ -7,13 +7,11 @@
  */
 
 import { prisma } from "@/lib/prisma";
+import { getSettings } from "@/lib/settings";
 
 const CODE_LENGTH = 4;
 const CODE_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // 排除易混淆: 0/O, 1/I
 const MAX_RETRIES = 5;
-
-// LINE 官方帳號 ID（@xxx 格式），用於產生分享連結
-const LINE_OA_ID = process.env.LINE_OA_ID || "@derek_bath";
 
 function randomCode(): string {
   let code = "";
@@ -21,6 +19,26 @@ function randomCode(): string {
     code += CODE_CHARS[Math.floor(Math.random() * CODE_CHARS.length)];
   }
   return `REF-${code}`;
+}
+
+/**
+ * Get the active LINE OA ID from DB settings.
+ * Supports production/test environment switching.
+ */
+async function getActiveLineOaId(): Promise<string> {
+  const cfg = await getSettings([
+    "line_active_env",
+    "line_oa_id_production",
+    "line_oa_id_test",
+  ]);
+
+  const env = cfg.line_active_env || "production";
+  const oaId =
+    env === "test"
+      ? cfg.line_oa_id_test || "@897utgnk"
+      : cfg.line_oa_id_production || "@417cnroq";
+
+  return oaId;
 }
 
 export interface ReferralResult {
@@ -32,14 +50,31 @@ export interface ReferralResult {
 
 /**
  * Build a shareable referral Flex Message card.
- * Contains the referral code + a "分享給朋友" button that opens LINE share.
+ * All text content comes from DB settings for easy customization.
  */
-function buildReferralFlexMessage(code: string) {
-  // oaMessage URL: opens chat with OA and pre-fills the referral code
-  const oaUrl = `https://line.me/R/oaMessage/${LINE_OA_ID}/?${encodeURIComponent(code)}`;
+async function buildReferralFlexMessage(code: string) {
+  const cfg = await getSettings([
+    "referral_brand_name",
+    "referral_share_text",
+    "flex_brand_color",
+  ]);
 
-  // Share text: friend receives this message with clickable link
-  const shareText = `🤝 DEREK 德瑞克衛浴 — 好友推薦\n\n我的推薦碼：${code}\n\n👉 點擊加入並自動輸入推薦碼：\n${oaUrl}`;
+  const lineOaId = await getActiveLineOaId();
+  const brandName = cfg.referral_brand_name || "DEREK 德瑞克衛浴";
+  const brandColor = cfg.flex_brand_color || "#B89A6A";
+
+  // oaMessage URL: opens chat with OA and pre-fills the referral code
+  const oaUrl = `https://line.me/R/oaMessage/${lineOaId}/?${encodeURIComponent(code)}`;
+
+  // Share text from template
+  const shareTextTemplate =
+    cfg.referral_share_text ||
+    "🤝 {brand} — 好友推薦\n\n我的推薦碼：{code}\n\n👉 點擊加入並自動輸入推薦碼：\n{url}";
+
+  const shareText = shareTextTemplate
+    .replace("{brand}", brandName)
+    .replace("{code}", code)
+    .replace("{url}", oaUrl);
 
   // LINE share picker URL: opens friend selection dialog
   const sharePickerUrl = `https://line.me/R/share?text=${encodeURIComponent(shareText)}`;
@@ -52,10 +87,10 @@ function buildReferralFlexMessage(code: string) {
       header: {
         type: "box",
         layout: "vertical",
-        backgroundColor: "#B89A6A",
+        backgroundColor: brandColor,
         paddingAll: "16px",
         contents: [
-          { type: "text", text: "🤝 DEREK 德瑞克衛浴", size: "sm", color: "#ffffff", align: "center" },
+          { type: "text", text: `🤝 ${brandName}`, size: "sm", color: "#ffffff", align: "center" },
           { type: "text", text: "專屬推薦碼", size: "xl", weight: "bold", color: "#ffffff", align: "center", margin: "sm" },
         ],
       },
@@ -72,7 +107,7 @@ function buildReferralFlexMessage(code: string) {
             cornerRadius: "12px",
             paddingAll: "16px",
             contents: [
-              { type: "text", text: code, size: "3xl", weight: "bold", color: "#B89A6A", align: "center" },
+              { type: "text", text: code, size: "3xl", weight: "bold", color: brandColor, align: "center" },
             ],
           },
           { type: "text", text: "點擊「分享給朋友」選擇好友\n朋友收到後點連結即可自動輸入推薦碼", size: "sm", color: "#888888", wrap: true, align: "center" },
@@ -87,7 +122,7 @@ function buildReferralFlexMessage(code: string) {
           {
             type: "button",
             style: "primary",
-            color: "#B89A6A",
+            color: brandColor,
             action: {
               type: "uri",
               label: "📤 分享給朋友",
@@ -125,7 +160,7 @@ export async function generateReferralCode(userId: string): Promise<ReferralResu
       success: true,
       code: existing.code,
       message: `您的專屬推薦碼是 ${existing.code}`,
-      flexMessage: buildReferralFlexMessage(existing.code),
+      flexMessage: await buildReferralFlexMessage(existing.code),
     };
   }
 
@@ -144,7 +179,7 @@ export async function generateReferralCode(userId: string): Promise<ReferralResu
         success: true,
         code,
         message: `您的專屬推薦碼是 ${code}`,
-        flexMessage: buildReferralFlexMessage(code),
+        flexMessage: await buildReferralFlexMessage(code),
       };
     } catch (err: unknown) {
       // Unique constraint violation → retry with new code
