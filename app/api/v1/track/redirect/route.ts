@@ -24,16 +24,19 @@ export async function GET(req: NextRequest) {
   }
 
   // Fire-and-forget tracking — don't block the redirect
-  try {
-    await prisma.event.create({
-      data: {
-        type: action,
-        userId: userId,
-        data: { storeId } as any,
-      },
-    });
-  } catch (e) {
-    console.error("[track/redirect] Failed to record event:", e);
+  if (userId) {
+    try {
+      await prisma.userEvent.create({
+        data: {
+          eventType: action,
+          userId: userId,
+          storeId: storeId || null,
+          data: { storeId },
+        },
+      });
+    } catch (e) {
+      console.error("[track/redirect] Failed to record event:", e);
+    }
   }
 
   return NextResponse.redirect(uri, 302);
