@@ -65,6 +65,14 @@ async function handleEvent(event: WebhookEvent, eventIndex: number) {
         replyToken: event.replyToken,
         messages: [{ type: "text", text: cfg.welcome_message }],
       });
+      if (userId) {
+        logChatMessage({
+          userId,
+          direction: "outbound",
+          msgType: "text",
+          content: { text: cfg.welcome_message },
+        }).catch((e) => console.error("[chatlog] outbound welcome:", e));
+      }
       return;
     }
 
@@ -80,6 +88,16 @@ async function handleEvent(event: WebhookEvent, eventIndex: number) {
     if (event.type === "message" && event.message.type === "text") {
       const text = event.message.text.trim();
 
+      // Log inbound text message
+      if (userId) {
+        logChatMessage({
+          userId,
+          direction: "inbound",
+          msgType: "text",
+          content: { text },
+        }).catch((e) => console.error("[chatlog] inbound text:", e));
+      }
+
       // ── Referral: generate code → Flex card with share link ──
       if (userId && REFERRAL_KEYWORDS.some((kw) => text === kw)) {
         const result = await generateReferralCode(userId);
@@ -90,6 +108,14 @@ async function handleEvent(event: WebhookEvent, eventIndex: number) {
             ? [result.flexMessage as any]
             : [{ type: "text", text: result.message }],
         });
+        logChatMessage({
+          userId,
+          direction: "outbound",
+          msgType: result.flexMessage ? "flex" : "text",
+          content: result.flexMessage
+            ? { altText: "推薦碼" }
+            : { text: result.message },
+        }).catch((e) => console.error("[chatlog] outbound referral gen:", e));
         return;
       }
 
@@ -102,6 +128,12 @@ async function handleEvent(event: WebhookEvent, eventIndex: number) {
           replyToken: event.replyToken,
           messages: [{ type: "text", text: result.message }],
         });
+        logChatMessage({
+          userId,
+          direction: "outbound",
+          msgType: "text",
+          content: { text: result.message },
+        }).catch((e) => console.error("[chatlog] outbound referral redeem:", e));
         return;
       }
 
@@ -128,17 +160,41 @@ async function handleEvent(event: WebhookEvent, eventIndex: number) {
           replyToken: event.replyToken,
           messages: [menu as any],
         });
+        if (userId) {
+          logChatMessage({
+            userId,
+            direction: "outbound",
+            msgType: "flex",
+            content: { altText: "地區選單" },
+          }).catch((e) => console.error("[chatlog] outbound region menu:", e));
+        }
       } else if (reply.type === "product_menu") {
         const menu = await buildProductMenu();
         await lineClient.replyMessage({
           replyToken: event.replyToken,
           messages: [menu as any],
         });
+        if (userId) {
+          logChatMessage({
+            userId,
+            direction: "outbound",
+            msgType: "flex",
+            content: { altText: "產品選單" },
+          }).catch((e) => console.error("[chatlog] outbound product menu:", e));
+        }
       } else {
         await lineClient.replyMessage({
           replyToken: event.replyToken,
           messages: [{ type: "text", text: reply.text }],
         });
+        if (userId) {
+          logChatMessage({
+            userId,
+            direction: "outbound",
+            msgType: "text",
+            content: { text: reply.text },
+          }).catch((e) => console.error("[chatlog] outbound text:", e));
+        }
       }
       return;
     }
