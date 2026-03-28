@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { SequenceTable } from "@/components/sequences/SequenceTable";
+import { FlexTemplateSettings } from "@/components/sequences/FlexTemplateSettings";
 
 export const dynamic = "force-dynamic";
 
@@ -55,6 +56,20 @@ export default async function SequencesPage({
     seqMap[row.sequenceId][row.status] = row._count;
   }
 
+  // Fetch flex template settings for the editor
+  const templateKeys = [
+    "flex_brand_color", "flex_brand_name",
+    "flex_welcome_title", "flex_welcome_body",
+    "flex_day3_title", "flex_day3_body",
+    "flex_day30_title", "flex_day30_body",
+    "flex_repair_phone", "flex_repair_hours",
+  ];
+  const templateSettings = await prisma.siteSetting.findMany({
+    where: { key: { in: templateKeys } },
+  });
+  const templateValues: Record<string, string> = {};
+  for (const s of templateSettings) templateValues[s.key] = s.value;
+
   const SEQ_LABELS: Record<string, string> = {
     hardcode_new_customer: "新客教育序列",
     hardcode_repair:       "維修服務序列",
@@ -74,6 +89,9 @@ export default async function SequencesPage({
       <p className="text-xs text-[var(--text-muted)] mb-6">
         管理自動化旅程中排定的 LINE 訊息 · Cron 每小時執行一次
       </p>
+
+      {/* ── Flex Template Settings ── */}
+      <FlexTemplateSettings initialValues={templateValues} />
 
       {/* ── Stats Row ── */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
