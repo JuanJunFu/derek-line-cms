@@ -61,7 +61,7 @@ export default async function DashboardLayout({
       </MobileSidebar>
 
       {/* Main content */}
-      <main className="flex-1 px-4 py-6 md:px-8 md:py-8 pt-16 md:pt-8 min-w-0 bg-[var(--bg-primary)]">
+      <main className="flex-1 px-4 py-6 md:px-8 md:py-8 pt-16 md:pt-8 min-w-0 bg-[var(--bg-tertiary)]">
         {children}
       </main>
     </div>
