@@ -10,11 +10,12 @@
  * Run: npx tsx scripts/deploy-richmenu-pair.ts
  */
 import "dotenv/config";
-import { createCanvas } from "canvas";
+import { execSync } from "child_process";
+import fs from "fs";
 
 const TOKEN = process.env.LINE_CHANNEL_ACCESS_TOKEN!;
 if (!TOKEN) {
-  console.error("❌ Missing LINE_CHANNEL_ACCESS_TOKEN in .env");
+  console.error("Missing LINE_CHANNEL_ACCESS_TOKEN in .env");
   process.exit(1);
 }
 
@@ -24,7 +25,6 @@ const DATA_API = "https://api-data.line.me/v2/bot";
 const ALIAS_NEW = "richmenu-alias-new";
 const ALIAS_VIP = "richmenu-alias-vip";
 
-// ── Image generation ──
 const W = 2500, H = 1686;
 const BANNER_H = 380;
 const GRID_H = H - BANNER_H;
@@ -32,114 +32,23 @@ const COLS = 3, ROWS = 2;
 const CELL_W = Math.floor(W / COLS);
 const CELL_H = Math.floor(GRID_H / ROWS);
 
-const BG_DARK = "#1a1a1a";
-const GOLD = "#B89A6A";
-const GOLD_LIGHT = "#D4B87A";
-const TEXT_DIM = "#666666";
-const GRID_LINE = "#2a2a2a";
-const ACCENT_GREEN = "#4CAF50";
-const ACCENT_BLUE = "#2196F3";
+/**
+ * Load pre-generated images from /tmp (created by generate-richmenu-images.ts).
+ * If not found, generate them first.
+ */
+function loadImages(): { newImg: Buffer; vipImg: Buffer } {
+  const newPath = "/tmp/richmenu-new-customer.png";
+  const vipPath = "/tmp/richmenu-vip-customer.png";
 
-type CellDef = { emoji: string; label: string; sub: string; accent?: string };
-
-function generateImage(cells: CellDef[], subtitle: string): Buffer {
-  const canvas = createCanvas(W, H);
-  const ctx = canvas.getContext("2d");
-
-  ctx.fillStyle = BG_DARK;
-  ctx.fillRect(0, 0, W, H);
-
-  // Banner
-  const bannerGrad = ctx.createLinearGradient(0, 0, W, BANNER_H);
-  bannerGrad.addColorStop(0, "#222222");
-  bannerGrad.addColorStop(0.5, "#111111");
-  bannerGrad.addColorStop(1, "#222222");
-  ctx.fillStyle = bannerGrad;
-  ctx.fillRect(0, 0, W, BANNER_H);
-
-  // Gold line
-  const lineGrad = ctx.createLinearGradient(0, 0, W, 0);
-  lineGrad.addColorStop(0, "transparent");
-  lineGrad.addColorStop(0.2, GOLD);
-  lineGrad.addColorStop(0.8, GOLD);
-  lineGrad.addColorStop(1, "transparent");
-  ctx.strokeStyle = lineGrad;
-  ctx.lineWidth = 3;
-  ctx.beginPath();
-  ctx.moveTo(0, BANNER_H - 2);
-  ctx.lineTo(W, BANNER_H - 2);
-  ctx.stroke();
-
-  // DEREK
-  ctx.fillStyle = GOLD;
-  ctx.font = "bold 140px serif";
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-  ctx.fillText("D  E  R  E  K", W / 2, BANNER_H / 2 - 50);
-
-  ctx.fillStyle = TEXT_DIM;
-  ctx.font = "42px sans-serif";
-  ctx.fillText("精 品 衛 浴  ·  頂 級 生 活 體 驗", W / 2, BANNER_H / 2 + 30);
-
-  ctx.fillStyle = subtitle.includes("新客") ? ACCENT_GREEN : GOLD_LIGHT;
-  ctx.font = "bold 36px sans-serif";
-  ctx.fillText(subtitle, W / 2, BANNER_H / 2 + 95);
-
-  // Grid lines
-  ctx.strokeStyle = GRID_LINE;
-  ctx.lineWidth = 2;
-  for (let col = 1; col < COLS; col++) {
-    ctx.beginPath();
-    ctx.moveTo(CELL_W * col, BANNER_H);
-    ctx.lineTo(CELL_W * col, H);
-    ctx.stroke();
-  }
-  ctx.beginPath();
-  ctx.moveTo(0, BANNER_H + CELL_H);
-  ctx.lineTo(W, BANNER_H + CELL_H);
-  ctx.stroke();
-
-  // Cells
-  for (let row = 0; row < ROWS; row++) {
-    for (let col = 0; col < COLS; col++) {
-      const idx = row * COLS + col;
-      if (idx >= cells.length) break;
-      const cell = cells[idx];
-      const cx = CELL_W * col + CELL_W / 2;
-      const cy = BANNER_H + CELL_H * row + CELL_H / 2;
-      const color = cell.accent || GOLD;
-
-      const cellGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, CELL_W / 2);
-      cellGrad.addColorStop(0, "#1f1f1f");
-      cellGrad.addColorStop(1, BG_DARK);
-      ctx.fillStyle = cellGrad;
-      ctx.fillRect(CELL_W * col + 1, BANNER_H + CELL_H * row + 1, CELL_W - 2, CELL_H - 2);
-
-      ctx.font = "100px sans-serif";
-      ctx.fillStyle = color;
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-      ctx.fillText(cell.emoji, cx, cy - 60);
-
-      ctx.fillStyle = color;
-      ctx.font = "bold 64px sans-serif";
-      ctx.fillText(cell.label, cx, cy + 40);
-
-      ctx.fillStyle = TEXT_DIM;
-      ctx.font = "32px sans-serif";
-      ctx.fillText(cell.sub, cx, cy + 100);
-    }
+  if (!fs.existsSync(newPath) || !fs.existsSync(vipPath)) {
+    console.log("  Images not found, generating...");
+    execSync("npx tsx scripts/generate-richmenu-images.ts", { stdio: "inherit" });
   }
 
-  // Bottom bar
-  ctx.fillStyle = GOLD;
-  ctx.fillRect(0, H - 50, W, 50);
-  ctx.fillStyle = BG_DARK;
-  ctx.font = "bold 30px sans-serif";
-  ctx.textBaseline = "middle";
-  ctx.fillText("DEREK 德瑞克衛浴  |  0800-063-366", W / 2, H - 25);
-
-  return canvas.toBuffer("image/png");
+  return {
+    newImg: fs.readFileSync(newPath),
+    vipImg: fs.readFileSync(vipPath),
+  };
 }
 
 // ── LINE API helpers ──
@@ -225,32 +134,10 @@ async function main() {
   await deleteAlias(ALIAS_NEW);
   await deleteAlias(ALIAS_VIP);
 
-  // Step 2: Generate images
-  console.log("\nStep 2: Generating images...");
-  const newImg = generateImage(
-    [
-      { emoji: "📍", label: "尋找門市", sub: "查詢附近服務據點" },
-      { emoji: "🛁", label: "產品目錄", sub: "瀏覽衛浴產品系列" },
-      { emoji: "📞", label: "聯絡我們", sub: "免費客服專線" },
-      { emoji: "🌐", label: "品牌官網", sub: "瀏覽最新產品資訊" },
-      { emoji: "🤝", label: "推薦好友", sub: "分享推薦碼給朋友" },
-      { emoji: "🔄", label: "更多服務", sub: "切換至熟客選單", accent: ACCENT_BLUE },
-    ],
-    "🌱 新客版  —  歡迎認識 DEREK"
-  );
+  // Step 2: Load images (auto-generates if needed)
+  console.log("\nStep 2: Loading images...");
+  const { newImg, vipImg } = loadImages();
   console.log(`  新客版: ${(newImg.length / 1024).toFixed(0)} KB`);
-
-  const vipImg = generateImage(
-    [
-      { emoji: "🔧", label: "維修預約", sub: "線上報修快速服務" },
-      { emoji: "🤝", label: "推薦好友", sub: "分享推薦碼給朋友" },
-      { emoji: "📞", label: "聯絡我們", sub: "免費客服專線" },
-      { emoji: "📍", label: "尋找門市", sub: "查詢附近服務據點" },
-      { emoji: "🛁", label: "產品目錄", sub: "瀏覽衛浴產品系列" },
-      { emoji: "🔄", label: "基本選單", sub: "切換至新客選單", accent: ACCENT_BLUE },
-    ],
-    "💎 熟客版  —  專屬貴賓服務"
-  );
   console.log(`  熟客版: ${(vipImg.length / 1024).toFixed(0)} KB`);
 
   // Step 3: Create rich menus on LINE
