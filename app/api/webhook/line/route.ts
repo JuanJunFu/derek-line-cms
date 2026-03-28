@@ -11,6 +11,7 @@ import { trackEvent } from "@/lib/tracking";
 import { triggerNewCustomerSequence, triggerRepairSequence } from "@/lib/sequence";
 import { REPAIR_KEYWORDS, REFERRAL_KEYWORDS, REFERRAL_CODE_PATTERN } from "@/lib/constants";
 import { generateReferralCode, redeemReferralCode } from "@/lib/referral";
+import { logChatMessage } from "@/lib/chatlog";
 
 export async function POST(req: NextRequest) {
   try {

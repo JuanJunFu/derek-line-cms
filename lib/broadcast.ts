@@ -31,7 +31,7 @@ export async function getAudienceUserIds(
       },
       select: { userId: true },
     });
-    return users.map((u) => u.userId);
+    return users.map((u: { userId: string }) => u.userId);
   }
 
   return [];
