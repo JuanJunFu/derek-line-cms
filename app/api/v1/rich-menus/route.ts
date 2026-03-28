@@ -4,6 +4,11 @@ import { auth } from "@/lib/auth";
 
 // GET /api/v1/rich-menus — list all rich menus
 export async function GET() {
+  const session = await auth();
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   const menus = await prisma.richMenu.findMany({
     orderBy: { createdAt: "desc" },
   });
