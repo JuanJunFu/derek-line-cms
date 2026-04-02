@@ -212,17 +212,27 @@ export async function trackEvent(
 ): Promise<void> {
   try {
     // 1. Write UserEvent
-    await prisma.userEvent.create({
-      data: {
-        webhookEventId: webhookEventId ?? null,
-        userId,
-        eventType,
-        category: data.category ?? null,
-        region: data.region ?? null,
-        storeId: data.storeId ?? null,
-        data: data as any,
-      },
-    });
+    // LINE sometimes retries webhook delivery — same webhookEventId may arrive twice.
+    // On duplicate (P2002), skip silently (idempotent processing).
+    try {
+      await prisma.userEvent.create({
+        data: {
+          webhookEventId: webhookEventId ?? null,
+          userId,
+          eventType,
+          category: data.category ?? null,
+          region: data.region ?? null,
+          storeId: data.storeId ?? null,
+          data: data as any,
+        },
+      });
+    } catch (createErr: any) {
+      if (createErr?.code === "P2002") {
+        // Duplicate webhook retry — already processed, skip entirely
+        return;
+      }
+      throw createErr;
+    }
 
     // 2. Get or count fallbacks for Rule 5
     let fallbackCount = data.fallbackCount ?? 0;
