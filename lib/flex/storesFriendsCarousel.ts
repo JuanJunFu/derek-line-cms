@@ -1,56 +1,31 @@
 /**
  * Area Managers Contact Carousel
- * Triggered when user taps the DEREK banner in Rich Menu
- * Shows 5 hardcoded area manager cards (person-centric, not store-centric)
+ * Triggered when user taps the DEREK banner in Rich Menu.
+ * Manager list and messages are managed via CMS Settings (後台設定).
  */
-
-const REPAIR_TEXT = encodeURIComponent(
-  "您好，我透過DEREK官方帳號找到您，想預約採購或維修服務，請問方便協助嗎？"
-);
-const LINE_SHARE_URL = `https://line.me/R/msg/text/?${REPAIR_TEXT}`;
+import { getSettings } from "@/lib/settings";
 
 interface AreaManager {
-  label: string;  // e.g. "北區負責人"
-  area: string;   // display area name
+  label: string;
+  area: string;
   lineUri: string;
 }
 
-const AREA_MANAGERS: AreaManager[] = [
-  {
-    label: "北區負責人",
-    area: "台北 / 新北",
-    lineUri: "https://line.me/ti/p/yuVxQMJgM0",
-  },
-  {
-    label: "新竹負責人",
-    area: "新竹",
-    lineUri: "https://line.me/ti/p/45qv_saITI",
-  },
-  {
-    label: "台中負責人",
-    area: "台中",
-    lineUri: "https://line.me/ti/p/PcMG5PT2a-",
-  },
-  {
-    label: "台南負責人",
-    area: "台南",
-    lineUri: "https://line.me/ti/p/VQ1Qd3eY4Q",
-  },
-  {
-    label: "高雄負責人",
-    area: "高雄",
-    lineUri: "https://lin.ee/mwJ2Mdi",
-  },
+const DEFAULT_MANAGERS: AreaManager[] = [
+  { label: "北區負責人", area: "台北 / 新北", lineUri: "https://line.me/ti/p/yuVxQMJgM0" },
+  { label: "新竹負責人", area: "新竹",        lineUri: "https://line.me/ti/p/45qv_saITI" },
+  { label: "台中負責人", area: "台中",        lineUri: "https://line.me/ti/p/PcMG5PT2a-" },
+  { label: "台南負責人", area: "台南",        lineUri: "https://line.me/ti/p/VQ1Qd3eY4Q" },
+  { label: "高雄負責人", area: "高雄",        lineUri: "https://lin.ee/mwJ2Mdi" },
 ];
 
-function buildManagerCard(manager: AreaManager) {
+function buildManagerCard(manager: AreaManager, lineShareUrl: string) {
   return {
     type: "bubble",
     body: {
       type: "box",
       layout: "vertical",
       contents: [
-        // Badge
         {
           type: "box",
           layout: "horizontal",
@@ -69,7 +44,6 @@ function buildManagerCard(manager: AreaManager) {
           paddingStart: "8px",
           paddingEnd: "8px",
         },
-        // Area
         {
           type: "text",
           text: manager.area,
@@ -77,7 +51,6 @@ function buildManagerCard(manager: AreaManager) {
           color: "#8A9BA8",
           margin: "sm",
         },
-        // Label
         {
           type: "text",
           text: manager.label,
@@ -85,7 +58,6 @@ function buildManagerCard(manager: AreaManager) {
           size: "lg",
           margin: "xs",
         },
-        // Description
         {
           type: "text",
           text: "採購諮詢・維修服務",
@@ -121,7 +93,7 @@ function buildManagerCard(manager: AreaManager) {
           action: {
             type: "uri",
             label: "💬 發送諮詢訊息",
-            uri: LINE_SHARE_URL,
+            uri: lineShareUrl,
           },
         },
       ],
@@ -131,12 +103,31 @@ function buildManagerCard(manager: AreaManager) {
 }
 
 export async function buildStoresFriendsCarousel() {
+  const cfg = await getSettings(["area_managers", "repair_line_message"]);
+
+  // Parse manager list from settings (fallback to hardcoded defaults)
+  let managers: AreaManager[] = DEFAULT_MANAGERS;
+  if (cfg.area_managers) {
+    try {
+      const parsed = JSON.parse(cfg.area_managers);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        managers = parsed;
+      }
+    } catch {
+      // JSON parse error → use defaults
+    }
+  }
+
+  const repairMsg = cfg.repair_line_message ||
+    "您好，我透過DEREK官方帳號找到您，想預約採購或維修服務，請問方便協助嗎？";
+  const lineShareUrl = `https://line.me/R/msg/text/?${encodeURIComponent(repairMsg)}`;
+
   return {
     type: "flex" as const,
     altText: "全台區域負責人 LINE 好友",
     contents: {
       type: "carousel",
-      contents: AREA_MANAGERS.map(buildManagerCard),
+      contents: managers.map((m) => buildManagerCard(m, lineShareUrl)),
     },
   };
 }

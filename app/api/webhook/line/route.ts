@@ -43,6 +43,9 @@ async function handleEvent(event: WebhookEvent, eventIndex: number) {
     "fallback_message",
     "no_store_message",
     "store_intro_prefix",
+    "friends_intro_message",
+    "repair_store_intro",
+    "repair_line_message",
   ]);
 
   // Generate a unique event ID for deduplication
@@ -359,7 +362,7 @@ async function handleEvent(event: WebhookEvent, eventIndex: number) {
           await lineClient.replyMessage({
             replyToken: event.replyToken,
             messages: [
-              { type: "text", text: "以下是全台各地區域負責人，加入好友後可直接諮詢採購或預約維修 👇" },
+              { type: "text", text: cfg.friends_intro_message || "以下是全台各地區域負責人，加入好友後可直接諮詢採購或預約維修 👇" },
               carousel as any,
             ],
           });
@@ -419,8 +422,12 @@ async function handleEvent(event: WebhookEvent, eventIndex: number) {
           });
         } else {
           const regionName = stores[0].region.name;
-          const introText = `以下是 ${regionName} 的維修服務據點，請依序：① 加好友 → ② 發送維修訊息 🔧`;
-          const carousel = buildRepairStoreCarousel(stores);
+          const introTemplate = cfg.repair_store_intro ||
+            "以下是 {region} 的維修服務據點，請依序：① 加好友 → ② 發送維修訊息 🔧";
+          const introText = introTemplate.replace("{region}", regionName);
+          const repairMsg = cfg.repair_line_message ||
+            "您好，我透過DEREK官方帳號找到您，想預約採購或維修服務，請問方便協助嗎？";
+          const carousel = buildRepairStoreCarousel(stores, repairMsg);
 
           if (userId) {
             for (const s of stores) {

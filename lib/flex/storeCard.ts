@@ -246,12 +246,10 @@ export function buildStoreCarousel(stores: (Store & { region: Region })[]) {
 }
 
 // ── Repair mode card ──
-const REPAIR_TEXT = encodeURIComponent(
-  "您好，我透過DEREK官方帳號找到您，想預約維修服務，請問方便協助嗎？"
-);
-const LINE_SHARE_URL = `https://line.me/R/msg/text/?${REPAIR_TEXT}`;
-
-function buildRepairCard(store: Store & { region: Region }): Record<string, any> {
+function buildRepairCard(
+  store: Store & { region: Region },
+  lineShareUrl: string
+): Record<string, any> {
   const cfg = TYPE_CONFIG[store.type] ?? TYPE_CONFIG.DEALER;
   const cleanPhone = store.phone.replace(/[^0-9]/g, "");
   const hasPhone = cleanPhone.length >= 8;
@@ -355,7 +353,7 @@ function buildRepairCard(store: Store & { region: Region }): Record<string, any>
       action: {
         type: "uri",
         label: "② 發送維修訊息",
-        uri: LINE_SHARE_URL,
+        uri: lineShareUrl,
       },
     });
   } else if (hasPhone) {
@@ -392,13 +390,17 @@ function buildRepairCard(store: Store & { region: Region }): Record<string, any>
   };
 }
 
-export function buildRepairStoreCarousel(stores: (Store & { region: Region })[]) {
+export function buildRepairStoreCarousel(
+  stores: (Store & { region: Region })[],
+  repairMessage: string
+) {
+  const lineShareUrl = `https://line.me/R/msg/text/?${encodeURIComponent(repairMessage)}`;
   return {
     type: "flex",
     altText: `${stores.length} 間門市可提供維修服務`,
     contents: {
       type: "carousel",
-      contents: stores.map(buildRepairCard),
+      contents: stores.map((s) => buildRepairCard(s, lineShareUrl)),
     },
   };
 }

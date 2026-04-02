@@ -14,11 +14,14 @@ const DESCRIPTIONS: Record<string, string> = {
   line_oa_id_test: "測試環境的 LINE 官方帳號 ID",
   line_active_env: "切換正式/測試環境，影響 Bot 使用的 LINE 帳號和推薦連結",
   referral_brand_name: "推薦卡片上顯示的品牌名稱",
-  referral_share_text:
-    "推薦分享訊息模板（可用變數：{brand}、{code}、{url}）",
+  referral_share_text: "推薦分享訊息模板（可用變數：{brand}、{code}、{url}）",
   flex_brand_color: "所有 Flex 訊息的按鈕和標題顏色",
   flex_brand_name: "所有 Flex 訊息中顯示的品牌名稱",
   alert_line_user_ids: "接收系統通知的管理員 LINE User IDs（逗號分隔多位）",
+  area_managers: "點擊橫幅後顯示的區域負責人名單，JSON 格式，每筆包含 label（姓名/職稱）、area（地區）、lineUri（LINE 連結）",
+  repair_line_message: "點擊「發送諮詢訊息」時預填到 LINE 的文字內容",
+  friends_intro_message: "點擊橫幅後、名片上方的引導文字",
+  repair_store_intro: "選擇維修地區後、門市卡片上方的引導文字（{region} 會被替換為地區名稱）",
 };
 
 const LABELS: Record<string, string> = {
@@ -35,6 +38,10 @@ const LABELS: Record<string, string> = {
   flex_brand_color: "品牌色",
   flex_brand_name: "品牌名稱",
   alert_line_user_ids: "通知管理員 LINE User IDs",
+  area_managers: "區域負責人名單",
+  repair_line_message: "維修預填訊息",
+  friends_intro_message: "橫幅點擊引導文字",
+  repair_store_intro: "維修門市引導文字",
 };
 
 // Pre-filled defaults for DEREK 德瑞克衛浴
@@ -78,6 +85,15 @@ const GROUPS: { title: string; keys: string[] }[] = [
   {
     title: "🎨 品牌外觀",
     keys: ["flex_brand_color", "flex_brand_name"],
+  },
+  {
+    title: "📞 區域負責人聯絡",
+    keys: [
+      "friends_intro_message",
+      "repair_store_intro",
+      "repair_line_message",
+      "area_managers",
+    ],
   },
 ];
 
@@ -139,6 +155,7 @@ export function SettingsForm({ settings }: { settings: SiteSetting[] }) {
   function renderField(key: string) {
     const isColor = key.includes("color");
     const isEnv = key === "line_active_env";
+    const isJson = key === "area_managers";
     const label = LABELS[key] || settingMap[key]?.label || key;
     const value = values[key] ?? "";
 
@@ -157,7 +174,20 @@ export function SettingsForm({ settings }: { settings: SiteSetting[] }) {
             {DESCRIPTIONS[key]}
           </p>
         )}
-        {isEnv ? (
+        {isJson ? (
+          <div>
+            <textarea
+              className={inputClass + " h-48 resize-y font-mono text-xs"}
+              value={value}
+              onChange={(e) => update(key, e.target.value)}
+              placeholder='[{"label":"北區負責人","area":"台北 / 新北","lineUri":"https://line.me/ti/p/xxx"}]'
+              spellCheck={false}
+            />
+            <p className="text-xs text-[var(--text-muted)] mt-1">
+              每筆格式：<code className="font-mono bg-[var(--bg-tertiary)] px-1 rounded">{"{"}"label":"XX區負責人","area":"地區","lineUri":"https://..."{"}"}</code>
+            </p>
+          </div>
+        ) : isEnv ? (
           <div className="flex gap-2">
             {["production", "test"].map((env) => (
               <button
