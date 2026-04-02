@@ -359,12 +359,11 @@ async function handleEvent(event: WebhookEvent, eventIndex: number) {
           await lineClient.replyMessage({
             replyToken: event.replyToken,
             messages: [
-              { type: "text", text: "以下是全台各地門市LINE好友，加入後可直接預約維修或諮詢 👇" },
+              { type: "text", text: "以下是全台各地區域負責人，加入好友後可直接諮詢採購或預約維修 👇" },
               carousel as any,
             ],
           });
           if (userId) {
-            await trackEvent(userId, "POSTBACK", { postbackAction: "SHOW_ALL_STORES_FRIENDS" }, webhookEventId);
             logChatMessage({
               userId,
               direction: "outbound",
@@ -384,7 +383,6 @@ async function handleEvent(event: WebhookEvent, eventIndex: number) {
           messages: [menu as any],
         });
         if (userId) {
-          await trackEvent(userId, "POSTBACK", { postbackAction: "SHOW_REGION_REPAIR" }, webhookEventId);
           logChatMessage({
             userId,
             direction: "outbound",
