@@ -2,9 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import type { WebhookEvent } from "@line/bot-sdk";
 import { lineClient, verifyLineSignature } from "@/lib/line";
 import { prisma } from "@/lib/prisma";
-import { buildRegionMenu } from "@/lib/flex/regionMenu";
-import { buildStoreCarousel } from "@/lib/flex/storeCard";
+import { buildRegionMenu, buildRegionMenuRepair } from "@/lib/flex/regionMenu";
+import { buildStoreCarousel, buildRepairStoreCarousel } from "@/lib/flex/storeCard";
 import { buildProductMenu, buildProductReply } from "@/lib/flex/productMenu";
+import { buildPurposeMenu } from "@/lib/flex/purposeMenu";
+import { buildStoresFriendsCarousel } from "@/lib/flex/storesFriendsCarousel";
 import { getAutoReply } from "@/lib/reply";
 import { getSettings } from "@/lib/settings";
 import { trackEvent } from "@/lib/tracking";
@@ -327,6 +329,122 @@ async function handleEvent(event: WebhookEvent, eventIndex: number) {
               msgType: "flex",
               content: { altText: `${regionName} 門市` },
             }).catch((e) => console.error("[chatlog] outbound store carousel:", e));
+          }
+        }
+        return;
+      }
+
+      // ── 採購 / 維修 目的選擇選單 ──
+      if (action === "SHOW_PURPOSE_MENU") {
+        const menu = buildPurposeMenu();
+        await lineClient.replyMessage({
+          replyToken: event.replyToken,
+          messages: [menu as any],
+        });
+        if (userId) {
+          logChatMessage({
+            userId,
+            direction: "outbound",
+            msgType: "flex",
+            content: { altText: "採購或維修" },
+          }).catch((e) => console.error("[chatlog] outbound purpose menu:", e));
+        }
+        return;
+      }
+
+      // ── 橫幅點擊：全台門市LINE好友名單 ──
+      if (action === "SHOW_ALL_STORES_FRIENDS") {
+        const carousel = await buildStoresFriendsCarousel();
+        if (carousel) {
+          await lineClient.replyMessage({
+            replyToken: event.replyToken,
+            messages: [
+              { type: "text", text: "以下是全台各地門市LINE好友，加入後可直接預約維修或諮詢 👇" },
+              carousel as any,
+            ],
+          });
+          if (userId) {
+            await trackEvent(userId, "POSTBACK", { postbackAction: "SHOW_ALL_STORES_FRIENDS" }, webhookEventId);
+            logChatMessage({
+              userId,
+              direction: "outbound",
+              msgType: "flex",
+              content: { altText: "全台門市LINE好友" },
+            }).catch((e) => console.error("[chatlog] outbound stores friends:", e));
+          }
+        }
+        return;
+      }
+
+      // ── 維修地區選單 ──
+      if (action === "SHOW_REGION_REPAIR") {
+        const menu = await buildRegionMenuRepair();
+        await lineClient.replyMessage({
+          replyToken: event.replyToken,
+          messages: [menu as any],
+        });
+        if (userId) {
+          await trackEvent(userId, "POSTBACK", { postbackAction: "SHOW_REGION_REPAIR" }, webhookEventId);
+          logChatMessage({
+            userId,
+            direction: "outbound",
+            msgType: "flex",
+            content: { altText: "維修地區選單" },
+          }).catch((e) => console.error("[chatlog] outbound repair region menu:", e));
+        }
+        return;
+      }
+
+      // ── 維修門市卡片 ──
+      if (action === "SELECT_REGION_REPAIR") {
+        const slug = params.get("slug")!;
+
+        if (userId) {
+          await trackEvent(
+            userId,
+            "REGION_SELECT",
+            { region: slug, mode: "repair" },
+            webhookEventId
+          );
+        }
+
+        const stores = await prisma.store.findMany({
+          where: { region: { slug }, isActive: true },
+          include: { region: true },
+          orderBy: { order: "asc" },
+        });
+
+        if (stores.length === 0) {
+          await lineClient.replyMessage({
+            replyToken: event.replyToken,
+            messages: [{ type: "text", text: cfg.no_store_message }],
+          });
+        } else {
+          const regionName = stores[0].region.name;
+          const introText = `以下是 ${regionName} 的維修服務據點，請依序：① 加好友 → ② 發送維修訊息 🔧`;
+          const carousel = buildRepairStoreCarousel(stores);
+
+          if (userId) {
+            for (const s of stores) {
+              await trackEvent(userId, "STORE_VIEW", {
+                storeId: s.id,
+                storeName: s.name,
+                mode: "repair",
+              });
+            }
+          }
+
+          await lineClient.replyMessage({
+            replyToken: event.replyToken,
+            messages: [{ type: "text", text: introText }, carousel as any],
+          });
+          if (userId) {
+            logChatMessage({
+              userId,
+              direction: "outbound",
+              msgType: "flex",
+              content: { altText: `${regionName} 維修門市` },
+            }).catch((e) => console.error("[chatlog] outbound repair carousel:", e));
           }
         }
         return;

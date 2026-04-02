@@ -1,7 +1,9 @@
 import { prisma } from "@/lib/prisma";
 import { getSetting } from "@/lib/settings";
 
-export async function buildRegionMenu() {
+type RegionMenuMode = "purchase" | "repair";
+
+async function buildRegionMenuBase(mode: RegionMenuMode) {
   const [regions, title] = await Promise.all([
     prisma.region.findMany({
       where: { isActive: true },
@@ -10,9 +12,9 @@ export async function buildRegionMenu() {
     getSetting("region_menu_title"),
   ]);
 
-  const menuTitle = title || "📍 請選擇您所在的地區";
+  const isRepair = mode === "repair";
+  const actionPrefix = isRepair ? "SELECT_REGION_REPAIR" : "SELECT_REGION";
 
-  // Build 2-column grid rows (matching gold.html layout)
   const rows: object[] = [];
   for (let i = 0; i < regions.length; i += 2) {
     const left = regions[i];
@@ -26,7 +28,7 @@ export async function buildRegionMenu() {
         action: {
           type: "postback",
           label: left.name,
-          data: `action=SELECT_REGION&slug=${left.slug}`,
+          data: `action=${actionPrefix}&slug=${left.slug}`,
           displayText: left.name,
         },
         flex: 1,
@@ -41,16 +43,13 @@ export async function buildRegionMenu() {
         action: {
           type: "postback",
           label: right.name,
-          data: `action=SELECT_REGION&slug=${right.slug}`,
+          data: `action=${actionPrefix}&slug=${right.slug}`,
           displayText: right.name,
         },
         flex: 1,
       });
     } else {
-      // Empty spacer for odd count
-      rowContents.push({
-        type: "filler",
-      });
+      rowContents.push({ type: "filler" });
     }
 
     rows.push({
@@ -63,7 +62,7 @@ export async function buildRegionMenu() {
 
   return {
     type: "flex" as const,
-    altText: "請選擇您所在的地區",
+    altText: isRepair ? "請選擇維修服務地區" : "請選擇您所在的地區",
     contents: {
       type: "bubble",
       body: {
@@ -72,23 +71,61 @@ export async function buildRegionMenu() {
         spacing: "md",
         paddingAll: "16px",
         contents: [
+          // Mode badge
+          isRepair
+            ? {
+                type: "box",
+                layout: "horizontal",
+                contents: [
+                  {
+                    type: "text",
+                    text: "🔧 維修預約",
+                    size: "xs",
+                    color: "#ffffff",
+                    weight: "bold",
+                  },
+                ],
+                backgroundColor: "#E67E22",
+                cornerRadius: "sm",
+                paddingAll: "4px",
+                paddingStart: "10px",
+                paddingEnd: "10px",
+              }
+            : {
+                type: "box",
+                layout: "horizontal",
+                contents: [
+                  {
+                    type: "text",
+                    text: "🛒 採購諮詢",
+                    size: "xs",
+                    color: "#ffffff",
+                    weight: "bold",
+                  },
+                ],
+                backgroundColor: "#1B4F8C",
+                cornerRadius: "sm",
+                paddingAll: "4px",
+                paddingStart: "10px",
+                paddingEnd: "10px",
+              },
           {
             type: "text",
-            text: "請選擇您所在的服務地區",
+            text: isRepair ? "請選擇維修服務地區" : "請選擇您所在的服務地區",
             weight: "bold",
             size: "md",
+            margin: "sm",
           },
           {
             type: "text",
-            text: "我們將為您找到最近的服務據點 📍",
+            text: isRepair
+              ? "選擇地區後將顯示門市聯繫方式 🔧"
+              : "我們將為您找到最近的服務據點 📍",
             size: "sm",
             color: "#888888",
             margin: "sm",
           },
-          {
-            type: "separator",
-            margin: "lg",
-          },
+          { type: "separator", margin: "lg" },
           {
             type: "text",
             text: "▼ 請選擇地區",
@@ -102,4 +139,12 @@ export async function buildRegionMenu() {
       },
     },
   };
+}
+
+export async function buildRegionMenu() {
+  return buildRegionMenuBase("purchase");
+}
+
+export async function buildRegionMenuRepair() {
+  return buildRegionMenuBase("repair");
 }

@@ -244,3 +244,161 @@ export function buildStoreCarousel(stores: (Store & { region: Region })[]) {
     },
   };
 }
+
+// ── Repair mode card ──
+const REPAIR_TEXT = encodeURIComponent(
+  "您好，我透過DEREK官方帳號找到您，想預約維修服務，請問方便協助嗎？"
+);
+const LINE_SHARE_URL = `https://line.me/R/msg/text/?${REPAIR_TEXT}`;
+
+function buildRepairCard(store: Store & { region: Region }): Record<string, any> {
+  const cfg = TYPE_CONFIG[store.type] ?? TYPE_CONFIG.DEALER;
+  const cleanPhone = store.phone.replace(/[^0-9]/g, "");
+  const hasPhone = cleanPhone.length >= 8;
+  const hasAddress = store.address && store.address !== "待補";
+  const lineUri = store.lineId
+    ? store.lineId.startsWith("http")
+      ? store.lineId
+      : "https://line.me/ti/p/" + store.lineId
+    : null;
+
+  const bodyContents: object[] = [
+    // Repair mode badge
+    {
+      type: "box",
+      layout: "horizontal",
+      contents: [
+        { type: "text", text: "🔧 維修預約", size: "xxs", color: "#ffffff", weight: "bold" },
+      ],
+      backgroundColor: "#E67E22",
+      cornerRadius: "sm",
+      paddingAll: "3px",
+      paddingStart: "8px",
+      paddingEnd: "8px",
+    },
+    // Type badge
+    {
+      type: "box",
+      layout: "horizontal",
+      contents: [
+        { type: "text", text: cfg.label, size: "xxs", color: cfg.color, weight: "bold" },
+      ],
+      backgroundColor: cfg.bg,
+      cornerRadius: "sm",
+      paddingAll: "3px",
+      paddingStart: "8px",
+      paddingEnd: "8px",
+      margin: "xs",
+    },
+    // Name
+    {
+      type: "text",
+      text: store.name,
+      weight: "bold",
+      size: "md",
+      margin: "md",
+    },
+  ];
+
+  if (hasAddress) {
+    bodyContents.push({
+      type: "text",
+      text: "📍 " + store.address,
+      size: "xs",
+      color: "#666666",
+      wrap: true,
+      margin: "sm",
+    });
+  }
+  if (hasPhone) {
+    bodyContents.push({
+      type: "text",
+      text: "📞 " + store.phone,
+      size: "xs",
+      color: "#666666",
+      margin: "xs",
+    });
+  }
+
+  // Instruction text
+  if (lineUri) {
+    bodyContents.push({
+      type: "text",
+      text: "請依序點擊：① 加好友 → ② 發送訊息",
+      size: "xxs",
+      color: "#E67E22",
+      margin: "md",
+      wrap: true,
+    });
+  }
+
+  const footerContents: object[] = [];
+
+  if (lineUri) {
+    footerContents.push({
+      type: "button",
+      style: "primary",
+      color: "#1B4F8C",
+      height: "sm",
+      action: {
+        type: "uri",
+        label: "① 加入門市LINE好友",
+        uri: lineUri,
+      },
+    });
+    footerContents.push({
+      type: "button",
+      style: "primary",
+      color: "#E67E22",
+      height: "sm",
+      margin: "sm",
+      action: {
+        type: "uri",
+        label: "② 發送維修訊息",
+        uri: LINE_SHARE_URL,
+      },
+    });
+  } else if (hasPhone) {
+    footerContents.push({
+      type: "button",
+      style: "primary",
+      color: "#1B4F8C",
+      height: "sm",
+      action: {
+        type: "uri",
+        label: "📞 致電門市",
+        uri: "tel:" + cleanPhone,
+      },
+    });
+  }
+
+  return {
+    type: "bubble",
+    body: {
+      type: "box",
+      layout: "vertical",
+      contents: bodyContents,
+      paddingAll: "16px",
+    },
+    footer: footerContents.length > 0
+      ? {
+          type: "box",
+          layout: "vertical",
+          spacing: "none",
+          contents: footerContents,
+          paddingAll: "12px",
+        }
+      : undefined,
+  };
+}
+
+export function buildRepairStoreCarousel(stores: (Store & { region: Region })[]) {
+  return {
+    type: "flex",
+    altText: `${stores.length} 間門市可提供維修服務`,
+    contents: {
+      type: "carousel",
+      contents: stores.map(buildRepairCard),
+    },
+  };
+}

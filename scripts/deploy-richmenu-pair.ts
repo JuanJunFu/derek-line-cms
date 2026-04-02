@@ -164,25 +164,36 @@ async function main() {
   }
 
   // ── 6-cell actions (DUKE 4/2 confirmed layout) ──
-  // [0] 門市 & 維修  [1] 產品目錄  [2] 品牌官網
-  // [3] 常見問題      [4] 粉絲專區  [5] 最新消息
+  // [0] 門市 & 維修 → SHOW_PURPOSE_MENU (採購 or 維修)
+  // [1] 產品目錄  [2] 品牌官網
+  // [3] 常見問題  [4] 粉絲專區  [5] 最新消息
   const sixCellActions = [
-    { type: "postback", data: "action=SHOW_REGION_MENU",   displayText: "尋找門市" },
-    { type: "postback", data: "action=SHOW_PRODUCT_MENU",  displayText: "產品目錄" },
-    { type: "uri", uri: "https://www.lcb.com.tw",          label: "品牌官網" },
+    { type: "postback", data: "action=SHOW_PURPOSE_MENU", displayText: "門市 & 維修" },
+    { type: "postback", data: "action=SHOW_PRODUCT_MENU", displayText: "產品目錄" },
+    { type: "uri", uri: "https://www.lcb.com.tw",         label: "品牌官網" },
     { type: "uri", uri: "https://www.lcb.com.tw/lcb/faq", label: "常見問題" },
-    { type: "uri", uri: "https://www.facebook.com/LCB.TW/",    label: "粉絲專區" },
-    { type: "uri", uri: "https://www.lcb.com.tw/lcb/news",     label: "最新消息" },
+    { type: "uri", uri: "https://www.facebook.com/LCB.TW/", label: "粉絲專區" },
+    { type: "uri", uri: "https://www.lcb.com.tw/lcb/news",  label: "最新消息" },
   ];
+
+  // ── Banner area (top 380px) → SHOW_ALL_STORES_FRIENDS ──
+  const bannerArea = {
+    bounds: { x: 0, y: 0, width: W, height: BANNER_H },
+    action: { type: "postback", data: "action=SHOW_ALL_STORES_FRIENDS", displayText: "全台門市好友" },
+  };
+
+  function makeAreasWithBanner(actions: Array<{ type: string; [key: string]: any }>) {
+    return [bannerArea, ...makeAreas(actions)];
+  }
 
   const newMenu = await lineApi("/richmenu", {
     method: "POST",
     body: JSON.stringify({
       size: { width: W, height: H },
       selected: false,
-      name: "DEREK 主選單 v4",
+      name: "DEREK 主選單 v5",
       chatBarText: "選單",
-      areas: makeAreas(sixCellActions),
+      areas: makeAreasWithBanner(sixCellActions),
     }),
   });
   console.log(`  主選單 ID: ${newMenu.richMenuId}`);
@@ -194,7 +205,7 @@ async function main() {
       selected: false,
       name: "DEREK 主選單 v4 (VIP)",
       chatBarText: "選單",
-      areas: makeAreas(sixCellActions),
+      areas: makeAreasWithBanner(sixCellActions),
     }),
   });
   console.log(`  VIP選單 ID: ${vipMenu.richMenuId}`);
