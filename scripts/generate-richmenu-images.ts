@@ -1,13 +1,10 @@
 /**
- * Generate Rich Menu images for DEREK LINE Bot — 新客版 + 熟客版
- * 2x3 grid layout (6 areas) with DEREK brand banner
- * Uses Canvas path drawing for colorful icons (node-canvas doesn't render emoji)
+ * Generate Rich Menu image for DEREK LINE Bot
+ * 2x3 grid (6 areas) with DEREK brand banner
+ * Blue color system: Classic Blue (#1B4F8C) + Cornhusk (#E8D5B0)
  *
  * Run: npx tsx scripts/generate-richmenu-images.ts
- *
- * Output:
- *   /tmp/richmenu-new-customer.png  (新客版)
- *   /tmp/richmenu-vip-customer.png  (熟客版)
+ * Output: /tmp/richmenu-derek.png
  */
 import { createCanvas, type CanvasRenderingContext2D } from "canvas";
 import fs from "fs";
@@ -18,59 +15,87 @@ const BANNER_H = 380;
 const GRID_H = H - BANNER_H;
 const COLS = 3;
 const ROWS = 2;
-const CELL_W = Math.floor(W / COLS);
-const CELL_H = Math.floor(GRID_H / ROWS);
+const CELL_W = Math.floor(W / COLS); // 833
+const CELL_H = Math.floor(GRID_H / ROWS); // 653
 
-// Brand colors
-const BG_DARK = "#1a1a1a";
-const BG_BANNER = "#111111";
-const GOLD = "#B89A6A";
-const GOLD_LIGHT = "#D4B87A";
+// ── Brand Colors (Blue System) ──
+const BG_BANNER = "#061B36";        // Deep navy — banner background
+const BG_CELL = "#0D2444";          // Dark navy — cell background
+const BRAND_BLUE = "#1B4F8C";       // Classic Blue — main brand
+const CORNHUSK = "#E8D5B0";         // Cornhusk — warm accent (replaces gold)
 const TEXT_WHITE = "#EEEEEE";
-const TEXT_DIM = "#888888";
-const GRID_LINE = "#2a2a2a";
+const TEXT_DIM = "#8A9BA8";         // Monument — secondary text
+const GRID_LINE = "#153460";        // Dark blue grid lines
 
-// Icon colors — vibrant on dark
+// ── Icon palette (blue family) ──
 const ICON_COLORS: Record<string, { bg: string; fg: string }> = {
-  store:   { bg: "#E74C3C", fg: "#FFFFFF" }, // red
-  product: { bg: "#3498DB", fg: "#FFFFFF" }, // blue
-  phone:   { bg: "#2ECC71", fg: "#FFFFFF" }, // green
-  web:     { bg: "#9B59B6", fg: "#FFFFFF" }, // purple
-  refer:   { bg: "#F39C12", fg: "#FFFFFF" }, // orange
-  switch:  { bg: "#1ABC9C", fg: "#FFFFFF" }, // teal
-  repair:  { bg: "#E67E22", fg: "#FFFFFF" }, // dark orange
+  store:   { bg: "#1B4F8C", fg: "#E8D5B0" }, // Classic Blue + Cornhusk
+  product: { bg: "#2980B9", fg: "#ffffff" }, // Bright Blue
+  web:     { bg: "#0F2D5A", fg: "#C8DCF0" }, // Navy + Baby Blue
+  faq:     { bg: "#5A85B0", fg: "#ffffff" }, // Provence Blue
+  fb:      { bg: "#1877F2", fg: "#ffffff" }, // Facebook Blue
+  news:    { bg: "#2C7BB6", fg: "#ffffff" }, // News Blue
 };
 
 // ── Icon drawing functions ──
-// Each draws inside a circle at (cx, cy) with radius r
 
-function drawMapPin(ctx: CanvasRenderingContext2D, cx: number, cy: number, r: number, colors: { bg: string; fg: string }) {
+function drawMapPinWrench(
+  ctx: CanvasRenderingContext2D,
+  cx: number, cy: number, r: number,
+  colors: { bg: string; fg: string }
+) {
   // Circle background
   ctx.beginPath();
   ctx.arc(cx, cy, r, 0, Math.PI * 2);
   ctx.fillStyle = colors.bg;
   ctx.fill();
 
-  // Pin shape
   const s = r * 0.5;
+
+  // Map pin (left side)
   ctx.fillStyle = colors.fg;
   ctx.beginPath();
-  ctx.arc(cx, cy - s * 0.3, s * 0.55, 0, Math.PI * 2);
+  ctx.arc(cx - s * 0.35, cy - s * 0.2, s * 0.45, 0, Math.PI * 2);
   ctx.fill();
-  // Pin point
   ctx.beginPath();
-  ctx.moveTo(cx - s * 0.35, cy);
-  ctx.lineTo(cx, cy + s * 0.9);
-  ctx.lineTo(cx + s * 0.35, cy);
+  ctx.moveTo(cx - s * 0.62, cy + s * 0.1);
+  ctx.lineTo(cx - s * 0.35, cy + s * 0.75);
+  ctx.lineTo(cx - s * 0.08, cy + s * 0.1);
   ctx.fill();
-  // Inner dot
   ctx.fillStyle = colors.bg;
   ctx.beginPath();
-  ctx.arc(cx, cy - s * 0.3, s * 0.2, 0, Math.PI * 2);
+  ctx.arc(cx - s * 0.35, cy - s * 0.2, s * 0.18, 0, Math.PI * 2);
   ctx.fill();
+
+  // Small wrench (right side)
+  ctx.save();
+  ctx.translate(cx + s * 0.55, cy + s * 0.1);
+  ctx.rotate(-Math.PI / 5);
+  ctx.fillStyle = colors.fg;
+  const ws = s * 0.38;
+  ctx.beginPath();
+  ctx.moveTo(-ws * 0.2, -ws * 0.9);
+  ctx.lineTo(-ws * 0.48, -ws * 0.58);
+  ctx.lineTo(-ws * 0.3, -ws * 0.4);
+  ctx.lineTo(-ws * 0.18, -ws * 0.45);
+  ctx.lineTo(ws * 0.18, -ws * 0.45);
+  ctx.lineTo(ws * 0.3, -ws * 0.4);
+  ctx.lineTo(ws * 0.48, -ws * 0.58);
+  ctx.lineTo(ws * 0.2, -ws * 0.9);
+  ctx.closePath();
+  ctx.fill();
+  ctx.fillRect(-ws * 0.15, -ws * 0.45, ws * 0.3, ws * 1.2);
+  ctx.beginPath();
+  ctx.arc(0, ws * 0.75, ws * 0.15, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
 }
 
-function drawBathtub(ctx: CanvasRenderingContext2D, cx: number, cy: number, r: number, colors: { bg: string; fg: string }) {
+function drawBathtub(
+  ctx: CanvasRenderingContext2D,
+  cx: number, cy: number, r: number,
+  colors: { bg: string; fg: string }
+) {
   ctx.beginPath();
   ctx.arc(cx, cy, r, 0, Math.PI * 2);
   ctx.fillStyle = colors.bg;
@@ -81,7 +106,6 @@ function drawBathtub(ctx: CanvasRenderingContext2D, cx: number, cy: number, r: n
   ctx.lineWidth = s * 0.2;
   ctx.lineCap = "round";
 
-  // Tub body (U shape)
   ctx.beginPath();
   ctx.moveTo(cx - s * 0.8, cy - s * 0.1);
   ctx.lineTo(cx - s * 0.8, cy + s * 0.3);
@@ -91,47 +115,28 @@ function drawBathtub(ctx: CanvasRenderingContext2D, cx: number, cy: number, r: n
   ctx.lineTo(cx + s * 0.8, cy - s * 0.1);
   ctx.stroke();
 
-  // Rim line
   ctx.beginPath();
   ctx.moveTo(cx - s, cy - s * 0.1);
   ctx.lineTo(cx + s, cy - s * 0.1);
   ctx.stroke();
 
-  // Faucet
   ctx.beginPath();
   ctx.moveTo(cx - s * 0.3, cy - s * 0.1);
   ctx.lineTo(cx - s * 0.3, cy - s * 0.55);
   ctx.lineTo(cx + s * 0.05, cy - s * 0.55);
   ctx.stroke();
 
-  // Water drop
   ctx.fillStyle = colors.fg;
   ctx.beginPath();
   ctx.arc(cx + s * 0.05, cy - s * 0.35, s * 0.08, 0, Math.PI * 2);
   ctx.fill();
 }
 
-function drawPhone(ctx: CanvasRenderingContext2D, cx: number, cy: number, r: number, colors: { bg: string; fg: string }) {
-  ctx.beginPath();
-  ctx.arc(cx, cy, r, 0, Math.PI * 2);
-  ctx.fillStyle = colors.bg;
-  ctx.fill();
-
-  const s = r * 0.45;
-  ctx.strokeStyle = colors.fg;
-  ctx.lineWidth = s * 0.25;
-  ctx.lineCap = "round";
-
-  // Phone receiver shape
-  ctx.beginPath();
-  ctx.moveTo(cx - s * 0.7, cy - s * 0.5);
-  ctx.quadraticCurveTo(cx - s * 0.9, cy - s * 0.1, cx - s * 0.5, cy + s * 0.1);
-  ctx.quadraticCurveTo(cx, cy + s * 0.4, cx + s * 0.5, cy + s * 0.1);
-  ctx.quadraticCurveTo(cx + s * 0.9, cy - s * 0.1, cx + s * 0.7, cy + s * 0.5);
-  ctx.stroke();
-}
-
-function drawGlobe(ctx: CanvasRenderingContext2D, cx: number, cy: number, r: number, colors: { bg: string; fg: string }) {
+function drawGlobe(
+  ctx: CanvasRenderingContext2D,
+  cx: number, cy: number, r: number,
+  colors: { bg: string; fg: string }
+) {
   ctx.beginPath();
   ctx.arc(cx, cy, r, 0, Math.PI * 2);
   ctx.fillStyle = colors.bg;
@@ -141,174 +146,196 @@ function drawGlobe(ctx: CanvasRenderingContext2D, cx: number, cy: number, r: num
   ctx.strokeStyle = colors.fg;
   ctx.lineWidth = s * 0.12;
 
-  // Outer circle
   ctx.beginPath();
   ctx.arc(cx, cy, s, 0, Math.PI * 2);
   ctx.stroke();
 
-  // Vertical ellipse
   ctx.beginPath();
   ctx.ellipse(cx, cy, s * 0.45, s, 0, 0, Math.PI * 2);
   ctx.stroke();
 
-  // Horizontal line
   ctx.beginPath();
   ctx.moveTo(cx - s, cy);
   ctx.lineTo(cx + s, cy);
   ctx.stroke();
 
-  // Top curve
   ctx.beginPath();
   ctx.moveTo(cx - s * 0.85, cy - s * 0.4);
   ctx.quadraticCurveTo(cx, cy - s * 0.55, cx + s * 0.85, cy - s * 0.4);
   ctx.stroke();
 
-  // Bottom curve
   ctx.beginPath();
   ctx.moveTo(cx - s * 0.85, cy + s * 0.4);
   ctx.quadraticCurveTo(cx, cy + s * 0.55, cx + s * 0.85, cy + s * 0.4);
   ctx.stroke();
 }
 
-function drawHandshake(ctx: CanvasRenderingContext2D, cx: number, cy: number, r: number, colors: { bg: string; fg: string }) {
+function drawQuestion(
+  ctx: CanvasRenderingContext2D,
+  cx: number, cy: number, r: number,
+  colors: { bg: string; fg: string }
+) {
   ctx.beginPath();
   ctx.arc(cx, cy, r, 0, Math.PI * 2);
   ctx.fillStyle = colors.bg;
   ctx.fill();
 
-  const s = r * 0.45;
+  const s = r * 0.55;
+
+  // Question mark arc
   ctx.strokeStyle = colors.fg;
   ctx.lineWidth = s * 0.22;
   ctx.lineCap = "round";
-  ctx.lineJoin = "round";
-
-  // Two hands meeting
   ctx.beginPath();
-  ctx.moveTo(cx - s * 0.9, cy + s * 0.2);
-  ctx.lineTo(cx - s * 0.3, cy - s * 0.1);
-  ctx.lineTo(cx + s * 0.1, cy + s * 0.15);
-  ctx.lineTo(cx + s * 0.5, cy - s * 0.1);
-  ctx.lineTo(cx + s * 0.9, cy + s * 0.2);
+  ctx.moveTo(cx - s * 0.35, cy - s * 0.5);
+  ctx.bezierCurveTo(
+    cx - s * 0.35, cy - s * 0.85,
+    cx + s * 0.45, cy - s * 0.85,
+    cx + s * 0.45, cy - s * 0.4
+  );
+  ctx.bezierCurveTo(
+    cx + s * 0.45, cy - s * 0.1,
+    cx + s * 0.05, cy - s * 0.1,
+    cx + s * 0.05, cy + s * 0.15
+  );
   ctx.stroke();
 
-  // Heart above
+  // Dot
   ctx.fillStyle = colors.fg;
-  const hx = cx, hy = cy - s * 0.55, hs = s * 0.2;
   ctx.beginPath();
-  ctx.moveTo(hx, hy + hs * 0.5);
-  ctx.bezierCurveTo(hx - hs, hy - hs * 0.3, hx - hs * 0.6, hy - hs, hx, hy - hs * 0.3);
-  ctx.bezierCurveTo(hx + hs * 0.6, hy - hs, hx + hs, hy - hs * 0.3, hx, hy + hs * 0.5);
+  ctx.arc(cx + s * 0.05, cy + s * 0.55, s * 0.14, 0, Math.PI * 2);
   ctx.fill();
 }
 
-function drawSwitch(ctx: CanvasRenderingContext2D, cx: number, cy: number, r: number, colors: { bg: string; fg: string }) {
+function drawFacebook(
+  ctx: CanvasRenderingContext2D,
+  cx: number, cy: number, r: number,
+  colors: { bg: string; fg: string }
+) {
+  // Rounded square background
+  const size = r * 1.4;
+  const rd = r * 0.28;
   ctx.beginPath();
-  ctx.arc(cx, cy, r, 0, Math.PI * 2);
+  ctx.moveTo(cx - size / 2 + rd, cy - size / 2);
+  ctx.lineTo(cx + size / 2 - rd, cy - size / 2);
+  ctx.quadraticCurveTo(cx + size / 2, cy - size / 2, cx + size / 2, cy - size / 2 + rd);
+  ctx.lineTo(cx + size / 2, cy + size / 2 - rd);
+  ctx.quadraticCurveTo(cx + size / 2, cy + size / 2, cx + size / 2 - rd, cy + size / 2);
+  ctx.lineTo(cx - size / 2 + rd, cy + size / 2);
+  ctx.quadraticCurveTo(cx - size / 2, cy + size / 2, cx - size / 2, cy + size / 2 - rd);
+  ctx.lineTo(cx - size / 2, cy - size / 2 + rd);
+  ctx.quadraticCurveTo(cx - size / 2, cy - size / 2, cx - size / 2 + rd, cy - size / 2);
+  ctx.closePath();
   ctx.fillStyle = colors.bg;
   ctx.fill();
 
-  const s = r * 0.4;
+  // "f" letterform
+  const s = r * 0.5;
+  ctx.fillStyle = colors.fg;
   ctx.strokeStyle = colors.fg;
-  ctx.lineWidth = s * 0.2;
+  ctx.lineWidth = s * 0.35;
   ctx.lineCap = "round";
 
-  // Circular arrows
+  // Vertical stroke
   ctx.beginPath();
-  ctx.arc(cx, cy, s * 0.7, -Math.PI * 0.8, Math.PI * 0.3);
+  ctx.moveTo(cx + s * 0.1, cy - s * 0.85);
+  ctx.lineTo(cx + s * 0.1, cy + s * 0.85);
   ctx.stroke();
 
-  // Arrow head 1
-  const a1x = cx + s * 0.7 * Math.cos(Math.PI * 0.3);
-  const a1y = cy + s * 0.7 * Math.sin(Math.PI * 0.3);
-  ctx.fillStyle = colors.fg;
+  // Top arc of f
   ctx.beginPath();
-  ctx.moveTo(a1x + s * 0.3, a1y - s * 0.1);
-  ctx.lineTo(a1x - s * 0.05, a1y - s * 0.15);
-  ctx.lineTo(a1x + s * 0.05, a1y + s * 0.25);
-  ctx.fill();
-
-  ctx.beginPath();
-  ctx.arc(cx, cy, s * 0.7, Math.PI * 0.2, -Math.PI * 0.8 + Math.PI * 2);
+  ctx.moveTo(cx + s * 0.1, cy - s * 0.55);
+  ctx.bezierCurveTo(
+    cx + s * 0.1, cy - s * 0.85,
+    cx + s * 0.65, cy - s * 0.85,
+    cx + s * 0.65, cy - s * 0.55
+  );
   ctx.stroke();
 
-  // Arrow head 2
-  const a2x = cx + s * 0.7 * Math.cos(-Math.PI * 0.8);
-  const a2y = cy + s * 0.7 * Math.sin(-Math.PI * 0.8);
+  // Crossbar
   ctx.beginPath();
-  ctx.moveTo(a2x - s * 0.3, a2y + s * 0.1);
-  ctx.lineTo(a2x + s * 0.05, a2y + s * 0.15);
-  ctx.lineTo(a2x - s * 0.05, a2y - s * 0.25);
-  ctx.fill();
+  ctx.moveTo(cx - s * 0.25, cy - s * 0.15);
+  ctx.lineTo(cx + s * 0.5, cy - s * 0.15);
+  ctx.stroke();
 }
 
-function drawWrench(ctx: CanvasRenderingContext2D, cx: number, cy: number, r: number, colors: { bg: string; fg: string }) {
+function drawBell(
+  ctx: CanvasRenderingContext2D,
+  cx: number, cy: number, r: number,
+  colors: { bg: string; fg: string }
+) {
   ctx.beginPath();
   ctx.arc(cx, cy, r, 0, Math.PI * 2);
   ctx.fillStyle = colors.bg;
   ctx.fill();
 
-  const s = r * 0.45;
-  ctx.save();
-  ctx.translate(cx, cy);
-  ctx.rotate(-Math.PI / 4);
-
+  const s = r * 0.52;
   ctx.fillStyle = colors.fg;
 
-  // Wrench head (open end)
+  // Bell body
   ctx.beginPath();
-  ctx.moveTo(-s * 0.2, -s * 0.9);
-  ctx.lineTo(-s * 0.5, -s * 0.6);
-  ctx.lineTo(-s * 0.35, -s * 0.45);
-  ctx.lineTo(-s * 0.2, -s * 0.5);
-  ctx.lineTo(s * 0.2, -s * 0.5);
-  ctx.lineTo(s * 0.35, -s * 0.45);
-  ctx.lineTo(s * 0.5, -s * 0.6);
-  ctx.lineTo(s * 0.2, -s * 0.9);
+  ctx.moveTo(cx - s * 0.08, cy - s * 0.85);
+  ctx.bezierCurveTo(cx - s * 0.08, cy - s * 0.85, cx - s * 0.7, cy - s * 0.6, cx - s * 0.75, cy + s * 0.2);
+  ctx.lineTo(cx + s * 0.75, cy + s * 0.2);
+  ctx.bezierCurveTo(cx + s * 0.7, cy - s * 0.6, cx + s * 0.08, cy - s * 0.85, cx + s * 0.08, cy - s * 0.85);
   ctx.closePath();
   ctx.fill();
 
-  // Handle
-  ctx.fillRect(-s * 0.15, -s * 0.5, s * 0.3, s * 1.3);
+  // Bell base bar
+  ctx.fillRect(cx - s * 0.85, cy + s * 0.2, s * 1.7, s * 0.2);
 
-  // Bottom rounded
+  // Clapper
   ctx.beginPath();
-  ctx.arc(0, s * 0.8, s * 0.15, 0, Math.PI * 2);
+  ctx.arc(cx, cy + s * 0.55, s * 0.18, 0, Math.PI * 2);
   ctx.fill();
 
-  ctx.restore();
+  // Small dot on top (stem)
+  ctx.beginPath();
+  ctx.arc(cx, cy - s * 0.85, s * 0.12, 0, Math.PI * 2);
+  ctx.fill();
 }
 
-type IconFn = (ctx: CanvasRenderingContext2D, cx: number, cy: number, r: number, colors: { bg: string; fg: string }) => void;
+type IconFn = (
+  ctx: CanvasRenderingContext2D,
+  cx: number, cy: number, r: number,
+  colors: { bg: string; fg: string }
+) => void;
 
 type CellDef = {
-  icon: string; // key into ICON_COLORS
+  icon: string;
   drawIcon: IconFn;
   label: string;
   sub: string;
 };
 
-function drawMenu(cells: CellDef[], title: string, subtitle: string, isNew: boolean, filename: string) {
+// ── 6-cell unified layout (DUKE 4/2 confirmed) ──
+const menuCells: CellDef[] = [
+  { icon: "store",   drawIcon: drawMapPinWrench, label: "門市 & 維修", sub: "查詢門市｜預約維修" },
+  { icon: "product", drawIcon: drawBathtub,      label: "產品目錄",    sub: "瀏覽衛浴產品系列" },
+  { icon: "web",     drawIcon: drawGlobe,        label: "品牌官網",    sub: "lcb.com.tw" },
+  { icon: "faq",     drawIcon: drawQuestion,     label: "常見問題",    sub: "產品Q&A解答" },
+  { icon: "fb",      drawIcon: drawFacebook,     label: "粉絲專區",    sub: "追蹤我們的動態" },
+  { icon: "news",    drawIcon: drawBell,         label: "最新消息",    sub: "活動優惠搶先看" },
+];
+
+function drawMenu(cells: CellDef[], filename: string) {
   const canvas = createCanvas(W, H);
   const ctx = canvas.getContext("2d");
 
-  // ── Background ──
-  ctx.fillStyle = BG_DARK;
-  ctx.fillRect(0, 0, W, H);
-
-  // ── Banner (top) with gradient ──
+  // ── Banner (top) ──
   const bannerGrad = ctx.createLinearGradient(0, 0, W, BANNER_H);
-  bannerGrad.addColorStop(0, "#1c1c1c");
+  bannerGrad.addColorStop(0, "#0A2240");
   bannerGrad.addColorStop(0.5, BG_BANNER);
-  bannerGrad.addColorStop(1, "#1c1c1c");
+  bannerGrad.addColorStop(1, "#0A2240");
   ctx.fillStyle = bannerGrad;
   ctx.fillRect(0, 0, W, BANNER_H);
 
-  // Gold accent line under banner
+  // Cornhusk accent line under banner
   const lineGrad = ctx.createLinearGradient(0, 0, W, 0);
-  lineGrad.addColorStop(0, "rgba(184,154,106,0)");
-  lineGrad.addColorStop(0.15, GOLD);
-  lineGrad.addColorStop(0.85, GOLD);
-  lineGrad.addColorStop(1, "rgba(184,154,106,0)");
+  lineGrad.addColorStop(0, "rgba(232,213,176,0)");
+  lineGrad.addColorStop(0.15, CORNHUSK);
+  lineGrad.addColorStop(0.85, CORNHUSK);
+  lineGrad.addColorStop(1, "rgba(232,213,176,0)");
   ctx.strokeStyle = lineGrad;
   ctx.lineWidth = 3;
   ctx.beginPath();
@@ -317,7 +344,7 @@ function drawMenu(cells: CellDef[], title: string, subtitle: string, isNew: bool
   ctx.stroke();
 
   // DEREK brand text
-  ctx.fillStyle = GOLD;
+  ctx.fillStyle = CORNHUSK;
   ctx.font = "bold 140px serif";
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
@@ -326,16 +353,18 @@ function drawMenu(cells: CellDef[], title: string, subtitle: string, isNew: bool
   // Tagline
   ctx.fillStyle = TEXT_DIM;
   ctx.font = "42px sans-serif";
-  ctx.fillText(subtitle, W / 2, BANNER_H / 2 + 25);
+  ctx.fillText("精 品 衛 浴  ·  頂 級 生 活 體 驗", W / 2, BANNER_H / 2 + 25);
 
-  // Menu type badge
-  const badgeText = isNew ? "Welcome Menu" : "VIP Menu";
-  const badgeColor = isNew ? "#2ECC71" : GOLD_LIGHT;
-  ctx.fillStyle = badgeColor;
-  ctx.font = "bold 34px sans-serif";
-  ctx.fillText(badgeText, W / 2, BANNER_H / 2 + 90);
+  // Subtitle in brand blue
+  ctx.fillStyle = "#5A85B0";
+  ctx.font = "bold 38px sans-serif";
+  ctx.fillText("德 瑞 克 衛 浴  官 方 服 務 選 單", W / 2, BANNER_H / 2 + 88);
 
-  // ── Grid lines (subtle) ──
+  // ── Cell background ──
+  ctx.fillStyle = BG_CELL;
+  ctx.fillRect(0, BANNER_H, W, GRID_H);
+
+  // ── Grid lines ──
   ctx.strokeStyle = GRID_LINE;
   ctx.lineWidth = 2;
   for (let col = 1; col < COLS; col++) {
@@ -350,7 +379,7 @@ function drawMenu(cells: CellDef[], title: string, subtitle: string, isNew: bool
   ctx.stroke();
 
   // ── Cells ──
-  const ICON_R = 65; // icon circle radius
+  const ICON_R = 82;
 
   for (let row = 0; row < ROWS; row++) {
     for (let col = 0; col < COLS; col++) {
@@ -362,83 +391,52 @@ function drawMenu(cells: CellDef[], title: string, subtitle: string, isNew: bool
       const cy = BANNER_H + CELL_H * row + CELL_H / 2;
       const colors = ICON_COLORS[cell.icon];
 
-      // Subtle cell glow behind icon
-      const glow = ctx.createRadialGradient(cx, cy - 30, 0, cx, cy - 30, ICON_R * 2.5);
-      glow.addColorStop(0, colors.bg + "18"); // very faint
+      // Subtle radial glow behind icon
+      const glow = ctx.createRadialGradient(cx, cy - 20, 0, cx, cy - 20, ICON_R * 2.5);
+      glow.addColorStop(0, BRAND_BLUE + "22");
       glow.addColorStop(1, "transparent");
       ctx.fillStyle = glow;
       ctx.fillRect(CELL_W * col, BANNER_H + CELL_H * row, CELL_W, CELL_H);
 
-      // Draw icon
-      cell.drawIcon(ctx, cx, cy - 55, ICON_R, colors);
+      // Icon (shifted up)
+      cell.drawIcon(ctx, cx, cy - 65, ICON_R, colors);
 
       // Label
       ctx.fillStyle = TEXT_WHITE;
-      ctx.font = "bold 56px sans-serif";
+      ctx.font = "bold 80px sans-serif";
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
-      ctx.fillText(cell.label, cx, cy + 50);
+      ctx.fillText(cell.label, cx, cy + 55);
 
       // Sub label
       ctx.fillStyle = TEXT_DIM;
-      ctx.font = "34px sans-serif";
-      ctx.fillText(cell.sub, cx, cy + 105);
+      ctx.font = "44px sans-serif";
+      ctx.fillText(cell.sub, cx, cy + 122);
     }
   }
 
-  // ── Bottom brand bar ──
-  ctx.fillStyle = GOLD;
+  // ── Bottom brand bar (Cornhusk) ──
+  ctx.fillStyle = CORNHUSK;
   ctx.fillRect(0, H - 50, W, 50);
-  ctx.fillStyle = BG_DARK;
-  ctx.font = "bold 28px sans-serif";
+  ctx.fillStyle = BG_BANNER;
+  ctx.font = "bold 30px sans-serif";
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
-  ctx.fillText("DEREK  |  0800-063-366  |  www.lcb.com.tw", W / 2, H - 25);
+  ctx.fillText("DEREK 德瑞克衛浴  |  0800-063-366  |  www.lcb.com.tw", W / 2, H - 25);
 
-  // Save
   const buffer = canvas.toBuffer("image/png");
   fs.writeFileSync(filename, buffer);
   console.log(`Generated ${filename} (${(buffer.length / 1024).toFixed(0)} KB)`);
 }
 
-// ── New Customer Menu ──
-const newCustomerCells: CellDef[] = [
-  { icon: "store",   drawIcon: drawMapPin,    label: "尋找門市", sub: "查詢附近服務據點" },
-  { icon: "product", drawIcon: drawBathtub,   label: "最新活動", sub: "瀏覽衛浴產品系列" },
-  { icon: "phone",   drawIcon: drawPhone,     label: "聯絡我們", sub: "免費客服專線" },
-  { icon: "web",     drawIcon: drawGlobe,     label: "品牌官網", sub: "瀏覽最新產品資訊" },
-  { icon: "refer",   drawIcon: drawHandshake, label: "推薦好友", sub: "分享推薦碼給朋友" },
-  { icon: "switch",  drawIcon: drawSwitch,    label: "更多服務", sub: "切換至熟客選單" },
-];
+console.log("Generating DEREK Rich Menu image...\n");
 
-// ── VIP Customer Menu ──
-const vipCustomerCells: CellDef[] = [
-  { icon: "repair",  drawIcon: drawWrench,    label: "維修預約", sub: "線上報修快速服務" },
-  { icon: "refer",   drawIcon: drawHandshake, label: "推薦好友", sub: "分享推薦碼給朋友" },
-  { icon: "phone",   drawIcon: drawPhone,     label: "聯絡我們", sub: "免費客服專線" },
-  { icon: "store",   drawIcon: drawMapPin,    label: "尋找門市", sub: "查詢附近服務據點" },
-  { icon: "product", drawIcon: drawBathtub,   label: "產品目錄", sub: "瀏覽衛浴產品系列" },
-  { icon: "switch",  drawIcon: drawSwitch,    label: "基本選單", sub: "切換至新客選單" },
-];
+drawMenu(menuCells, "/tmp/richmenu-derek.png");
 
-console.log("Generating DEREK Rich Menu images...\n");
+// Also keep legacy filenames so deploy-richmenu-pair.ts still works
+fs.copyFileSync("/tmp/richmenu-derek.png", "/tmp/richmenu-new-customer.png");
+fs.copyFileSync("/tmp/richmenu-derek.png", "/tmp/richmenu-vip-customer.png");
+console.log("Copied to legacy filenames (new-customer / vip-customer)");
 
-drawMenu(
-  newCustomerCells,
-  "DEREK 新客選單",
-  "精 品 衛 浴  ·  頂 級 生 活 體 驗",
-  true,
-  "/tmp/richmenu-new-customer.png"
-);
-
-drawMenu(
-  vipCustomerCells,
-  "DEREK 熟客選單",
-  "精 品 衛 浴  ·  尊 榮 貴 賓 服 務",
-  false,
-  "/tmp/richmenu-vip-customer.png"
-);
-
-console.log("\nNext steps:");
-console.log("  1. Check images: open /tmp/richmenu-*.png");
-console.log("  2. Deploy: npx tsx scripts/deploy-richmenu-pair.ts");
+console.log("\nNext step:");
+console.log("  Deploy: npx tsx scripts/deploy-richmenu-pair.ts");

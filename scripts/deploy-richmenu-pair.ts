@@ -163,43 +163,41 @@ async function main() {
     return areas;
   }
 
+  // ── 6-cell actions (DUKE 4/2 confirmed layout) ──
+  // [0] 門市 & 維修  [1] 產品目錄  [2] 品牌官網
+  // [3] 常見問題      [4] 粉絲專區  [5] 最新消息
+  const sixCellActions = [
+    { type: "postback", data: "action=SHOW_REGION_MENU",   displayText: "尋找門市" },
+    { type: "postback", data: "action=SHOW_PRODUCT_MENU",  displayText: "產品目錄" },
+    { type: "uri", uri: "https://www.lcb.com.tw",          label: "品牌官網" },
+    { type: "uri", uri: "https://www.lcb.com.tw/lcb/faq", label: "常見問題" },
+    { type: "uri", uri: "https://www.facebook.com/LCB.TW/",    label: "粉絲專區" },
+    { type: "uri", uri: "https://www.lcb.com.tw/lcb/news",     label: "最新消息" },
+  ];
+
   const newMenu = await lineApi("/richmenu", {
     method: "POST",
     body: JSON.stringify({
       size: { width: W, height: H },
       selected: false,
-      name: "DEREK 新客選單",
+      name: "DEREK 主選單 v4",
       chatBarText: "選單",
-      areas: makeAreas([
-        { type: "message", text: "門市" },
-        { type: "message", text: "產品" },
-        { type: "uri", uri: "tel:0800063366", label: "免費客服專線" },
-        { type: "uri", uri: "https://www.lcb.com.tw", label: "DEREK 官網" },
-        { type: "message", text: "推薦" },
-        { type: "richmenuswitch", richMenuAliasId: ALIAS_VIP, data: "richmenu-changed-to-vip" },
-      ]),
+      areas: makeAreas(sixCellActions),
     }),
   });
-  console.log(`  新客選單 ID: ${newMenu.richMenuId}`);
+  console.log(`  主選單 ID: ${newMenu.richMenuId}`);
 
   const vipMenu = await lineApi("/richmenu", {
     method: "POST",
     body: JSON.stringify({
       size: { width: W, height: H },
       selected: false,
-      name: "DEREK 熟客選單",
+      name: "DEREK 主選單 v4 (VIP)",
       chatBarText: "選單",
-      areas: makeAreas([
-        { type: "message", text: "維修" },
-        { type: "message", text: "推薦" },
-        { type: "uri", uri: "tel:0800063366", label: "免費客服專線" },
-        { type: "message", text: "門市" },
-        { type: "message", text: "產品" },
-        { type: "richmenuswitch", richMenuAliasId: ALIAS_NEW, data: "richmenu-changed-to-new" },
-      ]),
+      areas: makeAreas(sixCellActions),
     }),
   });
-  console.log(`  熟客選單 ID: ${vipMenu.richMenuId}`);
+  console.log(`  VIP選單 ID: ${vipMenu.richMenuId}`);
 
   // Step 4: Upload images
   console.log("\nStep 4: Uploading images...");

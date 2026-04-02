@@ -53,14 +53,15 @@ async function main() {
   // 2. Stores
   await prisma.store.createMany({
     data: [
-      // 大台北
+      // 大台北 — 旗艦門市（DUKE 4/2 提供）
       {
-        name: "DEREK 台北展示間",
-        type: "BRANCH",
+        name: "DEREK 北區旗艦門市",
+        type: "FLAGSHIP",
         regionId: rid("taipei"),
-        address: "待補",
-        phone: "0800-063366",
-        hours: "週一～五 08:00–17:00",
+        address: "新北市鶯歌區鶯桃路41號",
+        phone: "02-2670-3360",
+        lineId: "https://line.me/ti/p/yuVxQMJgM0",
+        hours: "週一～日 09:00–17:30",
         order: 0,
       },
       {
@@ -81,34 +82,37 @@ async function main() {
         hours: "待補",
         order: 2,
       },
-      // 竹苗
+      // 竹苗 — 旗艦門市（DUKE 4/2 提供）
       {
-        name: "DEREK 新竹旗艦店",
+        name: "DEREK 新竹旗艦門市",
         type: "FLAGSHIP",
         regionId: rid("hsinchu"),
-        address: "待補",
-        phone: "待補",
-        hours: "週一～六 10:00–18:00",
+        address: "新竹縣竹北市莊敬北路220號",
+        phone: "03-5509-480",
+        lineId: "https://line.me/ti/p/45qv_saITI",
+        hours: "週一～日 09:00–17:30",
         order: 0,
       },
-      // 中彰投雲
+      // 中彰投雲 — 旗艦門市（DUKE 4/2 提供）
       {
-        name: "DEREK 台中旗艦店",
+        name: "DEREK 台中旗艦門市",
         type: "FLAGSHIP",
         regionId: rid("taichung"),
-        address: "待補",
-        phone: "待補",
-        hours: "週一～六 10:00–18:00",
+        address: "台中市西區英才路581號",
+        phone: "04-2375-0808",
+        lineId: "https://line.me/ti/p/PcMG5PT2a-",
+        hours: "週一～日 09:00–17:30",
         order: 0,
       },
-      // 嘉南
+      // 嘉南 — 旗艦門市（DUKE 4/2 提供）
       {
-        name: "DEREK 台南旗艦店",
+        name: "DEREK 台南旗艦門市",
         type: "FLAGSHIP",
         regionId: rid("tainan"),
-        address: "待補",
-        phone: "待補",
-        hours: "週一～六 10:00–18:00",
+        address: "台南市安平區華平路148號",
+        phone: "06-2979-606",
+        lineId: "https://line.me/ti/p/VQ1Qd3eY4Q",
+        hours: "週一～日 09:00–17:30",
         order: 0,
       },
       {
@@ -129,24 +133,25 @@ async function main() {
         hours: "待補",
         order: 2,
       },
-      // 高屏台東
+      // 高屏台東 — 旗艦門市（DUKE 4/2 提供）
       {
-        name: "DEREK 高雄旗艦店",
+        name: "DEREK 高雄旗艦門市",
         type: "FLAGSHIP",
         regionId: rid("kaohsiung"),
-        address: "待補",
-        phone: "待補",
-        hours: "週一～六 10:00–18:00",
+        address: "高雄市前鎮區復興三路66號",
+        phone: "07-5528-566",
+        lineId: "https://lin.ee/mwJ2Mdi",
+        hours: "週一～日 09:00–17:30",
         order: 0,
       },
-      // 花蓮
+      // 花蓮 — 總經銷（DUKE 4/2 提供）
       {
         name: "百健行",
         type: "GENERAL",
         regionId: rid("hualien"),
         address: "花蓮縣吉安鄉南山一街40號",
         phone: "038-511315",
-        hours: "待補",
+        hours: "週一～五 08:00-12:00 13:30-17:30（國定假日公休）",
         order: 0,
       },
     ],

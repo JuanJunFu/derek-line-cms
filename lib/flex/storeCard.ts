@@ -7,10 +7,10 @@ import type { Store, Region } from "@prisma/client";
  */
 
 const TYPE_CONFIG: Record<string, { label: string; bg: string; color: string }> = {
-  FLAGSHIP: { label: "旗艦門市", bg: "#1a1a1a", color: "#B89A6A" },
-  BRANCH: { label: "分公司", bg: "#2B4C7E", color: "#ffffff" },
-  DEALER: { label: "授權經銷商", bg: "#9E9E9E", color: "#ffffff" },
-  GENERAL: { label: "總經銷", bg: "#4E7C5F", color: "#ffffff" },
+  FLAGSHIP: { label: "旗艦門市", bg: "#1B4F8C", color: "#E8D5B0" }, // Classic Blue + Cornhusk
+  BRANCH: { label: "分公司", bg: "#5A85B0", color: "#ffffff" },     // Provence Blue
+  DEALER: { label: "授權經銷商", bg: "#8A9BA8", color: "#ffffff" }, // Monument Gray
+  GENERAL: { label: "總經銷", bg: "#4E7C5F", color: "#ffffff" },   // Green (keep)
 };
 
 function buildStoreCard(store: Store & { region: Region }): Record<string, any> {
@@ -120,7 +120,7 @@ function buildStoreCard(store: Store & { region: Region }): Record<string, any> 
     footerContents.push({
       type: "button",
       style: "primary",
-      color: "#1a1a1a",
+      color: "#1B4F8C",
       height: "sm",
       action: {
         type: "uri",
@@ -131,7 +131,8 @@ function buildStoreCard(store: Store & { region: Region }): Record<string, any> 
   }
 
   if (store.lineId) {
-    const lineUri = "https://line.me/R/ti/p/" + store.lineId;
+    // lineId stores the full URL (e.g. https://line.me/ti/p/xxx or https://lin.ee/xxx)
+    const lineUri = store.lineId.startsWith("http") ? store.lineId : "https://line.me/ti/p/" + store.lineId;
     const trackUrl = `${baseUrl}/api/v1/track/redirect?action=STORE_LINE&storeId=${store.id}&uri=${encodeURIComponent(lineUri)}`;
     footerContents.push({
       type: "button",

@@ -41,42 +41,42 @@ async function main() {
     }
   } catch {}
 
-  // gold.html layout: banner(top 30%) + 2x2 grid(bottom 70%)
+  // 6-cell layout: banner(top) + 3x2 grid (DUKE 4/2 confirmed)
   const W = 2500, H = 1686;
-  const bannerH = 506; // top 30%
-  const gridH = H - bannerH; // bottom 70% = 1180
-  const cellW = W / 2; // 1250
-  const cellH = gridH / 2; // 590
+  const bannerH = 380;
+  const gridH = H - bannerH; // 1306
+  const cellW = Math.floor(W / 3); // 833
+  const cellH = Math.floor(gridH / 2); // 653
 
-  console.log("Creating Rich Menu (4-grid + banner)...");
+  // Helper — compute bounds for cell at (row, col)
+  function cellBounds(row: number, col: number) {
+    const isLastCol = col === 2;
+    const isLastRow = row === 1;
+    return {
+      x: cellW * col,
+      y: bannerH + cellH * row,
+      width: isLastCol ? W - cellW * 2 : cellW,  // last col gets remainder
+      height: isLastRow ? H - (bannerH + cellH) : cellH,
+    };
+  }
+
+  console.log("Creating Rich Menu (6-grid + banner, v4)...");
   const richMenu = await lineApi("/richmenu", {
     method: "POST",
     body: JSON.stringify({
       size: { width: W, height: H },
       selected: true,
-      name: "DEREK Main Menu v3",
+      name: "DEREK Main Menu v4",
       chatBarText: "選單",
       areas: [
-        // Top-left: 尋找門市
-        {
-          bounds: { x: 0, y: bannerH, width: cellW, height: cellH },
-          action: { type: "message", text: "門市" },
-        },
-        // Top-right: 聯絡我們
-        {
-          bounds: { x: cellW, y: bannerH, width: cellW, height: cellH },
-          action: { type: "uri", uri: "tel:0800063366", label: "聯絡我們" },
-        },
-        // Bottom-left: 產品分類（取代「最新活動」— 可追蹤）
-        {
-          bounds: { x: 0, y: bannerH + cellH, width: cellW, height: cellH },
-          action: { type: "message", text: "產品" },
-        },
-        // Bottom-right: 品牌官網
-        {
-          bounds: { x: cellW, y: bannerH + cellH, width: cellW, height: cellH },
-          action: { type: "uri", uri: "https://www.lcb.com.tw", label: "品牌官網" },
-        },
+        // Row 0
+        { bounds: cellBounds(0, 0), action: { type: "postback", data: "action=SHOW_REGION_MENU",  displayText: "尋找門市" } },
+        { bounds: cellBounds(0, 1), action: { type: "postback", data: "action=SHOW_PRODUCT_MENU", displayText: "產品目錄" } },
+        { bounds: cellBounds(0, 2), action: { type: "uri", uri: "https://www.lcb.com.tw",         label: "品牌官網" } },
+        // Row 1
+        { bounds: cellBounds(1, 0), action: { type: "uri", uri: "https://www.lcb.com.tw/lcb/faq",  label: "常見問題" } },
+        { bounds: cellBounds(1, 1), action: { type: "uri", uri: "https://www.facebook.com/LCB.TW/",    label: "粉絲專區" } },
+        { bounds: cellBounds(1, 2), action: { type: "uri", uri: "https://www.lcb.com.tw/lcb/news",      label: "最新消息" } },
       ],
     }),
   });
@@ -88,88 +88,106 @@ async function main() {
   const canvas = createCanvas(W, H);
   const ctx = canvas.getContext("2d");
 
-  // === Banner (top) ===
+  // === Banner (top) — Blue system ===
   const grad = ctx.createLinearGradient(0, 0, W, bannerH);
-  grad.addColorStop(0, "#222222");
-  grad.addColorStop(1, "#111111");
+  grad.addColorStop(0, "#0A2240");
+  grad.addColorStop(0.5, "#061B36");
+  grad.addColorStop(1, "#0A2240");
   ctx.fillStyle = grad;
   ctx.fillRect(0, 0, W, bannerH);
 
-  // Brand line
-  ctx.strokeStyle = "#B89A6A";
-  ctx.lineWidth = 2;
+  // Cornhusk accent line
+  ctx.strokeStyle = "#E8D5B0";
+  ctx.lineWidth = 3;
   ctx.beginPath();
-  ctx.moveTo(0, bannerH - 1);
-  ctx.lineTo(W, bannerH - 1);
+  ctx.moveTo(0, bannerH - 2);
+  ctx.lineTo(W, bannerH - 2);
   ctx.stroke();
 
-  // DEREK text (large)
-  ctx.fillStyle = "#B89A6A";
-  ctx.font = "bold 160px serif";
+  // DEREK brand text (Cornhusk)
+  ctx.fillStyle = "#E8D5B0";
+  ctx.font = "bold 150px serif";
   ctx.textAlign = "center";
-  ctx.fillText("D  E  R  E  K", W / 2, bannerH / 2 - 10);
+  ctx.textBaseline = "middle";
+  ctx.fillText("D  E  R  E  K", W / 2, bannerH / 2 - 50);
 
-  // Subtitle
-  ctx.fillStyle = "#666666";
-  ctx.font = "48px sans-serif";
-  ctx.fillText("精 品 衛 浴  ·  頂 級 生 活 體 驗", W / 2, bannerH / 2 + 70);
+  // Tagline
+  ctx.fillStyle = "#8A9BA8";
+  ctx.font = "44px sans-serif";
+  ctx.fillText("精 品 衛 浴  ·  頂 級 生 活 體 驗", W / 2, bannerH / 2 + 30);
+
+  // Sub badge
+  ctx.fillStyle = "#5A85B0";
+  ctx.font = "bold 38px sans-serif";
+  ctx.fillText("德 瑞 克 衛 浴  官 方 服 務 選 單", W / 2, bannerH / 2 + 88);
 
   // === Grid (bottom) ===
-  ctx.fillStyle = "#1a1a1a";
+  ctx.fillStyle = "#0D2444";
   ctx.fillRect(0, bannerH, W, gridH);
 
-  // Grid lines
-  ctx.strokeStyle = "#333333";
+  // Grid lines (dark blue)
+  ctx.strokeStyle = "#153460";
   ctx.lineWidth = 2;
-  // Vertical center
-  ctx.beginPath();
-  ctx.moveTo(cellW, bannerH);
-  ctx.lineTo(cellW, H);
-  ctx.stroke();
-  // Horizontal center
+  for (let col = 1; col < 3; col++) {
+    ctx.beginPath();
+    ctx.moveTo(cellW * col, bannerH);
+    ctx.lineTo(cellW * col, H - 50);
+    ctx.stroke();
+  }
   ctx.beginPath();
   ctx.moveTo(0, bannerH + cellH);
   ctx.lineTo(W, bannerH + cellH);
   ctx.stroke();
 
-  // Cell contents
-  const cells = [
-    { emoji: "📍", label: "尋找門市", sub: "查詢附近服務據點", x: cellW / 2, y: bannerH },
-    { emoji: "📞", label: "聯絡我們", sub: "免費客服專線", x: cellW + cellW / 2, y: bannerH },
-    { emoji: "🛁", label: "產品分類", sub: "瀏覽衛浴產品系列", x: cellW / 2, y: bannerH + cellH },
-    { emoji: "🌐", label: "品牌官網", sub: "瀏覽最新產品資訊", x: cellW + cellW / 2, y: bannerH + cellH },
+  // Cell labels with colored dots as icons (simple fallback without canvas icons)
+  const cells6 = [
+    { dot: "#1B4F8C", label: "門市 & 維修", sub: "查詢門市｜預約維修" },
+    { dot: "#2980B9", label: "產品目錄",    sub: "瀏覽衛浴產品系列" },
+    { dot: "#0F2D5A", label: "品牌官網",    sub: "lcb.com.tw" },
+    { dot: "#5A85B0", label: "常見問題",    sub: "產品Q&A解答" },
+    { dot: "#1877F2", label: "粉絲專區",    sub: "追蹤我們的動態" },
+    { dot: "#2C7BB6", label: "最新消息",    sub: "活動優惠搶先看" },
   ];
 
-  for (const cell of cells) {
-    const cy = cell.y + cellH / 2;
+  for (let row = 0; row < 2; row++) {
+    for (let col = 0; col < 3; col++) {
+      const idx = row * 3 + col;
+      const cell = cells6[idx];
+      const cx = cellW * col + cellW / 2;
+      const cy = bannerH + cellH * row + cellH / 2;
 
-    // Emoji
-    ctx.font = "120px sans-serif";
-    ctx.fillStyle = "#B89A6A";
-    ctx.textAlign = "center";
-    ctx.fillText(cell.emoji, cell.x, cy - 50);
+      // Colored circle icon
+      ctx.beginPath();
+      ctx.arc(cx, cy - 80, 80, 0, Math.PI * 2);
+      ctx.fillStyle = cell.dot;
+      ctx.fill();
 
-    // Label (4x larger)
-    ctx.fillStyle = "#B89A6A";
-    ctx.font = "bold 72px sans-serif";
-    ctx.fillText(cell.label, cell.x, cy + 50);
+      // Label
+      ctx.fillStyle = "#EEEEEE";
+      ctx.font = "bold 78px sans-serif";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(cell.label, cx, cy + 55);
 
-    // Sub label
-    ctx.fillStyle = "#666666";
-    ctx.font = "36px sans-serif";
-    ctx.fillText(cell.sub, cell.x, cy + 110);
+      // Sub label
+      ctx.fillStyle = "#8A9BA8";
+      ctx.font = "42px sans-serif";
+      ctx.fillText(cell.sub, cx, cy + 122);
+    }
   }
 
-  // Bottom brand bar
-  ctx.fillStyle = "#B89A6A";
-  ctx.fillRect(0, H - 60, W, 60);
-  ctx.fillStyle = "#1a1a1a";
-  ctx.font = "bold 36px sans-serif";
-  ctx.fillText("DEREK 德瑞克衛浴", W / 2, H - 18);
+  // Bottom brand bar (Cornhusk)
+  ctx.fillStyle = "#E8D5B0";
+  ctx.fillRect(0, H - 50, W, 50);
+  ctx.fillStyle = "#061B36";
+  ctx.font = "bold 30px sans-serif";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText("DEREK 德瑞克衛浴  |  0800-063-366  |  www.lcb.com.tw", W / 2, H - 25);
 
   const buffer = canvas.toBuffer("image/png");
-  fs.writeFileSync("/tmp/richmenu-v2.png", buffer);
-  console.log("Image saved");
+  fs.writeFileSync("/tmp/richmenu-v4.png", buffer);
+  console.log("Image saved → /tmp/richmenu-v4.png");
 
   // Upload image
   console.log("Uploading image...");
@@ -194,9 +212,9 @@ async function main() {
     headers: { Authorization: `Bearer ${TOKEN}` },
   });
 
-  console.log("✅ Rich Menu v2 setup complete!");
+  console.log("✅ Rich Menu v4 setup complete!");
   console.log(`   ID: ${richMenuId}`);
-  console.log("   Layout: 4-grid (尋找門市 | 聯絡我們 | 最新活動 | 品牌官網)");
+  console.log("   Layout: 6-grid (門市&維修 | 產品目錄 | 品牌官網 | 常見問題 | 粉絲專區 | 最新消息)");
 }
 
 main().catch(console.error);
